@@ -23,22 +23,19 @@
         <div class="n-middle">
             <div class="n-content">
                 <div v-show="showHomeFlag" class="n-content-item" v-for="item in newsList" :key="item.id">
-                    <h3 @click="gotoView(item.id)">{{item.title}}</h3>
-                    <div class="n-content-item-list" @click="gotoView(item.id)">
+                    <h3 @click="gotoNews(item.id)">{{item.title}}</h3>
+                    <div class="n-content-item-list" @click="gotoNews(item.id)">
                         <img :src='item.image_urls[0]'/>
                         <img :src='item.image_urls[0]'/>
                         <img :src='item.image_urls[0]'/>
                         <img :src='item.image_urls[0]'/>
                     </div>
-                    <p @click="gotoView(item.id)">来源：{{item.author+"     "+item.time}}</p>
+                    <p @click="gotoNews(item.id)">来源：{{item.author+"     "+item.time}}</p>
                 </div>
                 <PageTemp v-show="!showHomeFlag"></PageTemp>
             </div>
             <div class="n-right">
-                <div class='n-right-adver' @click="gotoAdver()">
-                    <img src='https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=3363295869,2467511306&fm=26&gp=0.jpg'/>
-                    这是广告
-                </div>
+                <ImageSlider></ImageSlider>
                 <ul class="n-right-list">
                     <h3>24小时排行榜</h3>
                     <li v-for="item in twelveList" :key="item.id">
@@ -58,8 +55,9 @@
 <script>
 import {getNewsList} from '@/api/Api'
 import PageTemp from './PageTemp'
+import ImageSlider from './news/ImageSlider'
 export default {
-    components:{PageTemp},
+    components:{PageTemp,ImageSlider},
     data(){
         return {
             msg:"这是首页新闻列表",
@@ -104,9 +102,6 @@ export default {
         },
         gotoNews(idx){
             window.open("https://www.baidu.com/", '_blank')
-        },
-        gotoAdver(){
-
         }
     }
 }
@@ -156,6 +151,7 @@ export default {
     .n-left {
         position: fixed;
         top: 0;
+        z-index: 100;
     }
     .n-left-ul {
          list-style-type: none;
@@ -211,7 +207,6 @@ export default {
     .n-right {
         display: flex;
         flex-direction: column;
-        width: 240px;
         margin-top:10px;
     }
     .n-right-adver {
