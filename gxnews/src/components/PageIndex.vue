@@ -8,6 +8,9 @@
                     </li>
                 </ul>
             </div>
+            <div class="n-title-logo" @click="reloadHome()">
+                <img src=".././assets/logo.png"/>
+            </div>
         </div>
         <div class="n-left">
             <ul class="n-left-ul">
@@ -88,6 +91,9 @@ export default {
                 div.style.top = '0px';
             }
         },
+        reloadHome(){
+            window.location.reload();
+        },
         gotoCategry(idx){
             console.log(idx)
         },
@@ -100,7 +106,7 @@ export default {
             window.open("https://www.baidu.com/", '_blank')
         },
         gotoAdver(){
-            
+
         }
     }
 }
@@ -122,6 +128,18 @@ export default {
     .n-title-ul {
         white-space:nowrap;
         display: block;
+    }
+    .n-title-logo {
+        position: relative;
+        display: block;
+        float: left;
+        left: 40px;
+        top: -60px;
+        cursor: pointer;
+    }
+    .n-title-logo img {
+        width: 120px;
+        height: 66px;
     }
     .n-title-ul li {
         margin:4px;
