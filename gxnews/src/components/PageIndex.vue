@@ -82,7 +82,7 @@ export default {
             let div = document.getElementsByClassName("n-left")[0];
             if(document.scrollingElement.scrollTop <= 80){
                 div.style.position = 'fixed';
-                div.style.top = '80px';
+                div.style.top = '100px';
             }
             else{
                 div.style.position = 'fixed';
