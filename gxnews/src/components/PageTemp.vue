@@ -1,15 +1,9 @@
 <template>
     <div class="cls_newsdetail">
-        <div v-for="n in list" :key="n.id">
-            <h2>{{n.title}}</h2>
-            <span>发布时间: {{n.pubTime}}</span>
-            <div class="cls_newscontent" >
-                <p v-html="n.content"></p>
-            </div>
-        </div>
-        <div class="cls_newsmore">
-            <div v-for="item in more_list" :key="item.id">
-                
+        <div>
+            <h2>{{detailInfo.title}}</h2>
+            <span v-show="detailInfo.updated_at ? true : false">发布时间: {{detailInfo.updated_at}}</span>
+            <div class="cls_newscontent" v-html="detailInfo.content">
             </div>
         </div>
     </div>
@@ -18,18 +12,19 @@
 export default {
     data(){
         return {
-            list:[{id:"1",title:"这是标题",pubTime:'2012/05/03',content:"这是新闻内容"}],
-            more_list:[{id:1,img:'',title:"哈哈哈哈哈",url:'cccccccc'}]
+            detailInfo:{}
         }
     },
-    mounted(){
-        this.setContent();
-    },
     methods:{
-        setContent(){
-            let content = "这是新闻内容这是新闻内容这是新闻内容这是新闻内容这是新闻内容这是新闻内容这是新闻内容这是新闻内容这是新闻内容这是新闻内容这是新闻内容这是新闻内容这是新闻内容这是新闻内容这是新闻内容这是新闻内容这是新闻内容这是新闻内容这是新闻内容这是新闻内容这是新闻内容这是新闻内容这是新闻内容这是新闻内容这是新闻内容这是新闻内容这是新闻内容这是新闻内容这是新闻内容这是新闻内容这是新闻内容这是新闻内容这是新闻内容这是新闻内容这是新闻内容这是新闻内容这是新闻内容这是新闻内容这是新闻内容这是新闻内容这是新闻内容这是新闻内容这是新闻内容这是新闻内容这是新闻内容这是新闻内容这是新闻内容这是新闻内容这是新闻内容这是新闻内容这是新闻内容这是新闻内容这是新闻内容这是新闻内容这是新闻内容这是新闻内容这是新闻内容这是新闻内容这是新闻内容这是新闻内容这是新闻内容这是新闻内容这是新闻内容这是新闻内容这是新闻内容这是新闻内容这是新闻内容这是新闻内容这是新闻内容这是新闻内容这是新闻内容这是新闻内容这是新闻内容这是新闻内容这是新闻内容这是新闻内容这是新闻内容这是新闻内容这是新闻内容这是新闻内容这是新闻内容这是新闻内容这是新闻内容这是新闻内容这是新闻内容这是新闻内容这是新闻内容"
-            this.list = [{id:"1",title:"这是标题",pubTime:'2012/05/03',content}]
-            return this.list;
+        setData(info){
+            info.content = this.escapeHtml(info.content);
+            this.detailInfo = info;
+        },
+        escapeHtml(str) {
+            var arrEntities={'lt':'<','gt':'>','nbsp':' ','amp':'&','quot':'"'};
+            str = str.replace(/&(lt|gt|nbsp|amp|quot);/ig,function(all,t){return arrEntities[t];});
+            str = str.replace(/gif@/g,'gif?@');
+            return str.replace(/padding-bottom:( ?)[0-9]+(.?)\d+%/g,"");
         }
     }
 }
@@ -37,10 +32,14 @@ export default {
 <style>
     .cls_newsdetail {
         width: 100%;
-        margin: 0 auto;
+        /* margin: 0 auto; */
+        text-align: left;
     }
     .cls_newscontent {
         display: block;
-        overflow: hidden;
+    }
+    .cls_newscontent img {
+        display: block;
+        margin: 0 auto;
     }
 </style>

@@ -3,8 +3,8 @@
         <div class="n-title">
             <div class="n-title-div">
                 <ul class="n-title-ul">
-                    <li v-for="item in titleList" :key="item.id">
-                        <a href="javascript:" @click="gotoCategry(item.id)" class="navLink">{{item.name}}</a>
+                    <li v-for="item in titleList" :key="item.cateId">
+                        <a href="javascript:" @click="gotoCategry(item.cateId)" class="navLink">{{item.cateName}}</a>
                     </li>
                 </ul>
             </div>
@@ -17,7 +17,7 @@
                 <li v-for="item in titleList" 
                     :key="item.id" 
                     :class="[item.id == selectIndex ? 'n-left-selected':'n-left-notselected']"
-                    @click="setLeftSelect(item.id)">{{item.name}}</li>
+                    @click="gotoCategry(item.cateId)">{{item.cateName}}</li>
             </ul>
         </div>
         <div class="n-middle">
@@ -25,14 +25,11 @@
                 <div v-show="showHomeFlag" class="n-content-item" v-for="item in newsList" :key="item.id">
                     <h3 @click="gotoNews(item.id)">{{item.title}}</h3>
                     <div class="n-content-item-list" @click="gotoNews(item.id)">
-                        <img :src='item.image_urls[0]'/>
-                        <img :src='item.image_urls[0]'/>
-                        <img :src='item.image_urls[0]'/>
-                        <img :src='item.image_urls[0]'/>
+                        <img v-for="index in item.pics" :key="index" :src='index'/>
                     </div>
-                    <p @click="gotoNews(item.id)">来源：{{item.author+"     "+item.time}}</p>
+                    <!-- <p @click="gotoNews(item.id)">来源：{{item.author+"     "+item.time}}</p> -->
                 </div>
-                <PageTemp v-show="!showHomeFlag"></PageTemp>
+                <PageTemp ref="pageTemp" v-show="!showHomeFlag"></PageTemp>
             </div>
             <div class="n-right">
                 <ImageSlider></ImageSlider>
@@ -40,11 +37,11 @@
                     <h3>24小时排行榜</h3>
                     <li v-for="item in twelveList" :key="item.id">
                         <div id="pic">
-                            <img :src="item.image_url" @click="gotoNews(item.id)"/>
+                            <img :src="item.pics[0]" @click="gotoNews(item.cateId)"/>
                         </div>
-                        <div style="n-right-list-news-title" @click="gotoNews(item.id)">
+                        <div style="n-right-list-news-title" @click="gotoNews(item.cateId)">
                             <a href="javascript:">{{item.title}}</a>
-                            <div class="n-right-list-news-author" @click="gotoNews(item.id)">来源:{{item.from}}</div>
+                            <div class="n-right-list-news-author" v-show="item.from ? true : false" @click="gotoNews(item.cateId)">来源:{{item.from}}</div>
                         </div>
                     </li>
                 </ul>
@@ -53,7 +50,7 @@
     </div>
 </template>
 <script>
-import {getNewsList} from '@/api/Api'
+import {getNewsList,getNewsListById,getNewsDetailById,get24HoursNews} from '@/api/Api'
 import PageTemp from './PageTemp'
 import ImageSlider from './news/ImageSlider'
 export default {
@@ -61,7 +58,7 @@ export default {
     data(){
         return {
             msg:"这是首页新闻列表",
-            showHomeFlag:false,
+            showHomeFlag:true,
             selectIndex:0,
             titleList:[],
             newsList:[],
@@ -69,11 +66,22 @@ export default {
         }
     },
     mounted(){
-        let res = getNewsList()
-        console.log(res)
-        this.titleList = res.categery;
-        this.newsList = res.news;
-        this.twelveList = res.news24;
+        let _this = this;
+        getNewsList().then(res=>{
+            if(res.code != 200) return;
+            let list = res.data;
+            let arr = [];
+            for(let i = 0;i < list.length;i++){
+                let cate = list[i];
+                arr.push({id:cate.cateId - 1,cateId:cate.cateId,cateName:cate.cateName})
+            }
+            _this.titleList = arr;
+            _this.gotoCategry(arr[0].cateId - 1);
+        })
+        get24HoursNews().then(res=>{
+            if(res.code != 200) return;
+            _this.twelveList = res.data;
+        })
         window.onscroll = this.listScroll;
         this.listScroll();
     },
@@ -93,15 +101,22 @@ export default {
             window.location.reload();
         },
         gotoCategry(idx){
-            console.log(idx)
-        },
-        setLeftSelect(index){
-            this.selectIndex = index;
-            // $router.push({ path: '/content' })
-            this.showHomeFlag = !this.showHomeFlag;
+            this.selectIndex = idx - 1;
+            this.showHomeFlag = true;
+            let _this = this
+            getNewsListById(idx).then(res=>{
+                if(res.code != 200) return
+                _this.newsList = res.data
+            })
         },
         gotoNews(idx){
-            window.open("https://www.baidu.com/", '_blank')
+            let _this = this
+            getNewsDetailById(idx).then(res=>{
+                if(res.code != 200) return
+                console.log(res)
+                _this.showHomeFlag = false;
+                _this.$refs.pageTemp.setData(res.data);
+            })
         }
     }
 }
@@ -118,7 +133,7 @@ export default {
         background-color: #222222;
     }
     .n-title-div {
-        width: 800px;
+        width: 880px;
     }
     .n-title-ul {
         white-space:nowrap;
