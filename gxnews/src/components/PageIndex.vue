@@ -23,13 +23,14 @@
         <div class="n-middle">
             <div class="n-content">
                 <div v-show="showHomeFlag" class="n-content-item" v-for="item in newsList" :key="item.id">
-                    <h3 @click="gotoNews(item.id)">{{item.title}}</h3>
+                    <a class="n_right_link" href="javascript:"><h3 @click="gotoNews(item.id)">{{item.title}}</h3></a>
                     <div class="n-content-item-list" @click="gotoNews(item.id)">
                         <img v-for="index in item.pics" :key="index" :src='index'/>
+                        <div class="n-conten-show-more">查看详情></div>
                     </div>
-                    <!-- <p @click="gotoNews(item.id)">来源：{{item.author+"     "+item.time}}</p> -->
+                    <p @click="gotoNews(item.id)">来源：未知</p>
                 </div>
-                <PageTemp ref="pageTemp" v-show="!showHomeFlag"></PageTemp>
+                <!-- <PageTemp ref="pageTemp" v-show="!showHomeFlag"></PageTemp> -->
             </div>
             <div class="n-right">
                 <ImageSlider></ImageSlider>
@@ -40,7 +41,7 @@
                             <img :src="item.pics[0]" @click="gotoNews(item.cateId)"/>
                         </div>
                         <div style="n-right-list-news-title" @click="gotoNews(item.cateId)">
-                            <a href="javascript:">{{item.title}}</a>
+                            <a class="n_right_link" href="javascript:">{{item.title}}</a>
                             <div class="n-right-list-news-author" v-show="item.from ? true : false" @click="gotoNews(item.cateId)">来源:{{item.from}}</div>
                         </div>
                     </li>
@@ -76,7 +77,7 @@ export default {
                 arr.push({id:cate.cateId - 1,cateId:cate.cateId,cateName:cate.cateName})
             }
             _this.titleList = arr;
-            _this.gotoCategry(arr[0].cateId - 1);
+            _this.gotoCategry(arr[0].cateId);
         })
         get24HoursNews().then(res=>{
             if(res.code != 200) return;
@@ -110,18 +111,25 @@ export default {
             })
         },
         gotoNews(idx){
-            let _this = this
-            getNewsDetailById(idx).then(res=>{
-                if(res.code != 200) return
-                console.log(res)
-                _this.showHomeFlag = false;
-                _this.$refs.pageTemp.setData(res.data);
-            })
+            let routeUrl = this.$router.resolve({
+                path: "/content",
+                query: {id:idx}
+            });
+            window.open(routeUrl.href, '_blank');
+            // getNewsDetailById(idx).then(res=>{
+            //     if(res.code != 200) return
+            //     console.log(res)
+            //     _this.showHomeFlag = false;
+            //     _this.$refs.pageTemp.setData(res.data);
+            // })
         }
     }
 }
 </script>
 <style>
+    a:hover{ 
+        color:#f24e4e;
+    }
     .n-main {
         width: 1400px;
         display: block;
@@ -133,7 +141,7 @@ export default {
         background-color: #222222;
     }
     .n-title-div {
-        width: 880px;
+        width: 1000px;
     }
     .n-title-ul {
         white-space:nowrap;
@@ -153,10 +161,16 @@ export default {
     }
     .n-title-ul li {
         margin:4px;
+        padding: 0 5px 0 5px;
         display:inline-block;
     }
     .navLink {
         color: aliceblue;
+        text-decoration: none;
+    }
+    .n_right_link {
+        color: #222222;
+        text-decoration: none;
     }
     .n-middle {
         margin-left: 160px;
@@ -191,11 +205,14 @@ export default {
         background-color: #fff;
     }
     .n-content {
-        width: 660px;
+        width: 750px;
         margin: 10px;
         padding: 0px 10px 0px 10px;
         display: flex;
         flex-direction: column;
+    }
+    .n-content p {
+        font-size: 8px;
     }
     .n-content-item {
         width: 100%;
@@ -203,16 +220,31 @@ export default {
         position: relative;
         margin-top: 2px;
         text-align: left;
+        padding-bottom: 1px;
         border-bottom: 1px solid #eee;
     }
     .n-content-item h3 {
         cursor: pointer;
+    }
+    .n-content-item-list {
+        display: flex;
+        flex-direction: row;
     }
     .n-content-item-list img {
         width: 156px;
         height: 88px;
         margin: 0px 2px 0px 2px;
         cursor: pointer;
+    }
+    .n-conten-show-more {
+        width: 156px;
+        height: 52px;
+        padding-top: 36px;
+        margin: 0px 2px 0px 2px;
+        background-color: #f5f5f5;
+        color: #95bade;
+        cursor: pointer;
+        text-align: center;
     }
     .n-content-item p {
         size: 12px;
@@ -223,16 +255,6 @@ export default {
         display: flex;
         flex-direction: column;
         margin-top:10px;
-    }
-    .n-right-adver {
-        display: block;
-        margin: 0 auto;
-        cursor: pointer;
-    }
-    .n-right-adver img {
-        width: 236px;
-        height: 240px;
-        cursor: pointer;
     }
     .n-right-list {
         width: 350px;

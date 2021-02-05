@@ -32,7 +32,6 @@ export default {
 <style>
     .cls_newsdetail {
         width: 100%;
-        /* margin: 0 auto; */
         text-align: left;
     }
     .cls_newscontent {

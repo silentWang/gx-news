@@ -42,11 +42,10 @@ export default {
     data () {
         return {
             sliders:[
-                {img:'https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=3363295869,2467511306&fm=26&gp=0.jpg'},
-                {img:'https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=3363295869,2467511306&fm=26&gp=0.jpg'},
-                {img:'https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=3363295869,2467511306&fm=26&gp=0.jpg'},
-                {img:'https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=3363295869,2467511306&fm=26&gp=0.jpg'},
-                {img:'https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=3363295869,2467511306&fm=26&gp=0.jpg'},
+                {img:'https://t10.baidu.com/it/u1=3303121956&u2=3435135091&fm=76'},
+                {img:'https://t12.baidu.com/it/u1=3236664035&u2=653502815&fm=76'},
+                {img:'https://t10.baidu.com/it/u1=43899183&u2=1560074593&fm=76'},
+                {img:'https://f10.baidu.com/it/u1=83108544&u2=2023014971&fm=76'}
             ],
             imgWidth:360,
             currentIndex:1,
