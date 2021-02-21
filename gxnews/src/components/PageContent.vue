@@ -22,7 +22,7 @@
                         </div>
                         <div style="n_left_list_news_title" @click="gotoNews(item.cateId)">
                             <a class="n_left_link" href="javascript:">{{item.title}}</a>
-                            <div class="n_left_list_news_author" v-show="item.from ? true : false" @click="gotoNews(item.cateId)">来源:{{item.from}}</div>
+                            <div class="n_left_list_news_author" @click="gotoNews(item.cateId)">来源:{{item.from}}</div>
                         </div>
                     </li>
                 </ul>
@@ -35,7 +35,7 @@
                         </div>
                         <div style="n_left_list_news_title" @click="gotoNews(item.cateId)">
                             <a class="n_left_link" href="javascript:">{{item.title}}</a>
-                            <div class="n_left_list_news_author" v-show="item.from ? true : false" @click="gotoNews(item.cateId)">来源:{{item.from}}</div>
+                            <div class="n_left_list_news_author" @click="gotoNews(item.cateId)">来源:{{item.from}}</div>
                         </div>
                     </li>
                 </ul>
@@ -47,7 +47,7 @@
                         </div>
                         <div style="n_left_list_news_title" @click="gotoNews(item.cateId)">
                             <a class="n_left_link" href="javascript:">{{item.title}}</a>
-                            <div class="n_left_list_news_author" v-show="item.from ? true : false" @click="gotoNews(item.cateId)">来源:{{item.from}}</div>
+                            <div class="n_left_list_news_author" @click="gotoNews(item.cateId)">来源:{{item.from}}</div>
                         </div>
                     </li>
                 </ul>
@@ -55,7 +55,9 @@
             </div>
             <div class="n_content">
                 <h2>{{detailInfo.title}}</h2>
-                <span v-show="detailInfo.updated_at ? true : false">发布时间: {{detailInfo.updated_at}}</span>
+                <br />
+                <p class="n_content_from" v-show="detailInfo.updated_at ? true : false">发布时间: {{detailInfo.updated_at}}</p>
+                <br />
                 <div class="cls_newscontent" v-html="detailInfo.content">
                 </div>
                 <ul class="n_next_list">
@@ -63,7 +65,7 @@
                         <div id="next_pic">
                             <img :src="item.pics[0]" @click="gotoNews(item.cateId)"/>
                         </div>
-                        <div @click="gotoNews(item.cateId)">
+                        <div class="n_next_list_news_title_content" @click="gotoNews(item.cateId)">
                             <a class="n_left_link" href="javascript:"><h3>{{item.title}}</h3></a>
                             <div class="n_next_list_news_author" @click="gotoNews(item.cateId)">
                                 <span class="tags_wrapper">
@@ -79,7 +81,7 @@
     </div>
 </template>
 <script>
-import {getNewsList,getNewsListById,getNewsDetailById} from '@/api/Api'
+import {getNewsList,getNewsDetailById,getDetailLeftNews,getDetailDownNews} from '@/api/Api'
 import ImageSlider from './news/ImageSlider'
 export default {
     components:{ImageSlider},
@@ -99,7 +101,6 @@ export default {
             this.$router.push({path:'/'});
             return;
         }
-        this.gotoCategry(0);
         let _this = this;
         getNewsList().then(res=>{
             if(res.code != 200) return;
@@ -120,19 +121,35 @@ export default {
             info.content = this.escapeHtml(info.content);
             _this.detailInfo = info;
         })
+
+        getDetailLeftNews().then(res=>{
+            if(res.code != 200) return
+            let data = res.data
+            for(let info of data){
+                if(info.name == "今日热点"){
+                    this.todayHots = info.list
+                }
+                if(info.name == "小编精选"){
+                    this.todayHots = info.list
+                }
+                if(info.name == "视角"){
+                    this.todayHots = info.list
+                }
+            }
+
+        })
+        getDetailDownNews().then(res=>{
+            if(res.code != 200) return
+            this.nextHots = res.data
+        })
     },
     methods:{
         gotoCategry(idx){
-            this.selectIndex = idx - 1;
-            this.showHomeFlag = true;
-            let _this = this;
-            getNewsListById(idx).then(res=>{
-                if(res.code != 200) return
-                _this.todayHots = res.data
-                _this.choseHots = res.data;
-                _this.viewHots = res.data;
-                _this.nextHots = res.data
-            })
+            let routeUrl = this.$router.resolve({
+                path: "/",
+                query: {id:idx}
+            });
+            window.open(routeUrl.href, '_blank');
         },
         escapeHtml(str) {
             var arrEntities={'lt':'<','gt':'>','nbsp':' ','amp':'&','quot':'"'};
@@ -144,6 +161,10 @@ export default {
 }
 </script>
 <style>
+    * {
+        margin:0px;
+        padding:0px;
+    }
     a:hover{ 
         color:#f24e4e;
     }
@@ -161,13 +182,14 @@ export default {
     }
     .n-title {
         width: 100%;
-        height: 30px;
+        height: 55px;
         background-color: #222222;
     }
     .n-title-div {
-        width: 1000px;
+        width: 1200px;
     }
     .n-title-ul {
+        padding-top: 12px;
         white-space:nowrap;
         display: block;
     }
@@ -175,13 +197,14 @@ export default {
         position: relative;
         display: block;
         float: left;
-        left: 40px;
-        top: -60px;
+        left: 80px;
+        top: -57px;
         cursor: pointer;
     }
     .n-title-logo img {
-        width: 120px;
-        height: 66px;
+        width: 140px;
+        height: 55px;
+        margin-top: 16px;
     }
     .n-title-ul li {
         margin:4px;
@@ -203,9 +226,16 @@ export default {
         margin-top:10px;
     }
     .n_content {
-        width: 1180px;
+        width: 660px;
         text-align: left;
         margin: 25px 0 0 25px;
+    }
+    .n_content_from {
+        color: #999;
+    }
+    .n_content img {
+        padding-top: 10px;
+        padding-bottom: 10px;
     }
     h3 {
         padding-left: 20px;
@@ -219,9 +249,10 @@ export default {
         margin-left: 0;
         border-top: 2px solid #ff0000;
         background-color: #f7f7f7;
+        font-size: 15px;
     }
     .n_up_list li {
-        margin:3px 0 3px 0;
+        margin: 10px 0 10px 0;
         display: flex;
         flex-direction: row;
         flex-wrap: nowrap;
@@ -252,7 +283,7 @@ export default {
         cursor: pointer;
     }
     .cls_newsdetail {
-        width: 100%;
+        /* width: 100%; */
         /* margin: 0 auto; */
         text-align: left;
     }
@@ -279,6 +310,9 @@ export default {
         margin: 10px 0 10px 0;
         padding: 5px 0 10px 0;
     }
+    .n_next_list_news_title_content {
+        padding-top: 10px;
+    }
     #next_pic img {
         width: 168px;
         height: 92px;
@@ -287,6 +321,7 @@ export default {
     }
     .n_next_list_news_author {
         padding-left: 20px;
+        padding-top: 18px;
     }
     .tags_wrapper a {
         width: 28px;
@@ -294,11 +329,12 @@ export default {
         font-size: 12px;
         border: 1px #f24e4e solid;
         border-radius: 5px;
-        padding-left: 3px;
+        padding-left: 2px;
+        padding-top: 1px;
         color: #f24e4e;
         text-decoration: none;
     }
-    .tags_from {
+    .tags_from { 
         padding-left: 20px;
         color: #999;
         font-size: 12px;

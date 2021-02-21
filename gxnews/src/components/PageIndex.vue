@@ -28,7 +28,7 @@
                         <img v-for="index in item.pics" :key="index" :src='index'/>
                         <div class="n-conten-show-more">查看详情></div>
                     </div>
-                    <p @click="gotoNews(item.id)">来源：未知</p>
+                    <p @click="gotoNews(item.id)">来源：{{item.from}}&nbsp;&nbsp;时间：{{item.time}}</p>
                 </div>
                 <!-- <PageTemp ref="pageTemp" v-show="!showHomeFlag"></PageTemp> -->
             </div>
@@ -42,7 +42,7 @@
                         </div>
                         <div style="n-right-list-news-title" @click="gotoNews(item.cateId)">
                             <a class="n_right_link" href="javascript:">{{item.title}}</a>
-                            <div class="n-right-list-news-author" v-show="item.from ? true : false" @click="gotoNews(item.cateId)">来源:{{item.from}}</div>
+                            <div class="n-right-list-news-author" @click="gotoNews(item.cateId)">来源:{{item.from}}&nbsp;&nbsp;&nbsp;时间：{{item.time}}</div>
                         </div>
                     </li>
                 </ul>
@@ -77,7 +77,14 @@ export default {
                 arr.push({id:cate.cateId - 1,cateId:cate.cateId,cateName:cate.cateName})
             }
             _this.titleList = arr;
-            _this.gotoCategry(arr[0].cateId);
+
+            let query = this.$route.query;
+            let cateId = arr[0].cateId;
+            if(!query && !query.id) {
+                cateId = query.id;
+            }
+            console.log("queryid:",query.id)
+            _this.gotoCategry(cateId);
         })
         get24HoursNews().then(res=>{
             if(res.code != 200) return;
@@ -89,12 +96,16 @@ export default {
     methods:{
         listScroll(evt){
             let div = document.getElementsByClassName("n-left")[0];
+            let titlediv = document.getElementsByClassName("n-main")[0];
+            let left = titlediv.offsetLeft;
+            let num = parseInt(left) + 50;
+            div.style.left = num + "px";
             if(document.scrollingElement.scrollTop <= 80){
-                div.style.position = 'fixed';
+                div.style.position = 'absolute';
                 div.style.top = '100px';
             }
             else{
-                div.style.position = 'fixed';
+                div.style.position = 'absolute';
                 div.style.top = '0px';
             }
         },
@@ -116,17 +127,15 @@ export default {
                 query: {id:idx}
             });
             window.open(routeUrl.href, '_blank');
-            // getNewsDetailById(idx).then(res=>{
-            //     if(res.code != 200) return
-            //     console.log(res)
-            //     _this.showHomeFlag = false;
-            //     _this.$refs.pageTemp.setData(res.data);
-            // })
         }
     }
 }
 </script>
 <style>
+    * {
+        margin:0px;
+        padding:0px;
+    }
     a:hover{ 
         color:#f24e4e;
     }
@@ -137,27 +146,28 @@ export default {
     }
     .n-title {
         width: 100%;
-        height: 30px;
+        height: 55px;
         background-color: #222222;
     }
     .n-title-div {
-        width: 1000px;
+        width: 1100px;
     }
     .n-title-ul {
         white-space:nowrap;
         display: block;
+        padding-top: 12px;
     }
     .n-title-logo {
         position: relative;
         display: block;
         float: left;
-        left: 40px;
-        top: -60px;
+        left: 20px;
+        top:-41px;
         cursor: pointer;
     }
     .n-title-logo img {
-        width: 120px;
-        height: 66px;
+        width: 140px;
+        height: 55px;
     }
     .n-title-ul li {
         margin:4px;
@@ -173,13 +183,13 @@ export default {
         text-decoration: none;
     }
     .n-middle {
-        margin-left: 160px;
+        margin-left: 200px;
         display: flex;
         flex-direction: row;
     }
     .n-left {
         position: fixed;
-        top: 0;
+        left: 50px;
         z-index: 100;
     }
     .n-left-ul {
@@ -220,7 +230,8 @@ export default {
         position: relative;
         margin-top: 2px;
         text-align: left;
-        padding-bottom: 1px;
+        padding-bottom: 10px;
+        padding-top: 10px;
         border-bottom: 1px solid #eee;
     }
     .n-content-item h3 {
@@ -229,11 +240,12 @@ export default {
     .n-content-item-list {
         display: flex;
         flex-direction: row;
+        margin: 10px 0 10px 0;
     }
     .n-content-item-list img {
         width: 156px;
         height: 88px;
-        margin: 0px 2px 0px 2px;
+        margin: 0px 4px 0px 4px;
         cursor: pointer;
     }
     .n-conten-show-more {
@@ -264,9 +276,10 @@ export default {
         margin: 0 auto;
         padding-left: 0;
         margin-left: 0;
+        font-size: 15px;
     }
     .n-right-list li {
-        margin:3px 0 3px 0;
+        margin: 10px 0 10px 0;
         display: flex;
         flex-direction: row;
         flex-wrap: nowrap;
