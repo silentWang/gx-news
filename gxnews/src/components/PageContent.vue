@@ -54,20 +54,20 @@
                 <ImageSlider></ImageSlider>
             </div>
             <div class="n_content">
-                <h2>{{detailInfo.title}}</h2>
+                <h1>{{detailInfo.title}}</h1>
                 <br />
-                <p class="n_content_from" v-show="detailInfo.updated_at ? true : false">发布时间: {{detailInfo.updated_at}}</p>
+                <p class="n_content_from" v-show="detailInfo.updated_at ? true : false">{{detailInfo.source_time}}&nbsp;&nbsp;&nbsp;来源:{{detailInfo.source_from}}</p>
                 <br />
                 <div class="cls_newscontent" v-html="detailInfo.content">
                 </div>
                 <ul class="n_next_list">
                     <li v-for="item in nextHots" :key="item.id">
                         <div id="next_pic">
-                            <img :src="item.pics[0]" @click="gotoNews(item.cateId)"/>
+                            <img :src="item.pics[0]" @click="gotoNews(item.id)"/>
                         </div>
-                        <div class="n_next_list_news_title_content" @click="gotoNews(item.cateId)">
+                        <div class="n_next_list_news_title_content" @click="gotoNews(item.id)">
                             <a class="n_left_link" href="javascript:"><h3>{{item.title}}</h3></a>
-                            <div class="n_next_list_news_author" @click="gotoNews(item.cateId)">
+                            <div class="n_next_list_news_author" @click="gotoNews(item.id)">
                                 <span class="tags_wrapper">
                                     <a href="javascript:">娱乐</a>
                                 </span>
@@ -130,10 +130,10 @@ export default {
                     this.todayHots = info.list
                 }
                 if(info.name == "小编精选"){
-                    this.todayHots = info.list
+                    this.choseHots = info.list
                 }
                 if(info.name == "视角"){
-                    this.todayHots = info.list
+                    this.viewHots = info.list
                 }
             }
 
@@ -151,11 +151,20 @@ export default {
             });
             window.open(routeUrl.href, '_blank');
         },
+        gotoNews(idx){
+            let routeUrl = this.$router.resolve({
+                path: "/content",
+                query: {id:idx}
+            });
+            window.open(routeUrl.href, '_blank');
+        },
         escapeHtml(str) {
             var arrEntities={'lt':'<','gt':'>','nbsp':' ','amp':'&','quot':'"'};
             str = str.replace(/&(lt|gt|nbsp|amp|quot);/ig,function(all,t){return arrEntities[t];});
             str = str.replace(/gif@/g,'gif?@');
-            return str.replace(/padding-bottom:( ?)[0-9]+(.?)\d+%/g,"");
+            str = str.replace(/padding-bottom:( ?)[0-9]+(.?)\d+%/g,"");
+            str = str.replace(/max-width:(\s+)(\d+)px/g,"");
+            return str
         }
     }
 }
@@ -282,13 +291,11 @@ export default {
         margin-right: 5px;
         cursor: pointer;
     }
-    .cls_newsdetail {
-        /* width: 100%; */
-        /* margin: 0 auto; */
-        text-align: left;
-    }
     .cls_newscontent {
         display: block;
+        line-height: 30px;
+        letter-spacing: 1px;
+        font-size: 18px;
     }
     .cls_newscontent img {
         display: block;

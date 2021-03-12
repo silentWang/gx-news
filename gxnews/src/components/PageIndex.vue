@@ -38,11 +38,11 @@
                     <h3>24小时排行榜</h3>
                     <li v-for="item in twelveList" :key="item.id">
                         <div id="pic">
-                            <img :src="item.pics[0]" @click="gotoNews(item.cateId)"/>
+                            <img :src="item.pics[0]" @click="gotoNews(item.id)"/>
                         </div>
-                        <div style="n-right-list-news-title" @click="gotoNews(item.cateId)">
+                        <div style="n-right-list-news-title" @click="gotoNews(item.id)">
                             <a class="n_right_link" href="javascript:">{{item.title}}</a>
-                            <div class="n-right-list-news-author" @click="gotoNews(item.cateId)">来源:{{item.from}}&nbsp;&nbsp;&nbsp;时间：{{item.time}}</div>
+                            <div class="n-right-list-news-author" @click="gotoNews(item.id)">来源:{{item.from}}&nbsp;&nbsp;&nbsp;时间：{{item.time}}</div>
                         </div>
                     </li>
                 </ul>
