@@ -82,6 +82,7 @@
 </template>
 <script>
 import {getNewsList,getNewsDetailById,getDetailLeftNews,getDetailDownNews} from '@/api/Api'
+import Utils from "@/api/Utils"
 import ImageSlider from './news/ImageSlider'
 export default {
     components:{ImageSlider},
@@ -102,6 +103,17 @@ export default {
             return;
         }
         let _this = this;
+        //only test
+        // setTimeout(() => {
+        //     let title = document.getElementsByClassName("n-title-logo")[0];
+        //     let evt = document.createEvent("UIEvent");
+        //     evt.initEvent("click",false,false);
+        //     evt.clientX = title.clientLeft;
+        //     evt.clientY = title.clientLeft;
+        //     title.dispatchEvent(evt);
+        // }, 1000);
+
+
         getNewsList().then(res=>{
             if(res.code != 200) return;
             let list = res.data;
@@ -118,7 +130,7 @@ export default {
                 return;
             }
             let info = res.data;
-            info.content = this.escapeHtml(info.content);
+            info.content = Utils.escapeHtml(info.content);
             _this.detailInfo = info;
         })
 
@@ -136,7 +148,6 @@ export default {
                     this.viewHots = info.list
                 }
             }
-
         })
         getDetailDownNews().then(res=>{
             if(res.code != 200) return
@@ -144,6 +155,13 @@ export default {
         })
     },
     methods:{
+        reloadHome(evt){
+            let routeUrl = this.$router.resolve({
+                path: "/"
+            });
+            // this.$router.push({path:"/"});
+            window.open(routeUrl.href);
+        },
         gotoCategry(idx){
             let routeUrl = this.$router.resolve({
                 path: "/",
@@ -157,14 +175,6 @@ export default {
                 query: {id:idx}
             });
             window.open(routeUrl.href, '_blank');
-        },
-        escapeHtml(str) {
-            var arrEntities={'lt':'<','gt':'>','nbsp':' ','amp':'&','quot':'"'};
-            str = str.replace(/&(lt|gt|nbsp|amp|quot);/ig,function(all,t){return arrEntities[t];});
-            str = str.replace(/gif@/g,'gif?@');
-            str = str.replace(/padding-bottom:( ?)[0-9]+(.?)\d+%/g,"");
-            str = str.replace(/max-width:(\s+)(\d+)px/g,"");
-            return str
         }
     }
 }
