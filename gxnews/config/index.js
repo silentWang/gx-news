@@ -9,7 +9,7 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: {
       '/napi': {
-        target:'http://api.sport-color.com/api', // 你请求的第三方接口
+        target:'http://112.124.52.49/api', // 你请求的第三方接口
         changeOrigin:true,
         pathRewrite:{ 
           '^/napi': ''  
