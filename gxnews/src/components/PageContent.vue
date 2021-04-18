@@ -22,7 +22,7 @@
                         </div>
                         <div style="n_left_list_news_title" @click="gotoNews(item.cateId)">
                             <a class="n_left_link" href="javascript:">{{item.title}}</a>
-                            <div class="n_left_list_news_author" @click="gotoNews(item.cateId)">来源:{{item.from}}</div>
+                            <div class="n_left_list_news_author" @click="gotoNews(item.cateId)">{{item.from}}&nbsp;&nbsp;{{item.time}}</div>
                         </div>
                     </li>
                 </ul>
@@ -35,7 +35,7 @@
                         </div>
                         <div style="n_left_list_news_title" @click="gotoNews(item.cateId)">
                             <a class="n_left_link" href="javascript:">{{item.title}}</a>
-                            <div class="n_left_list_news_author" @click="gotoNews(item.cateId)">来源:{{item.from}}</div>
+                            <div class="n_left_list_news_author" @click="gotoNews(item.cateId)">{{item.from}}&nbsp;&nbsp;{{item.time}}</div>
                         </div>
                     </li>
                 </ul>
@@ -47,7 +47,7 @@
                         </div>
                         <div style="n_left_list_news_title" @click="gotoNews(item.cateId)">
                             <a class="n_left_link" href="javascript:">{{item.title}}</a>
-                            <div class="n_left_list_news_author" @click="gotoNews(item.cateId)">来源:{{item.from}}</div>
+                            <div class="n_left_list_news_author" @click="gotoNews(item.cateId)">{{item.from}}&nbsp;&nbsp;{{item.time}}</div>
                         </div>
                     </li>
                 </ul>
@@ -56,7 +56,7 @@
             <div class="n_content">
                 <h1>{{detailInfo.title}}</h1>
                 <br />
-                <p class="n_content_from" v-show="detailInfo.updated_at ? true : false">{{detailInfo.source_time}}&nbsp;&nbsp;&nbsp;来源:{{detailInfo.source_from}}</p>
+                <p class="n_content_from" v-show="detailInfo.updated_at ? true : false">{{detailInfo.source_time}}&nbsp;&nbsp;&nbsp;{{detailInfo.source_from}}</p>
                 <br />
                 <div class="cls_newscontent" v-html="detailInfo.content">
                 </div>
@@ -71,7 +71,7 @@
                                 <span class="tags_wrapper">
                                     <a href="javascript:">娱乐</a>
                                 </span>
-                                <span class="tags_from">来源:{{item.from ? item.from:"未知"}}</span>
+                                <span class="tags_from">{{item.from ? item.from:"未知"}}&nbsp;&nbsp;{{item.time}}</span>
                             </div>
                         </div>
                     </li>

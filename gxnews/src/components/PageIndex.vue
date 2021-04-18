@@ -8,16 +8,16 @@
                     </li>
                 </ul>
             </div>
-            <div class="n-title-logo" @click="reloadHome()">
-                <img src=".././assets/logo.png"/>
-            </div>
+        </div>
+        <div class="n-title-logo" @click="reloadHome()">
+            <img src=".././assets/logo.png"/>
         </div>
         <div class="n-left">
             <ul class="n-left-ul">
                 <li v-for="item in titleList" 
-                    :key="item.id" 
-                    :class="[item.id == selectIndex ? 'n-left-selected':'n-left-notselected']"
-                    @click="gotoCategry(item.cateId)">{{item.cateName}}</li>
+                    :key="item.id"
+                    @click="gotoCategry(item.cateId)">
+                    <a target="_self" href='javascript:' :class="[item.id == selectIndex ? 'active' : 'inactive']">{{item.cateName}}</a></li>
             </ul>
         </div>
         <div class="n-middle">
@@ -28,7 +28,7 @@
                         <img v-for="index in item.pics" :key="index" :src='index'/>
                         <div class="n-conten-show-more">查看详情></div>
                     </div>
-                    <p @click="gotoNews(item.id)">来源：{{item.from}}&nbsp;&nbsp;时间：{{item.time}}</p>
+                    <p @click="gotoNews(item.id)">{{item.from}}&nbsp;&nbsp;{{item.time}}</p>
                 </div>
                 <!-- <PageTemp ref="pageTemp" v-show="!showHomeFlag"></PageTemp> -->
             </div>
@@ -42,7 +42,7 @@
                         </div>
                         <div style="n-right-list-news-title" @click="gotoNews(item.id)">
                             <a class="n_right_link" href="javascript:">{{item.title}}</a>
-                            <div class="n-right-list-news-author" @click="gotoNews(item.id)">来源:{{item.from}}&nbsp;&nbsp;&nbsp;时间：{{item.time}}</div>
+                            <div class="n-right-list-news-author" @click="gotoNews(item.id)">{{item.from}}&nbsp;&nbsp;&nbsp;{{item.time}}</div>
                         </div>
                     </li>
                 </ul>
@@ -97,16 +97,17 @@ export default {
         listScroll(evt){
             let div = document.getElementsByClassName("n-left")[0];
             let titlediv = document.getElementsByClassName("n-main")[0];
+            let logo = document.getElementsByClassName("n-title-logo")[0];
             let left = titlediv.offsetLeft;
             let num = parseInt(left) + 50;
             div.style.left = num + "px";
             if(document.scrollingElement.scrollTop <= 80){
-                div.style.position = 'absolute';
-                div.style.top = '100px';
+                div.style.top = '70px';
+                logo.style.top = "0px"
             }
             else{
-                div.style.position = 'absolute';
-                div.style.top = '0px';
+                div.style.top = '70px';
+                logo.style.top = "0px"
             }
         },
         reloadHome(){
@@ -124,8 +125,7 @@ export default {
         gotoNews(idx){
             let routeUrl = this.$router.resolve({
                 path: "/content",
-                query: {id:idx}
-            });
+                query: {id:idx}            });
             window.open(routeUrl.href, '_blank');
         }
     }
@@ -135,6 +135,9 @@ export default {
     * {
         margin:0px;
         padding:0px;
+    }
+    body {
+        background: #f5f5f5;
     }
     a:hover{ 
         color:#f24e4e;
@@ -146,7 +149,7 @@ export default {
     }
     .n-title {
         width: 100%;
-        height: 55px;
+        height: 40px;
         background-color: #222222;
     }
     .n-title-div {
@@ -154,15 +157,14 @@ export default {
     }
     .n-title-ul {
         white-space:nowrap;
-        display: block;
+        display: none;
         padding-top: 12px;
     }
     .n-title-logo {
-        position: relative;
+        position: fixed;
         display: block;
         float: left;
-        left: 20px;
-        top:-41px;
+        left: 45px;
         cursor: pointer;
     }
     .n-title-logo img {
@@ -190,29 +192,35 @@ export default {
     .n-left {
         position: fixed;
         left: 50px;
+        top:20px;
         z-index: 100;
+        background: #eee;
     }
     .n-left-ul {
          list-style-type: none;
          font-weight: 500;
+         text-align: center;
+         background: #fff;
+         padding-top: 10px;
     }
     .n-left-ul li {
+        width:130px;
+    }
+    .n-left-ul li a {
         display: block;
-        width: 110px;
-        height: 30px;
-        border-top-left-radius: 10px;
-        border-bottom-left-radius: 10px;
-        margin:3px 0 3px 0;
-        padding-top: 5px;
+        height: 38px;
+        line-height: 38px;
+        border-radius: 4px;
+        margin-bottom: 2px;
+        white-space: nowrap;
+        overflow: hidden;
+        font-size: 16px;
+        text-decoration: none;
+        background: #fff;
+        border-radius: 0;
+        position: relative;
         cursor: pointer;
-    }
-    .n-left-selected {
-        color: #fff;
-        background-color: #ff0000;
-    }
-    .n-left-notselected {
-        color: #000;
-        background-color: #fff;
+        color:#333;
     }
     .n-content {
         width: 750px;
@@ -295,7 +303,7 @@ export default {
         width:220px;
         height: 68px;
         word-break:break-all;
-        size: 14px;
+        font-size: 14px;
         cursor: pointer;
     }
     .n-right-list-news-title a {
@@ -305,9 +313,26 @@ export default {
         display: block;
         position: relative;
         bottom: 0px;
-        size: 14px;
+        font-size: 12px;
         color: #9b9597;
         cursor: pointer;
+    }
+    .inactive:hover {
+        background-color: #fff;
+        color: #ff0000;
+    }
+    .active , .active:hover{
+        background-color: #fff;
+        color: #ff0000;
+    }
+    .active:after,.inactive:hover:after {
+        content: " ";
+        position: absolute;
+        border-bottom: 2px solid #ff0000;
+        bottom: 6px;
+        left: 50%;
+        width: 36px;
+        margin-left: -18px;
     }
     
 </style>
