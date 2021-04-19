@@ -21,7 +21,9 @@
                     <li v-for="item in titleList" 
                         :key="item.id"
                         @click="gotoCategry(item.cateId)">
-                        <a target="_self" href='javascript:' :class="[item.id == selectIndex ? 'active' : 'inactive']">{{item.cateName}}</a></li>
+                        <a target="_self" href='javascript:' :class="[item.id == selectIndex ? 'active' : 'inactive']">{{item.cateName}}</a>
+                        <img v-show="item.id == selectIndex" src=".././assets/refresh.png">
+                    </li>
                 </ul>
             </div>
         </div>
@@ -47,7 +49,7 @@
             <div class="n_right">
                 <ImageSlider></ImageSlider>
                 <div class="n_right_container">
-                    <div class="n_right_today">今日热点</div>
+                    <div class="n_right_today"><img src=".././assets/yuandian.png"/>今日热点</div>
                     <ul class="n_right_list">
                         <li v-for="item in twelveList" :key="item.id">
                             <a class="image" href="javascript:" :title="item.title">
@@ -262,6 +264,12 @@ export default {
         cursor: pointer;
         color:#333;
     }
+    .n-left-ul li img {
+        display: block;
+        position: relative;
+        top: -29px;
+        left: 90px;
+    }
     .n-content {
         width: 690px;
         margin: 10px 15px 10px 180px;
@@ -365,6 +373,12 @@ export default {
         line-height: 40px;
         text-align: left;
         border-bottom: 1px solid #eee;
+    }
+    .n_right_today img {
+        display: inline-block;
+        vertical-align: middle;
+        margin-bottom: 4px;
+        margin-right: 5px;
     }
     .n_right_list {
         list-style: none;
