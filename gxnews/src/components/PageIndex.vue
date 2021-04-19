@@ -8,6 +8,9 @@
                     </li>
                 </ul>
             </div>
+            <div class="n_title_weather">
+                <iframe allowtransparency="true" frameborder="0" width="317" height="28" scrolling="no" src="//tianqi.2345.com/plugin/widget/index.htm?s=3&amp;z=1&amp;t=1&amp;v=0&amp;d=1&amp;bd=0&amp;k=000000&amp;f=ffffff&amp;ltf=ffffff&amp;htf=ffffff&amp;q=1&amp;e=0&amp;a=1&amp;c=54511&amp;w=317&amp;h=28&amp;align=right"></iframe>
+            </div>
         </div>
         <div class="n_left">
             <div class="n_left_inner">
@@ -69,6 +72,7 @@ export default {
     data(){
         return {
             msg:"这是首页新闻列表",
+            todayWeather:"",
             showHomeFlag:true,
             selectIndex:0,
             titleList:[],
@@ -196,6 +200,13 @@ export default {
     .n_right_link {
         color: #222222;
         text-decoration: none;
+    }
+    .n_title_weather {
+        position: absolute;
+        top: 10px;
+        right: 280px;
+        overflow: hidden;
+        height: 40px;
     }
     .n-middle {
         width: 1280px;
