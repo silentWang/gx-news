@@ -8,11 +8,11 @@ module.exports = {
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
     proxyTable: {
-      '/dapi': {
+      '/napi': {
         target:'http://112.124.52.49/napi', // 你请求的第三方接口
         changeOrigin:true,
         pathRewrite:{ 
-          '^/dapi': ''  
+          '^/napi': ''  
         }
       }
     },

@@ -1,9 +1,9 @@
 <template>
     <div class="cls_main">
-        <div class="n-title">
-            <div class="n-title-div">
-                <ul class="n-title-ul">
-                    <div class="n-title-logo" @click="reloadHome()">
+        <div class="bn_title">
+            <div class="bn_title_div">
+                <ul class="bn_title_ul">
+                    <div class="bn_title_logo" @click="reloadHome()">
                         <img src=".././assets/logo.png"/>
                     </div>
                     <li v-for="item in titleList" :key="item.cateId">
@@ -12,8 +12,8 @@
                 </ul>
             </div>
         </div>
-        <div class="n_main">
-            <div class="n_left">
+        <div class="bn_main">
+            <div class="bn_left">
                 <ul class="n_up_list">
                     <h3>今日热点</h3>
                     <li v-for="item in todayHots" :key="item.id">
@@ -21,7 +21,7 @@
                             <img :src="item.pics[0]" @click="gotoNews(item.cateId)">
                         </a>
                         <p>
-                            <a href="javascript:" :title="item.title">{{item.title}}</a>
+                            <a href="javascript:" :title="item.title" @click="gotoNews(item.id)">{{item.title}}</a>
                         </p>
                     </li>
                 </ul>
@@ -32,7 +32,7 @@
                             <img :src="item.pics[0]" @click="gotoNews(item.cateId)">
                         </a>
                         <p>
-                            <a href="javascript:" :title="item.title">{{item.title}}</a>
+                            <a href="javascript:" :title="item.title" @click="gotoNews(item.id)">{{item.title}}</a>
                         </p>
                     </li>
                 </ul>
@@ -43,16 +43,16 @@
                             <img :src="item.pics[0]" @click="gotoNews(item.cateId)">
                         </a>
                         <p>
-                            <a href="javascript:" :title="item.title">{{item.title}}</a>
+                            <a href="javascript:" :title="item.title" @click="gotoNews(item.id)">{{item.title}}</a>
                         </p>
                     </li>
                 </ul>
                 <!-- <ImageSlider></ImageSlider> -->
             </div>
-            <div class="n_content">
+            <div class="bn_content">
                 <h1>{{detailInfo.title}}</h1>
                 <br/>
-                <div class="n_content_second_title">
+                <div class="bn_content_second_title">
                     <span v-show="detailInfo.updated_at ? true : false">{{detailInfo.source_time}}&nbsp;&nbsp;&nbsp;{{detailInfo.source_from}}</span>
                     <a target="_blank" href="javascript:">博主</a>
                 </div>
@@ -67,7 +67,7 @@
                         </div>
                         <div class="n_next_list_news_title_content">
                             <div>
-                                <a class="n_left_link" href="javascript:" @click="gotoNews(item.id)">{{item.title}}</a>
+                                <a class="bn_left_link" href="javascript:" @click="gotoNews(item.id)">{{item.title}}</a>
                             </div>
                             <div class="n_next_list_news_tag" @click="gotoNews(item.id)">
                                 <span class="tags_wrapper">
@@ -108,7 +108,7 @@ export default {
         let _this = this;
         //only test
         // setTimeout(() => {
-        //     let title = document.getElementsByClassName("n-title-logo")[0];
+        //     let title = document.getElementsByClassName("bn_title_logo")[0];
         //     let evt = document.createEvent("UIEvent");
         //     evt.initEvent("click",false,false);
         //     evt.clientX = title.clientLeft;
@@ -204,12 +204,7 @@ export default {
     a:hover{ 
         color:#f24e4e;
     }
-    hr {
-        width: 100%;
-        color:#f24e4e;
-        height: 2px;
-    }
-    .n_left_link {
+    .bn_left_link {
         color: #222222;
         font-size: 20px;
         font-weight: bold;
@@ -219,28 +214,28 @@ export default {
         margin: 0 auto;
         background: #f5f5f5;
     }
-    .n-title {
+    .bn_title {
         width: 100%;
         height: 40px;
         background-color: #222222;
     }
-    .n-title-ul {
+    .bn_title_ul {
         padding-top: 5px;
         white-space:nowrap;
         display: block;
     }
-    .n-title-logo {
+    .bn_title_logo {
         position: absolute;
         display: inline-block;
         cursor: pointer;
         margin-left: -160px;
         top: -5px;
     }
-    .n-title-logo img {
+    .bn_title_logo img {
         width: 140px;
         height: 55px;
     }
-    .n-title-ul li {
+    .bn_title_ul li {
         margin:4px;
         padding: 0 5px 0 5px;
         display:inline-block;
@@ -249,13 +244,13 @@ export default {
         color: aliceblue;
         text-decoration: none;
     }
-    .n_main {
+    .bn_main {
         width: 1190px;
         padding-top: 10px;
         padding-left: 118px;
         margin: 0 auto;
     }
-    .n_left {
+    .bn_left {
         display: flex;
         flex-direction: column;
         background-color: #fff;
@@ -264,7 +259,7 @@ export default {
         padding: 10px;
         float: left;
     }
-    .n_content {
+    .bn_content {
         width: 780px;
         margin: 25px 0 0 10px;
         background: #fff;
@@ -273,28 +268,28 @@ export default {
         display: block;
         float: left;
     }
-    .n_content_second_title {
+    .bn_content_second_title {
         text-align: left;
         font-size: 12px;
         color: #999;
         padding-bottom: 15px;
         border-bottom:1px solid #f1f1f1;
     }
-    .n_content_second_title a {
+    .bn_content_second_title a {
         border:1px solid #eee;
         padding:2px 6px;
         border-radius: 3px;
         font-style: normal;
         float: right;
     }
-    .n_content_second_title a:hover {
+    .bn_content_second_title a:hover {
         border: 1px solid #f24e4e;
         border-radius: 3px;
         padding: 2px 6px;
         color: #f24e4e;
         font-style: normal;
     }
-    .n_content img {
+    .bn_content img {
         padding-top: 10px;
         padding-bottom: 10px;
     }
@@ -341,17 +336,17 @@ export default {
         overflow: hidden;
         line-height: 25px;
     }
-    .n_left_list_news_title {
+    .bn_left_list_news_title {
         width:220px;
         height: 68px;
         word-break:break-all;
         size: 14px;
         cursor: pointer;
     }
-    .n_left_list_news_title a {
+    .bn_left_list_news_title a {
         cursor: pointer;
     }
-    .n_left_list_news_author{
+    .bn_left_list_news_author{
         display: block;
         position: relative;
         bottom: 0px;
