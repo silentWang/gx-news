@@ -355,6 +355,13 @@ export default {
         padding: 2px 6px;
         color: #a0a0a0;
     }
+    .n_content_info a:hover {
+        border: 1px solid #f24e4e;
+        border-radius: 3px;
+        padding: 2px 6px;
+        color: #f24e4e;
+        font-style: normal;
+    }
     .n_right {
         width: 336px;
         float: right;

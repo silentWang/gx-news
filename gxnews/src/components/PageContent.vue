@@ -3,13 +3,13 @@
         <div class="n-title">
             <div class="n-title-div">
                 <ul class="n-title-ul">
+                    <div class="n-title-logo" @click="reloadHome()">
+                        <img src=".././assets/logo.png"/>
+                    </div>
                     <li v-for="item in titleList" :key="item.cateId">
                         <a href="javascript:" @click="gotoCategry(item.cateId)" class="navLink">{{item.cateName}}</a>
                     </li>
                 </ul>
-            </div>
-            <div class="n-title-logo" @click="reloadHome()">
-                <img src=".././assets/logo.png"/>
             </div>
         </div>
         <div class="n_main">
@@ -17,61 +17,64 @@
                 <ul class="n_up_list">
                     <h3>今日热点</h3>
                     <li v-for="item in todayHots" :key="item.id">
-                        <div id="pic">
-                            <img :src="item.pics[0]" @click="gotoNews(item.cateId)"/>
-                        </div>
-                        <div style="n_left_list_news_title" @click="gotoNews(item.cateId)">
-                            <a class="n_left_link" href="javascript:">{{item.title}}</a>
-                            <div class="n_left_list_news_author" @click="gotoNews(item.cateId)">{{item.from}}&nbsp;&nbsp;{{item.time}}</div>
-                        </div>
+                        <a class="image" href="javascript:" :title="item.title">
+                            <img :src="item.pics[0]" @click="gotoNews(item.cateId)">
+                        </a>
+                        <p>
+                            <a href="javascript:" :title="item.title">{{item.title}}</a>
+                        </p>
                     </li>
                 </ul>
-                <ImageSlider></ImageSlider>
                 <ul class="n_up_list">
                     <h3>小编精选</h3>
                     <li v-for="item in choseHots" :key="item.id">
-                        <div id="pic">
-                            <img :src="item.pics[0]" @click="gotoNews(item.cateId)"/>
-                        </div>
-                        <div style="n_left_list_news_title" @click="gotoNews(item.cateId)">
-                            <a class="n_left_link" href="javascript:">{{item.title}}</a>
-                            <div class="n_left_list_news_author" @click="gotoNews(item.cateId)">{{item.from}}&nbsp;&nbsp;{{item.time}}</div>
-                        </div>
+                        <a class="image" href="javascript:" :title="item.title">
+                            <img :src="item.pics[0]" @click="gotoNews(item.cateId)">
+                        </a>
+                        <p>
+                            <a href="javascript:" :title="item.title">{{item.title}}</a>
+                        </p>
                     </li>
                 </ul>
                 <ul class="n_up_list">
                     <h3>视角</h3>
                     <li v-for="item in viewHots" :key="item.id">
-                        <div id="pic">
-                            <img :src="item.pics[0]" @click="gotoNews(item.cateId)"/>
-                        </div>
-                        <div style="n_left_list_news_title" @click="gotoNews(item.cateId)">
-                            <a class="n_left_link" href="javascript:">{{item.title}}</a>
-                            <div class="n_left_list_news_author" @click="gotoNews(item.cateId)">{{item.from}}&nbsp;&nbsp;{{item.time}}</div>
-                        </div>
+                        <a class="image" href="javascript:" :title="item.title">
+                            <img :src="item.pics[0]" @click="gotoNews(item.cateId)">
+                        </a>
+                        <p>
+                            <a href="javascript:" :title="item.title">{{item.title}}</a>
+                        </p>
                     </li>
                 </ul>
-                <ImageSlider></ImageSlider>
+                <!-- <ImageSlider></ImageSlider> -->
             </div>
             <div class="n_content">
                 <h1>{{detailInfo.title}}</h1>
-                <br />
-                <p class="n_content_from" v-show="detailInfo.updated_at ? true : false">{{detailInfo.source_time}}&nbsp;&nbsp;&nbsp;{{detailInfo.source_from}}</p>
-                <br />
-                <div class="cls_newscontent" v-html="detailInfo.content">
+                <br/>
+                <div class="n_content_second_title">
+                    <span v-show="detailInfo.updated_at ? true : false">{{detailInfo.source_time}}&nbsp;&nbsp;&nbsp;{{detailInfo.source_from}}</span>
+                    <a target="_blank" href="javascript:">博主</a>
                 </div>
+                <br />
+                <div class="cls_newscontent" v-html="detailInfo.content"></div>
                 <ul class="n_next_list">
                     <li v-for="item in nextHots" :key="item.id">
                         <div id="next_pic">
-                            <img :src="item.pics[0]" @click="gotoNews(item.id)"/>
+                            <a href="javascript:" target="_blank">
+                                <img :src="item.pics[0]" @click="gotoNews(item.id)"/>
+                            </a>
                         </div>
-                        <div class="n_next_list_news_title_content" @click="gotoNews(item.id)">
-                            <a class="n_left_link" href="javascript:"><h3>{{item.title}}</h3></a>
-                            <div class="n_next_list_news_author" @click="gotoNews(item.id)">
+                        <div class="n_next_list_news_title_content">
+                            <div>
+                                <a class="n_left_link" href="javascript:" @click="gotoNews(item.id)">{{item.title}}</a>
+                            </div>
+                            <div class="n_next_list_news_tag" @click="gotoNews(item.id)">
                                 <span class="tags_wrapper">
-                                    <a href="javascript:">娱乐</a>
+                                    <a href="#">娱乐</a>&nbsp;
+                                    <a href="#">新闻</a>&nbsp;
                                 </span>
-                                <span class="tags_from">{{item.from ? item.from:"未知"}}&nbsp;&nbsp;{{item.time}}</span>
+                                <span>{{item.time}}</span>
                             </div>
                         </div>
                     </li>
@@ -152,6 +155,9 @@ export default {
         getDetailDownNews().then(res=>{
             if(res.code != 200) return
             this.nextHots = res.data
+            // this.todayHots = res.data
+            // this.choseHots = res.data
+            // this.viewHots = res.data
         })
     },
     methods:{
@@ -184,6 +190,17 @@ export default {
         margin:0px;
         padding:0px;
     }
+    body {
+        background: #f5f5f5;
+    }
+    h1,h2,h3,h4,h5,h6 {
+        text-align: left;
+    }
+    a {
+        color: #333;
+        text-decoration: none;
+        cursor: pointer;
+    }
     a:hover{ 
         color:#f24e4e;
     }
@@ -194,36 +211,34 @@ export default {
     }
     .n_left_link {
         color: #222222;
-        text-decoration: none;
+        font-size: 20px;
+        font-weight: bold;
+        text-align: left;
     }
     .cls_main {
         margin: 0 auto;
+        background: #f5f5f5;
     }
     .n-title {
         width: 100%;
-        height: 55px;
+        height: 40px;
         background-color: #222222;
     }
-    .n-title-div {
-        width: 1200px;
-    }
     .n-title-ul {
-        padding-top: 12px;
+        padding-top: 5px;
         white-space:nowrap;
         display: block;
     }
     .n-title-logo {
-        position: relative;
-        display: block;
-        float: left;
-        left: 80px;
-        top: -57px;
+        position: absolute;
+        display: inline-block;
         cursor: pointer;
+        margin-left: -160px;
+        top: -5px;
     }
     .n-title-logo img {
         width: 140px;
         height: 55px;
-        margin-top: 16px;
     }
     .n-title-ul li {
         margin:4px;
@@ -235,47 +250,96 @@ export default {
         text-decoration: none;
     }
     .n_main {
+        width: 1190px;
+        padding-top: 10px;
+        padding-left: 118px;
         margin: 0 auto;
-        display: flex;
-        flex-direction: row;
     }
     .n_left {
         display: flex;
         flex-direction: column;
-        margin-top:10px;
+        background-color: #fff;
+        width: 336px;
+        margin-top:10px; 
+        padding: 10px;
+        float: left;
     }
     .n_content {
-        width: 660px;
-        text-align: left;
-        margin: 25px 0 0 25px;
+        width: 780px;
+        margin: 25px 0 0 10px;
+        background: #fff;
+        padding: 10px;
+        margin-top: 10px;
+        display: block;
+        float: left;
     }
-    .n_content_from {
+    .n_content_second_title {
+        text-align: left;
+        font-size: 12px;
         color: #999;
+        padding-bottom: 15px;
+        border-bottom:1px solid #f1f1f1;
+    }
+    .n_content_second_title a {
+        border:1px solid #eee;
+        padding:2px 6px;
+        border-radius: 3px;
+        font-style: normal;
+        float: right;
+    }
+    .n_content_second_title a:hover {
+        border: 1px solid #f24e4e;
+        border-radius: 3px;
+        padding: 2px 6px;
+        color: #f24e4e;
+        font-style: normal;
     }
     .n_content img {
         padding-top: 10px;
         padding-bottom: 10px;
     }
-    h3 {
-        padding-left: 20px;
-    }
     .n_up_list {
-        width: 350px;
-        text-align: left;
-        list-style-type: none;
-        margin: 0 auto;
-        padding:0 10px 0 10px;
-        margin-left: 0;
-        border-top: 2px solid #ff0000;
-        background-color: #f7f7f7;
-        font-size: 15px;
+        list-style: none;
+        font-size: 14px;
+        margin-block-start: 1em;
+        margin-inline-start: 0px;
+        margin-inline-end: 0px;
+    }
+    .n_up_list h3 {
+        display: block;
+        border-top: 3px solid #b00101;
+        height: 30px;
+        position: relative;
+        padding-left: 5px;
+        padding-top: 10px;
     }
     .n_up_list li {
-        margin: 10px 0 10px 0;
-        display: flex;
-        flex-direction: row;
-        flex-wrap: nowrap;
-        align-items: center;
+        overflow: hidden;
+        zoom: 1;
+        margin-bottom: 8px;
+    }
+    .n_up_list li a.image {
+        float: left;
+        width: 100px;
+        height: 57px;
+        display: block;
+        overflow: hidden;
+        margin-right: 10px;
+        background: #f1f1f1;
+        position: relative;
+        cursor: pointer;
+    }
+    .n_up_list li .image img {
+        vertical-align: middle;
+        transition: transform .5s ease-in;
+    }
+    .n_up_list li p {
+        width: 206px;
+        height: 54px;
+        text-align: left;
+        float: left;
+        overflow: hidden;
+        line-height: 25px;
     }
     .n_left_list_news_title {
         width:220px;
@@ -306,50 +370,74 @@ export default {
         line-height: 30px;
         letter-spacing: 1px;
         font-size: 18px;
+        text-align: left;
     }
     .cls_newscontent img {
         display: block;
         margin: 0 auto;
     }
     .n_next_list{
-        text-align: left;
         list-style-type: none;
         margin: 0 auto;
-        padding:0 10px 0 10px;
+        padding:15px 10px 0 10px;
         margin-left: 0;
     }
     .n_next_list li {
-        display: flex;
-        flex-direction: row;
+        overflow: hidden;
+        zoom: 1;
         word-break:break-all;
         cursor: pointer;
-        border-bottom:1px solid #ddd;
-        margin: 10px 0 10px 0;
-        padding: 5px 0 10px 0;
+        border-bottom:1px solid #eee;
+        margin-bottom: 10px;
+        padding-bottom: 10px;
     }
     .n_next_list_news_title_content {
-        padding-top: 10px;
+        text-align: left;
+        float: left;
+        width: 536px;
+        height: 88px;
+        position: relative;
+    }
+    #next_pic {
+        width: 177px;
+        height: 100px;
+        float: left;
+        margin-right: 15px;
+        background-color: #f1f1f1;
+    }
+    #next_pic a {
+        width: 177px;
+        height: 100px;
+        display: block;
+        overflow: hidden;
     }
     #next_pic img {
-        width: 168px;
-        height: 92px;
-        margin-right: 5px;
-        cursor: pointer;
+        width: 177px;
+        overflow: hidden;
+        padding: 0px;
     }
-    .n_next_list_news_author {
-        padding-left: 20px;
-        padding-top: 18px;
+    .n_next_list_news_tag {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        zoom: 1;
+        width: 100%;
+        font-size: 12px;
+        color: #bbb;
     }
     .tags_wrapper a {
-        width: 28px;
-        height: 18px;
-        font-size: 12px;
-        border: 1px #f24e4e solid;
-        border-radius: 5px;
-        padding-left: 2px;
-        padding-top: 1px;
+        border: 1px solid #eee;
+        border-radius: 3px;
+        padding: 2px 6px;
+        color: #a0a0a0;
+        font-style: normal;
+    }
+    .tags_wrapper a:hover {
+        border: 1px solid #f24e4e;
+        border-radius: 3px;
+        padding: 2px 6px;
         color: #f24e4e;
-        text-decoration: none;
+        font-style: normal;
     }
     .tags_from { 
         padding-left: 20px;
