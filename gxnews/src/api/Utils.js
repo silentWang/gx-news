@@ -9,6 +9,5 @@ export default class Utils {
         str = str.replace(/max-width:(\s+)(\d+)px/g,"");
         return str
     }
-    
 
 }

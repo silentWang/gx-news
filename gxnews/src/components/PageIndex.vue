@@ -1,10 +1,17 @@
 <template>
     <div class="an_main">
         <div class="an-title">
-            <div class="an-title-div">
+            <!-- <div class="an-title-div">
                 <ul class="an-title-ul">
                     <li v-for="item in titleList" :key="item.cateId">
                         <a href="javascript:" @click="gotoCategry(item.cateId)" class="navLink">{{item.cateName}}</a>
+                    </li>
+                </ul>
+            </div> -->
+            <div class="an_title_scrollnews_div">
+                <ul class="an_title_scrollnews_ul">
+                    <li v-for="item in timeNewList" :key="item.id">
+                        <a href="javascript:" @click="gotoNews(item.id)">{{item.title}}</a>
                     </li>
                 </ul>
             </div>
@@ -12,22 +19,22 @@
                 <iframe allowtransparency="true" frameborder="0" width="317" height="28" scrolling="no" src="//tianqi.2345.com/plugin/widget/index.htm?s=3&amp;z=1&amp;t=1&amp;v=0&amp;d=1&amp;bd=0&amp;k=000000&amp;f=ffffff&amp;ltf=ffffff&amp;htf=ffffff&amp;q=1&amp;e=0&amp;a=1&amp;c=54511&amp;w=317&amp;h=28&amp;align=right"></iframe>
             </div>
         </div>
-        <div class="an_left">
-            <div class="an_left_inner">
-                <div class="an_title_logo" @click="reloadHome()">
-                    <img src=".././assets/logo.png"/>
-                </div>
-                <ul class="an_left_ul">
-                    <li v-for="item in titleList" 
-                        :key="item.id"
-                        @click="gotoCategry(item.cateId)">
-                        <a target="_self" href='javascript:' :class="[item.id == selectIndex ? 'a_active' : 'a_inactive']">{{item.cateName}}</a>
-                        <img v-show="item.id == selectIndex" src=".././assets/refresh.png">
-                    </li>
-                </ul>
-            </div>
-        </div>
         <div class="an_middle">
+            <div class="an_left">
+                <div class="an_left_inner">
+                    <div class="an_title_logo" @click="reloadHome()">
+                        <img src=".././assets/logo.png"/>
+                    </div>
+                    <ul class="an_left_ul">
+                        <li v-for="item in titleList" 
+                            :key="item.id"
+                            @click="gotoCategry(item.cateId)">
+                            <a target="_self" href='javascript:' :class="[item.id == selectIndex ? 'a_active' : 'a_inactive']">{{item.cateName}}</a>
+                            <img v-show="item.id == selectIndex" src=".././assets/refresh.png">
+                        </li>
+                    </ul>
+                </div>
+            </div>
             <div class="an_content">
                 <div v-show="showHomeFlag" class="an_content-item" v-for="item in newsList" :key="item.id">
                     <div class="an_content_image" @click="gotoNews(item.id)">
@@ -66,20 +73,21 @@
     </div>
 </template>
 <script>
-import {getNewsList,getNewsListById,getNewsDetailById,get24HoursNews} from '@/api/Api'
+import {getNewsList,getNewsListById,getTimeNewsList,get24HoursNews} from '@/api/Api'
 import PageTemp from './PageTemp'
 import ImageSlider from './news/ImageSlider'
 export default {
     components:{PageTemp,ImageSlider},
     data(){
         return {
-            msg:"这是首页新闻列表",
+            currenNewIndex:0,
             todayWeather:"",
             showHomeFlag:true,
             selectIndex:0,
             titleList:[],
             newsList:[],
-            twelveList:[]
+            twelveList:[],
+            timeNewList:[]
         }
     },
     mounted(){
@@ -105,6 +113,14 @@ export default {
         get24HoursNews().then(res=>{
             if(res.code != 200) return;
             _this.twelveList = res.data;
+        })
+        getTimeNewsList().then(res=>{
+            if(res.code != 200) return;
+            _this.timeNewList = res.data;
+            _this.currenNewIndex = 1;
+            if(res.data && res.data.length > 1){
+                _this.playTimeNews();
+            }
         })
         // window.onscroll = this.listScroll;
         // this.listScroll();
@@ -143,6 +159,32 @@ export default {
                 path: "/content",
                 query: {id:idx}            });
             window.open(routeUrl.href, '_blank');
+        },
+        playTimeNews(){
+            let len = this.timeNewList.length;
+            let index = this.currenNewIndex;
+            let ele = document.getElementsByClassName("an_title_scrollnews_ul")[0];
+            if(index < len){
+                let transitions = ['transitionend','oTransitionEnd','transitionend','webkitTransitionEnd'];
+                for(let i = 0;i < transitions.length;i++){
+                    ele.addEventListener(transitions[i],()=>{
+                        this.currenNewIndex++;
+                        this.playTimeNews();
+                    })
+                }
+                let mtop = -index * 25;
+                ele.style.transitionProperty = "all"
+                ele.style.transitionDuration = "1s"
+                // ele.style.transitionDelay = "3s"
+                ele.style.marginTop = mtop + "px"
+            }
+            else{
+                ele.style.transitionProperty = "";
+                ele.style.transitionDuration = "";
+                ele.style.marginTop = "0px";
+                this.currenNewIndex = 0;
+                this.playTimeNews();
+            }
         }
     }
 }
@@ -180,6 +222,7 @@ export default {
     .an-title {
         width: 100%;
         height: 40px;
+        text-align: center;
         background-color: #222222;
     }
     .an-title-div {
@@ -194,6 +237,30 @@ export default {
         margin:4px;
         padding: 0 5px 0 5px;
         display:inline-block;
+    }
+    .an_title_scrollnews_div {
+        position: relative;
+        top: 10px;
+        height: 20px;
+        overflow: hidden;
+    }
+    .an_title_scrollnews_ul {
+        padding: 0px;
+        margin: 0px;
+        position: relative;
+        top: 0px;
+    }
+    .an_title_scrollnews_ul li {
+        padding-bottom: 5px;
+        height: 20px;
+        overflow: hidden;
+    }
+    .an_title_scrollnews_ul li a {
+        color: #fff;
+        font-size: 16px;
+    }
+    .an_title_scrollnews_ul li a:hover{
+        color:#f24e4e;
     }
     .navLink {
         color: aliceblue;
@@ -211,16 +278,14 @@ export default {
         height: 40px;
     }
     .an_middle {
-        width: 1280px;
-        margin-left: 188px;
-        float:left;
+        width: 1200px;
+        position: relative;
+        margin: 0 auto;
     }
     .an_left {
         width: 130px;
         height: auto;
-        position: absolute;
         top: 0;
-        left: 222px;
         z-index: 999999;
     }
     .an_left_inner {
@@ -242,11 +307,13 @@ export default {
         font-weight: 500;
         text-align: center;
         background: #fff;
+        padding-bottom: 10px;
         padding-top: 10px;
         border-radius: 8px;
     }
     .an_left_ul li {
         width:130px;
+        height:38px;
     }
     .an_left_ul li a {
         display: block;
@@ -262,7 +329,6 @@ export default {
         border-radius: 0;
         position: relative;
         cursor: pointer;
-        /* color:#333; */
     }
     .an_left_ul li img {
         display: block;
@@ -272,7 +338,8 @@ export default {
     }
     .an_content {
         width: 690px;
-        margin: 10px 15px 10px 180px;
+        position: relative;
+        left: 140px;
         padding: 10px;
         display: flex;
         flex-direction: column;
@@ -364,8 +431,9 @@ export default {
     }
     .an_right {
         width: 336px;
+        position: relative;
         float: right;
-        margin-right: 35px;
+        right: 4px;
         margin-top:10px;
     }
     .an_right_container {

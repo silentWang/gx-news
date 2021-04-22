@@ -2,10 +2,10 @@
     <div class="cls_main">
         <div class="bn_title">
             <div class="bn_title_div">
+                <div class="bn_title_logo" @click="reloadHome()">
+                    <img src=".././assets/logo.png"/>
+                </div>
                 <ul class="bn_title_ul">
-                    <div class="bn_title_logo" @click="reloadHome()">
-                        <img src=".././assets/logo.png"/>
-                    </div>
                     <li v-for="item in titleList" :key="item.cateId">
                         <a href="javascript:" @click="gotoCategry(item.cateId)" class="navLink">{{item.cateName}}</a>
                     </li>
@@ -211,24 +211,31 @@ export default {
         text-align: left;
     }
     .cls_main {
-        margin: 0 auto;
         background: #f5f5f5;
     }
     .bn_title {
         width: 100%;
         height: 40px;
         background-color: #222222;
+        position: fixed;
+        z-index: 100;
+    }
+    .bn_title_div {
+        width: 1190px;
+        padding-top: 5px;
+        margin: 0 auto;
     }
     .bn_title_ul {
-        padding-top: 5px;
-        white-space:nowrap;
         display: block;
+        margin-left: 180px;
+        white-space:nowrap;
+        text-align: left;
     }
     .bn_title_logo {
-        position: absolute;
-        display: inline-block;
+        position: relative;
+        float: left;
+        display: block;
         cursor: pointer;
-        margin-left: -160px;
         top: -5px;
     }
     .bn_title_logo img {
@@ -246,8 +253,9 @@ export default {
     }
     .bn_main {
         width: 1190px;
+        position: relative;
+        top: 40px;
         padding-top: 10px;
-        padding-left: 118px;
         margin: 0 auto;
     }
     .bn_left {
