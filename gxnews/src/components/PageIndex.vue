@@ -9,6 +9,7 @@
                 </ul>
             </div> -->
             <div class="an_title_scrollnews_div">
+                <div v-show="timeNewList.length > 0">今日热搜:</div>
                 <ul class="an_title_scrollnews_ul">
                     <li v-for="item in timeNewList" :key="item.id">
                         <a href="javascript:" @click="gotoNews(item.id)">{{item.title}}</a>
@@ -76,6 +77,7 @@
 import {getNewsList,getNewsListById,getTimeNewsList,get24HoursNews} from '@/api/Api'
 import PageTemp from './PageTemp'
 import ImageSlider from './news/ImageSlider'
+let _this;
 export default {
     components:{PageTemp,ImageSlider},
     data(){
@@ -91,7 +93,7 @@ export default {
         }
     },
     mounted(){
-        let _this = this;
+        _this = this;
         getNewsList().then(res=>{
             if(res.code != 200) return;
             let list = res.data;
@@ -117,8 +119,8 @@ export default {
         getTimeNewsList().then(res=>{
             if(res.code != 200) return;
             _this.timeNewList = res.data;
-            _this.currenNewIndex = 1;
             if(res.data && res.data.length > 1){
+                _this.currenNewIndex = 0;
                 _this.playTimeNews();
             }
         })
@@ -160,30 +162,36 @@ export default {
                 query: {id:idx}            });
             window.open(routeUrl.href, '_blank');
         },
-        playTimeNews(){
-            let len = this.timeNewList.length;
-            let index = this.currenNewIndex;
-            let ele = document.getElementsByClassName("an_title_scrollnews_ul")[0];
-            if(index < len){
-                let transitions = ['transitionend','oTransitionEnd','transitionend','webkitTransitionEnd'];
-                for(let i = 0;i < transitions.length;i++){
-                    ele.addEventListener(transitions[i],()=>{
-                        this.currenNewIndex++;
-                        this.playTimeNews();
-                    })
-                }
-                let mtop = -index * 25;
-                ele.style.transitionProperty = "all"
-                ele.style.transitionDuration = "1s"
-                // ele.style.transitionDelay = "3s"
-                ele.style.marginTop = mtop + "px"
+        playTimeNews(ele = null,isplay = false){
+            if(!ele){
+                ele = document.getElementsByClassName("an_title_scrollnews_ul")[0];
+            }
+            let ncontext = _this;
+            if(isplay){
+                ele.style.transition = "all 1s"
+                ele.style.marginTop = "0px";
+                ncontext.currenNewIndex++;
+                ncontext.playTimeNews(ele)
             }
             else{
-                ele.style.transitionProperty = "";
-                ele.style.transitionDuration = "";
-                ele.style.marginTop = "0px";
-                this.currenNewIndex = 0;
-                this.playTimeNews();
+                ele.style.transition = "all 1s"
+                setTimeout(() => {
+                    let len = ncontext.timeNewList.length;
+                    let mtop = -ncontext.currenNewIndex * 25;
+                    ele.style.marginTop = mtop + "px"
+                    if(ncontext.currenNewIndex < len){
+                        ncontext.playTimeNews(ele);
+                        ncontext.currenNewIndex++;
+                    }
+                    else{
+                        ncontext.currenNewIndex = 0;
+                        ele.style.transition = "width 1s"
+                        ele.style.marginTop = "25px";
+                        setTimeout(() => {
+                            ncontext.playTimeNews(ele,true);
+                        }, 100);
+                    }
+                }, 3000);
             }
         }
     }
@@ -222,7 +230,6 @@ export default {
     .an-title {
         width: 100%;
         height: 40px;
-        text-align: center;
         background-color: #222222;
     }
     .an-title-div {
@@ -243,11 +250,20 @@ export default {
         top: 10px;
         height: 20px;
         overflow: hidden;
+        margin: 0 auto;
+        width: 366px;
+    }
+    .an_title_scrollnews_div div {
+        float: left;
+        color: #fff;
+        margin-right: 5px;
     }
     .an_title_scrollnews_ul {
+        float: left;
+        text-align: left;
+        position: relative;
         padding: 0px;
         margin: 0px;
-        position: relative;
         top: 0px;
     }
     .an_title_scrollnews_ul li {
@@ -257,7 +273,6 @@ export default {
     }
     .an_title_scrollnews_ul li a {
         color: #fff;
-        font-size: 16px;
     }
     .an_title_scrollnews_ul li a:hover{
         color:#f24e4e;
