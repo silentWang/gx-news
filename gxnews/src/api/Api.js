@@ -40,13 +40,13 @@ export const get24HoursNews = ()=>{
 }
 /**滚动新闻 */
 export const getTimeNewsList = ()=>{
-    let data = [
-        {id: 1,title: "测试标题1111111111111",url: "测试链接"},
-        {id: 2,title: "测试标题22222222222",url: "测试链接"},
-        {id: 3,title: "测试标题3333333",url: "测试链接"},
-        {id: 4,title: "测试标题444444",url: "测试链接"}
-    ];
-    return new Promise((resolve,reject)=>{resolve({code:200,data})})
+    // let data = [
+    //     {id: 1,title: "测试标题1111111111111",url: "测试链接"},
+    //     {id: 2,title: "测试标题22222222222",url: "测试链接"},
+    //     {id: 3,title: "测试标题3333333",url: "测试链接"},
+    //     {id: 4,title: "测试标题444444",url: "测试链接"}
+    // ];
+    // return new Promise((resolve,reject)=>{resolve({code:200,data})})
     return axios.get("v1/news/fast").then(res=>res.data)
 }
 /**详情页左侧热点、 小编推荐、视角*/

@@ -12,7 +12,7 @@
                 <div v-show="timeNewList.length > 0">今日热搜:</div>
                 <ul class="an_title_scrollnews_ul">
                     <li v-for="item in timeNewList" :key="item.id">
-                        <a href="javascript:" @click="gotoNews(item.id)">{{item.title}}</a>
+                        <a :href="item.url" target="_blank">{{item.title}}</a>
                     </li>
                 </ul>
             </div>
@@ -46,7 +46,7 @@
                             <h2><a target="_blank" href="javascript:">{{item.title}}</a></h2>
                             <p class="an_content_info">
                                 <a target="_self" href="javascript:">{{titleList[selectIndex].cateName}}</a>&nbsp;
-                                <a target="_self" href="javascript:">{{item.from}}</a>&nbsp;
+                                <a target="_self" href="javascript:" v-show="item.from.length > 0">{{item.from}}</a>&nbsp;
                                 <span>{{item.time}}</span>
                             </p>
                         </div>
@@ -55,7 +55,7 @@
                 <!-- <PageTemp ref="pageTemp" v-show="!showHomeFlag"></PageTemp> -->
             </div>
             <div class="an_right">
-                <ImageSlider></ImageSlider>
+                <!-- <ImageSlider></ImageSlider> -->
                 <div class="an_right_container">
                     <div class="an_right_today"><img src=".././assets/yuandian.png"/>今日热点</div>
                     <ul class="an_right_list">
@@ -458,7 +458,6 @@ export default {
     .an_right_today {
         font-size: 16px;
         font-weight: bold;
-        padding-left: 20px;
         display: block;
         line-height: 40px;
         text-align: left;
@@ -480,6 +479,8 @@ export default {
     .an_right_list li {
         overflow: hidden;
         zoom: 1;
+        border-bottom: 1px solid #eee;
+        margin-top: 10px;
     }
     .an_right_list li a.image {
         float: left;

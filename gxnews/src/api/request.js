@@ -4,7 +4,7 @@ import axios from 'axios'
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded'
 axios.defaults.headers['X-APP-KEY'] = 'A000001'
 axios.defaults.timeout = 60000
-axios.defaults.baseURL = "/napi"
+axios.defaults.baseURL = process.env.API_ROOT
 axios.defaults.withCredentials = false
 
 // 服务器响应拦截器，这里拦截403错误
@@ -40,12 +40,6 @@ axios.interceptors.response.use(
             type: 'warning',
             message: '登录过期，请重新登录！'
           })
-          // router.push({
-          //   path: '/login',
-          //   query: {
-          //     redirect
-          //   }
-          // })
           break
         default:
           break

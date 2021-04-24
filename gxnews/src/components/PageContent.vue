@@ -1,5 +1,34 @@
 <template>
     <div class="cls_main">
+        <div v-show="showDialogFlag" class="an_dialog_container" @click="showDialogFlag = false">
+            <div class="an_dialog_view">
+                <div class="atitle">
+                    当前页已闲置过久，点击关闭或空白处，即可回到网页
+                    <div class="close" title="关闭" @click="showDialogFlag = false">×</div>
+                </div>
+                <ul class="an_dialog_list">
+                    <li v-for="item in nextHots" :key="item.id">
+                        <div id="next_pic">
+                            <a href="javascript:" target="_blank">
+                                <img :src="item.pics[0]" @click="gotoNews(item.id)"/>
+                            </a>
+                        </div>
+                        <div class="an_dialog_list_news_title_content">
+                            <div>
+                                <a class="bn_left_link" href="javascript:" @click="gotoNews(item.id)">{{item.title}}</a>
+                            </div>
+                            <div class="an_dialog_list_news_tag" @click="gotoNews(item.id)">
+                                <span class="tags_wrapper">
+                                    <a href="#">娱乐</a>&nbsp;
+                                    <a href="#">新闻</a>&nbsp;
+                                </span>
+                                <span>{{item.time}}</span>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
         <div class="bn_title">
             <div class="bn_title_div">
                 <div class="bn_title_logo" @click="reloadHome()">
@@ -91,6 +120,7 @@ export default {
     components:{ImageSlider},
     data(){
         return {
+            showDialogFlag:true,
             titleList:[],
             todayHots:[],
             choseHots:[],
@@ -213,12 +243,103 @@ export default {
     .cls_main {
         background: #f5f5f5;
     }
+    .an_dialog_container {
+        position: fixed;
+        left: 0px;
+        right: 0px;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0, 0.7);
+        z-index: 99;
+        margin: 0 auto;
+        text-align: center;
+        vertical-align: middle;
+    }
+    .an_dialog_view {
+        width: 750px;
+        height: 500px;
+        min-height: 500px;
+        margin: 0 auto;
+        background: #fff;
+        border-radius: 10px;
+        font-size: 14px;
+        top: 50%;
+        left: 50%;
+        position: fixed;
+        margin-left: -375px;
+        margin-top: -250px;
+        overflow: hidden;
+        box-shadow: 0 0 20px 2px #e9e9e9;
+    }
+    .an_dialog_view .atitle {
+        text-align: center;
+        height: 36px;
+        line-height: 36px;
+        background: #af080f;
+        color: #fff;
+        position: relative;
+        border-top-left-radius: 10px;
+        border-top-right-radius: 10px;
+        font-size: 16px;
+    }
+    .an_dialog_view div .close {
+        position: absolute;
+        top: 8px;
+        right: 9px;
+        height: 20px;
+        width: 20px;
+        line-height: 20px;
+        background: #ce6666;
+        border-radius: 100%;
+        font-size: 14px;
+        cursor: pointer;
+        font-family: serif;
+    }
+    .an_dialog_list {
+        height: 450px;
+        list-style-type: none;
+        position: relative;
+        margin-top: 10px;
+        padding: 10px;
+        overflow-x: hidden;
+        overflow-y: scroll;
+    }
+    .an_dialog_list li {
+        overflow: hidden;
+        zoom: 1;
+        word-break: break-all;
+        cursor: pointer;
+        border-bottom: 1px solid #eee;
+        margin-bottom: 10px;
+        padding-bottom: 10px;
+    }
+    .an_dialog_list_news_title_content {
+        text-align: left;
+        float: left;
+        width: 500px;
+        height: 95px;
+        position: relative;
+    }
+    .an_dialog_list_news_title_content div {
+        background: #fff;
+        text-align: left;
+    }
+    .an_dialog_list_news_tag {
+        position: absolute;
+        bottom: 0px;
+        left: 0px;
+        zoom: 1;
+        width: 100%;
+        font-size: 12px;
+        color: #bbb;
+    }
+
     .bn_title {
         width: 100%;
         height: 40px;
         background-color: #222222;
         position: fixed;
-        z-index: 100;
+        z-index: 90;
     }
     .bn_title_div {
         width: 1190px;
