@@ -1,13 +1,13 @@
 <template>
     <div class="cls_main">
-        <div v-show="showDialogFlag" class="an_dialog_container" @click="showDialogFlag = false">
+        <div v-show="showDialogFlag" class="an_dialog_container" @click="checkStayState(false)">
             <div class="an_dialog_view">
                 <div class="atitle">
                     当前页已闲置过久，点击关闭或空白处，即可回到网页
-                    <div class="close" title="关闭" @click="showDialogFlag = false">×</div>
+                    <div class="close" title="关闭" @click="checkStayState(false)">×</div>
                 </div>
                 <ul class="an_dialog_list">
-                    <li v-for="item in nextHots" :key="item.id">
+                    <li v-for="item in viewList" :key="item.id">
                         <div id="next_pic">
                             <a href="javascript:" target="_blank">
                                 <img :src="item.pics[0]" @click="gotoNews(item.id)"/>
@@ -109,23 +109,42 @@
                     </li>
                 </ul>
             </div>
+            <div class="bn_sidenav">
+                <ul>
+                    <li class="home">
+                        <a href="/">首页</a>
+                    </li>
+                    <li class="channel">
+                        <a target="_self" href="javascript:" @click="gotoCategry(selectIndex + 1)">频道</a>
+                    </li>
+                    <li class="hot">
+                        <a target="_self" href="javascript:" @click="gotoCategry(1)">热点</a>
+                    </li>
+                    <li class="gototop" v-show="showGoTopFlag">
+                        <a target="_self" href="javascript:window.scrollTo(0,0)">顶部</a>
+                    </li>
+                </ul>
+            </div>
         </div>
     </div>
 </template>
 <script>
-import {getNewsList,getNewsDetailById,getDetailLeftNews,getDetailDownNews} from '@/api/Api'
+import {getNewsList,getNewsDetailById,getDetailLeftNews,getDetailDownNews,getNewsListById} from '@/api/Api'
 import Utils from "@/api/Utils"
+import ScreenHandler from "@/scripts/ScreenHandler"
 import ImageSlider from './news/ImageSlider'
 export default {
     components:{ImageSlider},
     data(){
         return {
-            showDialogFlag:true,
+            showDialogFlag:false,
+            showGoTopFlag:false,
             titleList:[],
             todayHots:[],
             choseHots:[],
             viewHots:[],
             nextHots:[],
+            viewList:[],
             detailInfo:{}
         }
     },
@@ -166,7 +185,6 @@ export default {
             info.content = Utils.escapeHtml(info.content);
             _this.detailInfo = info;
         })
-
         getDetailLeftNews().then(res=>{
             if(res.code != 200) return
             let data = res.data
@@ -185,10 +203,16 @@ export default {
         getDetailDownNews().then(res=>{
             if(res.code != 200) return
             this.nextHots = res.data
-            // this.todayHots = res.data
-            // this.choseHots = res.data
-            // this.viewHots = res.data
         })
+        getNewsListById(1).then(res=>{
+            if(res.code != 200) return
+            let data = res.data;
+            if(!data || data.length == 0) return;
+            _this.viewList = data.slice(0,15);
+            _this.checkStayState();
+        })
+        window.onscroll = this.listScroll.bind(this);
+        this.listScroll();
     },
     methods:{
         reloadHome(evt){
@@ -197,6 +221,11 @@ export default {
             });
             // this.$router.push({path:"/"});
             window.open(routeUrl.href);
+        },
+        listScroll(){
+            let scrollTop = document.scrollingElement.scrollTop;
+            let chgt = document.documentElement.clientHeight;
+            this.showGoTopFlag = scrollTop >= chgt;
         },
         gotoCategry(idx){
             let routeUrl = this.$router.resolve({
@@ -211,6 +240,18 @@ export default {
                 query: {id:idx}
             });
             window.open(routeUrl.href, '_blank');
+        },
+        checkStayState(bool = true){
+            let _this = this;
+            if(!this.screenHandler){
+                this.screenHandler = new ScreenHandler(15000,()=>{
+                    _this.showDialogFlag = true;
+                });
+            }
+            if(!bool){
+                _this.showDialogFlag = false;
+                _this.screenHandler.reWatch();
+            }
         }
     }
 }
@@ -291,7 +332,7 @@ export default {
         line-height: 20px;
         background: #ce6666;
         border-radius: 100%;
-        font-size: 14px;
+        font-size: 16px;
         cursor: pointer;
         font-family: serif;
     }
@@ -441,6 +482,8 @@ export default {
         overflow: hidden;
         zoom: 1;
         margin-bottom: 8px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #eee;
     }
     .n_up_list li a.image {
         float: left;
@@ -567,6 +610,51 @@ export default {
         padding-left: 20px;
         color: #999;
         font-size: 12px;
+    }
+    .bn_sidenav {
+        position: fixed;
+        margin-left: 1190px;
+        margin-top: 30px;
+        top: 30px;
+    }
+    .bn_sidenav ul {
+        list-style: none;
+    }
+    .bn_sidenav li {
+        width: 40px;
+        height: 40px;
+        margin-bottom: 2px;
+        background-size: 32px 32px;
+        background-repeat: no-repeat;
+        background-color: #fff;
+        background-position: center;
+        border-radius: 2px;
+    }
+    .bn_sidenav .home {
+        background-image: url("../assets/home.png");
+    }
+    .bn_sidenav .channel {
+        background-image: url("../assets/menu.png");
+    }
+    .bn_sidenav .hot {
+        background-image: url("../assets/fire.png");
+    }
+    .bn_sidenav .gototop {
+        background-image: url("../assets/down.png");
+    }
+    .bn_sidenav a {
+        color: #fff;
+        width: 40px;
+        height: 40px;
+        border-radius: 2px;
+        line-height: 40px;
+        display: block;
+        font-size: 12px;
+        opacity: 0;
+    }
+    .bn_sidenav a:hover{
+        opacity: 1;
+        background-color: #ff0000;
     }
 
 </style>

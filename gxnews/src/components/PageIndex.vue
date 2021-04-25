@@ -1,6 +1,6 @@
 <template>
     <div class="an_main">
-        <div class="an-title">
+        <div class="an-title" id="toptitle">
             <!-- <div class="an-title-div">
                 <ul class="an-title-ul">
                     <li v-for="item in titleList" :key="item.cateId">
@@ -70,6 +70,22 @@
                     </ul>
                 </div>
             </div>
+            <div class="an_sidenav">
+                <ul>
+                    <li class="home">
+                        <a href="/">首页</a>
+                    </li>
+                    <li class="channel">
+                        <a target="_self" href="javascript:" @click="gotoCategry(selectIndex + 1)">频道</a>
+                    </li>
+                    <li class="hot">
+                        <a target="_self" href="javascript:" @click="gotoCategry(1)">热点</a>
+                    </li>
+                    <li class="gototop" v-show="showDialogFlag">
+                        <a target="_self" href="javascript:window.scrollTo(0,0)">顶部</a>
+                    </li>
+                </ul>
+            </div>
         </div>
     </div>
 </template>
@@ -85,6 +101,7 @@ export default {
             currenNewIndex:0,
             todayWeather:"",
             showHomeFlag:true,
+            showDialogFlag:false,
             selectIndex:0,
             titleList:[],
             newsList:[],
@@ -109,7 +126,6 @@ export default {
             if(query && query.id >= 0) {
                 cateId = query.id;
             }
-            console.log("queryid:",query.id)
             _this.gotoCategry(cateId);
         })
         get24HoursNews().then(res=>{
@@ -124,25 +140,28 @@ export default {
                 _this.playTimeNews();
             }
         })
-        // window.onscroll = this.listScroll;
-        // this.listScroll();
+        window.onscroll = this.listScroll.bind(this);
+        this.listScroll();
     },
     methods:{
         listScroll(evt){
-            let div = document.getElementsByClassName("an_left")[0];
-            let titlediv = document.getElementsByClassName("an_main")[0];
-            let logo = document.getElementsByClassName("an_title_logo")[0];
-            let left = titlediv.offsetLeft;
-            let num = parseInt(left) + 50;
-            div.style.left = num + "px";
-            if(document.scrollingElement.scrollTop <= 80){
-                div.style.top = '70px';
-                logo.style.top = "0px"
+            let mEle = document.getElementsByClassName("an_middle")[0];
+            let rEle = document.getElementsByClassName("an_right")[0];
+            let scrollTop = document.scrollingElement.scrollTop;
+            let rsHgt = rEle.offsetHeight;
+            let chgt = document.documentElement.clientHeight;
+            let fVal = 0;
+            this.showDialogFlag = scrollTop >= chgt;
+            if(chgt >= rsHgt){
+                fVal = scrollTop - 50 < 0 ? 0 : scrollTop - 50;
             }
-            else{
-                div.style.top = '70px';
-                logo.style.top = "0px"
+            else if(rsHgt - chgt > scrollTop){
+                fVal = 0;
             }
+            else {
+                fVal = scrollTop - rsHgt + chgt - 50;
+            }
+            rEle.style.top = fVal + "px";
         },
         reloadHome(){
             window.location.reload();
@@ -153,7 +172,7 @@ export default {
             let _this = this
             getNewsListById(idx).then(res=>{
                 if(res.code != 200) return
-                _this.newsList = res.data
+                _this.newsList = res.data;
             })
         },
         gotoNews(idx){
@@ -202,10 +221,15 @@ export default {
         margin:0px;
         padding:0px;
     }
+    html {
+        top:0;
+        left: 0;
+        height: 100%;
+    }
     body {
         background: #f5f5f5;
         color:#222222;
-        font: 14px/26px PingFang SC,Hiragino Sans GB,Microsoft YaHei,WenQuanYi Micro Hei,Helvetica Neue,Arial,sans-serif;
+        /* font: 14px/26px PingFang SC,Hiragino Sans GB,Microsoft YaHei,WenQuanYi Micro Hei,Helvetica Neue,Arial,sans-serif; */
     }
     a {
         color: #333;
@@ -226,6 +250,7 @@ export default {
     .an_main {
         display: block;
         margin: 0 auto;
+        height: 100%;
     }
     .an-title {
         width: 100%;
@@ -273,6 +298,7 @@ export default {
     }
     .an_title_scrollnews_ul li a {
         color: #fff;
+        text-decoration: underline;
     }
     .an_title_scrollnews_ul li a:hover{
         color:#f24e4e;
@@ -299,7 +325,6 @@ export default {
     }
     .an_left {
         width: 130px;
-        height: auto;
         top: 0;
         z-index: 999999;
     }
@@ -356,6 +381,7 @@ export default {
         position: relative;
         left: 140px;
         padding: 10px;
+        top: 10px;
         display: flex;
         flex-direction: column;
         background-color: #fff;
@@ -505,7 +531,6 @@ export default {
         overflow: hidden;
         line-height: 25px;
     }
-    
     .a_inactive:hover {
         background-color: #fff;
         color: #ff0000;
@@ -522,6 +547,52 @@ export default {
         left: 50%;
         width: 36px;
         margin-left: -18px;
+    }
+    .an_sidenav {
+        position: fixed;
+        margin-left: 1200px;
+        margin-top: 30px;
+        bottom: 30px;
+    }
+    .an_sidenav ul {
+        list-style: none;
+    }
+    .an_sidenav li {
+        width: 40px;
+        height: 40px;
+        margin-bottom: 2px;
+        background-size: 32px 32px;
+        background-repeat: no-repeat;
+        /* background-color: #f97a7a; */
+        background-color: #fff;
+        background-position: center;
+        border-radius: 2px;
+    }
+    .an_sidenav .home {
+        background-image: url("../assets/home.png");
+    }
+    .an_sidenav .channel {
+        background-image: url("../assets/menu.png");
+    }
+    .an_sidenav .hot {
+        background-image: url("../assets/fire.png");
+    }
+    .an_sidenav .gototop {
+        background-image: url("../assets/down.png");
+    }
+    .an_sidenav a {
+        color: #fff;
+        width: 40px;
+        height: 40px;
+        border-radius: 2px;
+        line-height: 40px;
+        display: block;
+        font-size: 12px;
+        opacity: 0;
+    }
+    .an_sidenav a:hover{
+        opacity: 1;
+        background-color: #ff0000;
     }
     
 </style>
