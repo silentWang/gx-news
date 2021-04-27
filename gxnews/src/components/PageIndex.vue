@@ -149,6 +149,7 @@ export default {
             let rEle = document.getElementsByClassName("an_right")[0];
             let scrollTop = document.scrollingElement.scrollTop;
             let rsHgt = rEle.offsetHeight;
+            let dcHgt = document.documentElement.scrollHeight;
             let chgt = document.documentElement.clientHeight;
             let fVal = 0;
             this.showDialogFlag = scrollTop >= chgt;
@@ -162,6 +163,7 @@ export default {
                 fVal = scrollTop - rsHgt + chgt - 50;
             }
             rEle.style.top = fVal + "px";
+            console.log(`stp:${scrollTop}   chgt:${chgt}  dhgt:${dcHgt}`);
         },
         reloadHome(){
             window.location.reload();
