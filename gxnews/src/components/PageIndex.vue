@@ -163,7 +163,6 @@ export default {
                 fVal = scrollTop - rsHgt + chgt - 50;
             }
             rEle.style.top = fVal + "px";
-            console.log(`stp:${scrollTop}   chgt:${chgt}  dhgt:${dcHgt}`);
         },
         reloadHome(){
             window.location.reload();

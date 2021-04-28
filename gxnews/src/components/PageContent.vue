@@ -219,13 +219,26 @@ export default {
             let routeUrl = this.$router.resolve({
                 path: "/"
             });
-            // this.$router.push({path:"/"});
             window.open(routeUrl.href);
         },
         listScroll(){
             let scrollTop = document.scrollingElement.scrollTop;
             let chgt = document.documentElement.clientHeight;
             this.showGoTopFlag = scrollTop >= chgt;
+            let rEle = document.getElementsByClassName("bn_left")[0];
+            let rsHgt = rEle.offsetHeight;
+            let dcHgt = document.documentElement.scrollHeight;
+            let fVal = 0;
+            if(chgt >= rsHgt){
+                fVal = scrollTop - 50 < 0 ? 0 : scrollTop - 50;
+            }
+            else if(rsHgt - chgt > scrollTop){
+                fVal = 0;
+            }
+            else {
+                fVal = scrollTop - rsHgt + chgt - 50;
+            }
+            rEle.style.top = fVal + "px";
         },
         gotoCategry(idx){
             let routeUrl = this.$router.resolve({
@@ -428,6 +441,7 @@ export default {
         margin-top:10px; 
         padding: 10px;
         float: left;
+        position: relative;
     }
     .bn_content {
         width: 780px;
