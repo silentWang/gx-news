@@ -140,6 +140,7 @@ export default {
                 _this.playTimeNews();
             }
         })
+        document.title = "热点新闻";
         window.onscroll = this.listScroll.bind(this);
         this.listScroll();
     },
@@ -163,6 +164,10 @@ export default {
                 fVal = scrollTop - rsHgt + chgt - 50;
             }
             rEle.style.top = fVal + "px";
+            if(dcHgt - scrollTop <= chgt + 20){
+                //到底了
+                console.log("到底了")
+            }
         },
         reloadHome(){
             window.location.reload();

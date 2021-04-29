@@ -87,6 +87,12 @@
                 </div>
                 <br />
                 <div class="cls_newscontent" v-html="detailInfo.content"></div>
+                <div class="bn_content_pages">
+                    <a v-for="item in allPages" :key="item.id"
+                         :class="[item.id == currentPageIndex ? 'bn_content_pages_a_selected' : 'bn_content_pages_a_normal']" 
+                         href="javascript:"
+                         @click="gotoPage(item.index)">{{item.index}}</a>
+                </div>
                 <ul class="n_next_list">
                     <li v-for="item in nextHots" :key="item.id">
                         <div id="next_pic">
@@ -139,6 +145,8 @@ export default {
         return {
             showDialogFlag:false,
             showGoTopFlag:false,
+            currentPageIndex:1,
+            allPages:[],
             titleList:[],
             todayHots:[],
             choseHots:[],
@@ -155,6 +163,10 @@ export default {
             return;
         }
         let _this = this;
+        this.allPages = [
+            {id:1,index:1},
+            {id:2,index:2}
+        ];
         //only test
         // setTimeout(() => {
         //     let title = document.getElementsByClassName("bn_title_logo")[0];
@@ -184,6 +196,7 @@ export default {
             let info = res.data;
             info.content = Utils.escapeHtml(info.content);
             _this.detailInfo = info;
+            document.title = info.title;
         })
         getDetailLeftNews().then(res=>{
             if(res.code != 200) return
@@ -226,6 +239,7 @@ export default {
             let chgt = document.documentElement.clientHeight;
             this.showGoTopFlag = scrollTop >= chgt;
             let rEle = document.getElementsByClassName("bn_left")[0];
+            if(!rEle) return;
             let rsHgt = rEle.offsetHeight;
             let dcHgt = document.documentElement.scrollHeight;
             let fVal = 0;
@@ -253,6 +267,15 @@ export default {
                 query: {id:idx}
             });
             window.open(routeUrl.href, '_blank');
+        },
+        gotoPage(index){
+            if(index == 2){
+                let routeUrl = this.$router.resolve({
+                    path: "/",
+                    query: {id:1}
+                });
+                window.open(routeUrl.href, '_self');
+            }
         },
         checkStayState(bool = true){
             let _this = this;
@@ -556,6 +579,35 @@ export default {
     .cls_newscontent img {
         display: block;
         margin: 0 auto;
+    }
+    .bn_content_pages {
+        position: relative;
+        width: 320px;
+        margin: 0 auto;
+    }
+    .bn_content_pages_a_selected {
+        background-color: #b00101;
+        font-size: 14px;
+        padding: 6px 10px;
+        line-height: 1;
+        margin: 0 3px;
+        color: #fff;
+        text-decoration: none;
+        display: inline-block;
+    }
+    .bn_content_pages_a_normal {
+        background: #333;
+        font-size: 14px;
+        padding: 6px 10px;
+        line-height: 1;
+        margin: 0 3px;
+        color: #fff;
+        text-decoration: none;
+        display: inline-block;
+    }
+    .bn_content_pages a:hover {
+        color: #fff;
+        background-color: #b00101;
     }
     .n_next_list{
         list-style-type: none;
