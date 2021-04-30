@@ -37,35 +37,41 @@
                 </div>
             </div>
             <div class="an_content">
-                <div v-show="showHomeFlag" class="an_content-item" v-for="item in newsList" :key="item.id">
-                    <div class="an_content_image" @click="gotoNews(item.id)">
-                        <a target="_blank" href="javascript:"><img :src='item.pics[0]'/></a>
-                    </div>
-                    <div class="an_content_desc">
-                        <div class="an_content_desc_inner" @click="gotoNews(item.id)">
-                            <h2><a target="_blank" href="javascript:">{{item.title}}</a></h2>
-                            <p class="an_content_info">
-                                <a target="_self" href="javascript:">{{titleList[selectIndex].cateName}}</a>&nbsp;
-                                <a target="_self" href="javascript:" v-show="item.from.length > 0">{{item.from}}</a>&nbsp;
-                                <span>{{item.time}}</span>
-                            </p>
+                <div class="an_content-item" v-for="item in newsList" :key="curPageIndex + '_' + item.id">
+                    <div v-if="item.type != 2">
+                        <div class="an_content_image" @click="gotoNews(item.id)">
+                            <a target="_blank" href="javascript:"><img :src='item.pics[0]'/></a>
+                        </div>
+                        <div class="an_content_desc">
+                            <div class="an_content_desc_inner" @click="gotoNews(item.id)">
+                                <h2><a target="_blank" href="javascript:">{{item.title}}</a></h2>
+                                <p class="an_content_info">
+                                    <a target="_self" href="javascript:">{{titleList[selectIndex].cateName}}</a>&nbsp;
+                                    <a target="_self" href="javascript:" v-show="item.from.length > 0">{{item.from}}</a>&nbsp;
+                                    <span>{{item.time}}</span>
+                                </p>
+                            </div>
                         </div>
                     </div>
+                    <div v-else @click="clkUxArt(item.id)" class="adver_common_class_u8x3032d3" v-html="item.title">
+                    </div>
                 </div>
-                <!-- <PageTemp ref="pageTemp" v-show="!showHomeFlag"></PageTemp> -->
             </div>
             <div class="an_right">
-                <!-- <ImageSlider></ImageSlider> -->
                 <div class="an_right_container">
                     <div class="an_right_today"><img src=".././assets/yuandian.png"/>今日热点</div>
                     <ul class="an_right_list">
                         <li v-for="item in twelveList" :key="item.id">
-                            <a class="image" href="javascript:" :title="item.title">
-                                <img :src="item.pics[0]" @click="gotoNews(item.id)">
-                            </a>
-                            <p>
-                                <a href="javascript:" :title="item.title" @click="gotoNews(item.id)">{{item.title}}</a>
-                            </p>
+                            <div v-if="item.type != 2">
+                                <a class="image" href="javascript:" :title="item.title">
+                                    <img :src="item.pics[0]" @click="gotoNews(item.id)">
+                                </a>
+                                <p>
+                                    <a href="javascript:" :title="item.title" @click="gotoNews(item.id)">{{item.title}}</a>
+                                </p>
+                            </div>
+                            <div v-else @click="clkUxArt(item.id)" class="adver_common_class_u8x2583456" v-html="item.title">
+                            </div>
                         </li>
                     </ul>
                 </div>
@@ -81,7 +87,7 @@
                     <li class="hot">
                         <a target="_self" href="javascript:" @click="gotoCategry(1)">热点</a>
                     </li>
-                    <li class="gototop" v-show="showDialogFlag">
+                    <li class="gototop" v-show="showTopFlag">
                         <a target="_self" href="javascript:window.scrollTo(0,0)">顶部</a>
                     </li>
                 </ul>
@@ -90,7 +96,8 @@
     </div>
 </template>
 <script>
-import {getNewsList,getNewsListById,getTimeNewsList,get24HoursNews} from '@/api/Api'
+import dataCenter from '@/api/DataCenter'
+import Utils from "@/api/Utils"
 import PageTemp from './PageTemp'
 import ImageSlider from './news/ImageSlider'
 let _this;
@@ -100,9 +107,10 @@ export default {
         return {
             currenNewIndex:0,
             todayWeather:"",
-            showHomeFlag:true,
-            showDialogFlag:false,
+            showTopFlag:false,
             selectIndex:0,
+            curPageIndex:1,
+            isChange:false,
             titleList:[],
             newsList:[],
             twelveList:[],
@@ -111,7 +119,7 @@ export default {
     },
     mounted(){
         _this = this;
-        getNewsList().then(res=>{
+        dataCenter.getNewsList().then(res=>{
             if(res.code != 200) return;
             let list = res.data;
             let arr = [];
@@ -120,26 +128,32 @@ export default {
                 arr.push({id:cate.cateId - 1,cateId:cate.cateId,cateName:cate.cateName})
             }
             _this.titleList = arr;
-
             let query = this.$route.query;
             let cateId = arr[0].cateId;
-            if(query && query.id >= 0) {
+            if(query && query.id >= 0){
                 cateId = query.id;
             }
             _this.gotoCategry(cateId);
         })
-        get24HoursNews().then(res=>{
+        dataCenter.get24HoursNews().then(res=>{
             if(res.code != 200) return;
             _this.twelveList = res.data;
+            _this.$nextTick(()=>{
+                let eles = document.getElementsByClassName("adver_common_class_u8x2583456");
+                for(let i = 0;i < eles.length;i++){
+                    let ele = document.getElementsByClassName("adver_common_class_u8x2583456")[0];
+                    Utils.changeAndExecuteJS(ele);
+                }
+            });
         })
-        getTimeNewsList().then(res=>{
+        dataCenter.getTimeNewsList().then(res=>{
             if(res.code != 200) return;
             _this.timeNewList = res.data;
             if(res.data && res.data.length > 1){
                 _this.currenNewIndex = 0;
                 _this.playTimeNews();
             }
-        })
+        });
         document.title = "热点新闻";
         window.onscroll = this.listScroll.bind(this);
         this.listScroll();
@@ -153,7 +167,7 @@ export default {
             let dcHgt = document.documentElement.scrollHeight;
             let chgt = document.documentElement.clientHeight;
             let fVal = 0;
-            this.showDialogFlag = scrollTop >= chgt;
+            this.showTopFlag = scrollTop >= chgt;
             if(chgt >= rsHgt){
                 fVal = scrollTop - 50 < 0 ? 0 : scrollTop - 50;
             }
@@ -164,27 +178,42 @@ export default {
                 fVal = scrollTop - rsHgt + chgt - 50;
             }
             rEle.style.top = fVal + "px";
-            if(dcHgt - scrollTop <= chgt + 20){
+            if(dcHgt - scrollTop <= chgt && scrollTop > 0 && !this.isChange){
                 //到底了
                 console.log("到底了")
+                this.isChange = true;
+                this.curPageIndex++;
+                this.gotoCategry(this.selectIndex + 1);
             }
         },
         reloadHome(){
             window.location.reload();
         },
+        clkUxArt(id){
+            console.log("点击了gx   " + id);
+        },
         gotoCategry(idx){
             this.selectIndex = idx - 1;
-            this.showHomeFlag = true;
             let _this = this
-            getNewsListById(idx).then(res=>{
+            dataCenter.getNewsListById(idx,this.curPageIndex).then(res=>{
+                _this.isChange = false;
                 if(res.code != 200) return
-                _this.newsList = res.data;
+                let news = res.data;
+                _this.newsList = _this.newsList.concat(news);
+                _this.$nextTick(()=>{
+                    let eles = document.getElementsByClassName("adver_common_class_u8x3032d3");
+                    for(let i = 0;i < eles.length;i++){
+                        let ele = document.getElementsByClassName("adver_common_class_u8x3032d3")[0];
+                        Utils.changeAndExecuteJS(ele);
+                    }
+                });
             })
         },
         gotoNews(idx){
             let routeUrl = this.$router.resolve({
                 path: "/content",
-                query: {id:idx}            });
+                query: {id:idx}            
+            });
             window.open(routeUrl.href, '_blank');
         },
         playTimeNews(ele = null,isplay = false){

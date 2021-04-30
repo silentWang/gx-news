@@ -135,7 +135,7 @@
     </div>
 </template>
 <script>
-import {getNewsList,getNewsDetailById,getDetailLeftNews,getDetailDownNews,getNewsListById} from '@/api/Api'
+import dataCenter from '@/api/DataCenter'
 import Utils from "@/api/Utils"
 import ScreenHandler from "@/scripts/ScreenHandler"
 import ImageSlider from './news/ImageSlider'
@@ -178,7 +178,7 @@ export default {
         // }, 1000);
 
 
-        getNewsList().then(res=>{
+        dataCenter.getNewsList().then(res=>{
             if(res.code != 200) return;
             let list = res.data;
             let arr = [];
@@ -188,7 +188,7 @@ export default {
             }
             _this.titleList = arr;
         })
-        getNewsDetailById(query.id).then(res=>{
+        dataCenter.getNewsDetailById(query.id).then(res=>{
             if(res.code != 200) {
                 this.$router.push({path:'/'});
                 return;
@@ -198,7 +198,7 @@ export default {
             _this.detailInfo = info;
             document.title = info.title;
         })
-        getDetailLeftNews().then(res=>{
+        dataCenter.getDetailLeftNews().then(res=>{
             if(res.code != 200) return
             let data = res.data
             for(let info of data){
@@ -213,11 +213,11 @@ export default {
                 }
             }
         })
-        getDetailDownNews().then(res=>{
+        dataCenter.getDetailDownNews().then(res=>{
             if(res.code != 200) return
             this.nextHots = res.data
         })
-        getNewsListById(1).then(res=>{
+        dataCenter.getNewsListById(1).then(res=>{
             if(res.code != 200) return
             let data = res.data;
             if(!data || data.length == 0) return;
