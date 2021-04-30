@@ -37,7 +37,7 @@
                 </div>
             </div>
             <div class="an_content">
-                <div class="an_content-item" v-for="item in newsList" :key="curPageIndex + '_' + item.id">
+                <div class="an_content-item" v-for="item in newsList" :key="curPageIndex + '_' + item.id + '_' + item.type">
                     <div v-if="item.type != 2">
                         <div class="an_content_image" @click="gotoNews(item.id)">
                             <a target="_blank"><img :src='item.pics[0]'/></a>
@@ -59,9 +59,10 @@
             </div>
             <div class="an_right">
                 <div class="an_right_container">
+                    <div class="adver_common_class_u8u756412"></div>
                     <div class="an_right_today"><img src=".././assets/yuandian.png"/>今日热点</div>
                     <ul class="an_right_list">
-                        <li v-for="item in twelveList" :key="item.id">
+                        <li v-for="item in twelveList" :key="item.id + '_' + item.type">
                             <div v-if="item.type != 2">
                                 <a class="image"  :title="item.title">
                                     <img :src="item.pics[0]" @click="gotoNews(item.id)">
@@ -74,6 +75,7 @@
                             </div>
                         </li>
                     </ul>
+                    <div class="adver_common_class_u8u756412"></div>
                 </div>
             </div>
             <div class="an_sidenav">
@@ -154,6 +156,9 @@ export default {
                 _this.playTimeNews();
             }
         });
+        setTimeout(()=>{
+            _this.addKitchAdver();
+        },1000);
         document.title = "热点新闻";
         window.onscroll = this.listScroll.bind(this);
         this.listScroll();
@@ -185,6 +190,17 @@ export default {
                 this.curPageIndex++;
                 this.gotoCategry(this.selectIndex + 1);
             }
+        },
+        addKitchAdver(){
+            let had = dataCenter.getRandomAdverInfo(Utils.PositionType.POSITION_HEADER);
+            let fad = dataCenter.getRandomAdverInfo(Utils.PositionType.POSITION_FOOTER);
+            let ele1 = document.getElementsByClassName("adver_common_class_u8u756412")[0];
+            let ele2 = document.getElementsByClassName("adver_common_class_u8u756412")[1];
+            if(!had || !fad) return;
+            ele1.innerHTML = had.ad_script;
+            ele2.innerHTML = fad.ad_script;
+            Utils.changeAndExecuteJS(ele1);
+            Utils.changeAndExecuteJS(ele2);
         },
         reloadHome(){
             window.location.reload();

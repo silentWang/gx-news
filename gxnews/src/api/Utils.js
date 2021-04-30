@@ -3,7 +3,9 @@ export default class Utils {
 
     static PositionType = {
         POSITION_MAIN:"main",
-        POSITION_SIDE:"side"
+        POSITION_SIDE:"side",
+        POSITION_HEADER:"header",
+        POSITION_FOOTER:"footer",
     }
 
     static escapeHtml(str){
