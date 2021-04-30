@@ -9,13 +9,13 @@
                 <ul class="an_dialog_list">
                     <li v-for="item in viewList" :key="item.id">
                         <div id="next_pic">
-                            <a href="javascript:" target="_blank">
+                            <a  target="_blank">
                                 <img :src="item.pics[0]" @click="gotoNews(item.id)"/>
                             </a>
                         </div>
                         <div class="an_dialog_list_news_title_content">
                             <div>
-                                <a class="bn_left_link" href="javascript:" @click="gotoNews(item.id)">{{item.title}}</a>
+                                <a class="bn_left_link"  @click="gotoNews(item.id)">{{item.title}}</a>
                             </div>
                             <div class="an_dialog_list_news_tag" @click="gotoNews(item.id)">
                                 <span class="tags_wrapper">
@@ -36,7 +36,7 @@
                 </div>
                 <ul class="bn_title_ul">
                     <li v-for="item in titleList" :key="item.cateId">
-                        <a href="javascript:" @click="gotoCategry(item.cateId)" class="navLink">{{item.cateName}}</a>
+                        <a  @click="gotoCategry(item.cateId)" class="navLink">{{item.cateName}}</a>
                     </li>
                 </ul>
             </div>
@@ -46,33 +46,33 @@
                 <ul class="n_up_list">
                     <h3>今日热点</h3>
                     <li v-for="item in todayHots" :key="item.id">
-                        <a class="image" href="javascript:" :title="item.title">
+                        <a class="image"  :title="item.title">
                             <img :src="item.pics[0]" @click="gotoNews(item.cateId)">
                         </a>
                         <p>
-                            <a href="javascript:" :title="item.title" @click="gotoNews(item.id)">{{item.title}}</a>
+                            <a  :title="item.title" @click="gotoNews(item.id)">{{item.title}}</a>
                         </p>
                     </li>
                 </ul>
                 <ul class="n_up_list">
                     <h3>小编精选</h3>
                     <li v-for="item in choseHots" :key="item.id">
-                        <a class="image" href="javascript:" :title="item.title">
+                        <a class="image"  :title="item.title">
                             <img :src="item.pics[0]" @click="gotoNews(item.cateId)">
                         </a>
                         <p>
-                            <a href="javascript:" :title="item.title" @click="gotoNews(item.id)">{{item.title}}</a>
+                            <a  :title="item.title" @click="gotoNews(item.id)">{{item.title}}</a>
                         </p>
                     </li>
                 </ul>
                 <ul class="n_up_list">
                     <h3>视角</h3>
                     <li v-for="item in viewHots" :key="item.id">
-                        <a class="image" href="javascript:" :title="item.title">
+                        <a class="image"  :title="item.title">
                             <img :src="item.pics[0]" @click="gotoNews(item.cateId)">
                         </a>
                         <p>
-                            <a href="javascript:" :title="item.title" @click="gotoNews(item.id)">{{item.title}}</a>
+                            <a  :title="item.title" @click="gotoNews(item.id)">{{item.title}}</a>
                         </p>
                     </li>
                 </ul>
@@ -83,26 +83,26 @@
                 <br/>
                 <div class="bn_content_second_title">
                     <span v-show="detailInfo.updated_at ? true : false">{{detailInfo.source_time}}&nbsp;&nbsp;&nbsp;{{detailInfo.source_from}}</span>
-                    <a target="_blank" href="javascript:">博主</a>
+                    <a target="_blank" >博主</a>
                 </div>
                 <br />
                 <div class="cls_newscontent" v-html="detailInfo.content"></div>
                 <div class="bn_content_pages">
                     <a v-for="item in allPages" :key="item.id"
                          :class="[item.id == currentPageIndex ? 'bn_content_pages_a_selected' : 'bn_content_pages_a_normal']" 
-                         href="javascript:"
+                         
                          @click="gotoPage(item.index)">{{item.index}}</a>
                 </div>
                 <ul class="n_next_list">
                     <li v-for="item in nextHots" :key="item.id">
                         <div id="next_pic">
-                            <a href="javascript:" target="_blank">
+                            <a  target="_blank">
                                 <img :src="item.pics[0]" @click="gotoNews(item.id)"/>
                             </a>
                         </div>
                         <div class="n_next_list_news_title_content">
                             <div>
-                                <a class="bn_left_link" href="javascript:" @click="gotoNews(item.id)">{{item.title}}</a>
+                                <a class="bn_left_link"  @click="gotoNews(item.id)">{{item.title}}</a>
                             </div>
                             <div class="n_next_list_news_tag" @click="gotoNews(item.id)">
                                 <span class="tags_wrapper">
@@ -121,10 +121,10 @@
                         <a href="/">首页</a>
                     </li>
                     <li class="channel">
-                        <a target="_self" href="javascript:" @click="gotoCategry(selectIndex + 1)">频道</a>
+                        <a target="_self"  @click="gotoCategry(selectIndex + 1)">频道</a>
                     </li>
                     <li class="hot">
-                        <a target="_self" href="javascript:" @click="gotoCategry(1)">热点</a>
+                        <a target="_self"  @click="gotoCategry(1)">热点</a>
                     </li>
                     <li class="gototop" v-show="showGoTopFlag">
                         <a target="_self" href="javascript:window.scrollTo(0,0)">顶部</a>

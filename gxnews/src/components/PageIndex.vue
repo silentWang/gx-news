@@ -4,7 +4,7 @@
             <!-- <div class="an-title-div">
                 <ul class="an-title-ul">
                     <li v-for="item in titleList" :key="item.cateId">
-                        <a href="javascript:" @click="gotoCategry(item.cateId)" class="navLink">{{item.cateName}}</a>
+                        <a  @click="gotoCategry(item.cateId)" class="navLink">{{item.cateName}}</a>
                     </li>
                 </ul>
             </div> -->
@@ -40,14 +40,14 @@
                 <div class="an_content-item" v-for="item in newsList" :key="curPageIndex + '_' + item.id">
                     <div v-if="item.type != 2">
                         <div class="an_content_image" @click="gotoNews(item.id)">
-                            <a target="_blank" href="javascript:"><img :src='item.pics[0]'/></a>
+                            <a target="_blank"><img :src='item.pics[0]'/></a>
                         </div>
                         <div class="an_content_desc">
                             <div class="an_content_desc_inner" @click="gotoNews(item.id)">
-                                <h2><a target="_blank" href="javascript:">{{item.title}}</a></h2>
+                                <h2><a target="_blank" >{{item.title}}</a></h2>
                                 <p class="an_content_info">
-                                    <a target="_self" href="javascript:">{{titleList[selectIndex].cateName}}</a>&nbsp;
-                                    <a target="_self" href="javascript:" v-show="item.from.length > 0">{{item.from}}</a>&nbsp;
+                                    <a target="_self" >{{titleList[selectIndex].cateName}}</a>&nbsp;
+                                    <a target="_self"  v-show="item.from.length > 0">{{item.from}}</a>&nbsp;
                                     <span>{{item.time}}</span>
                                 </p>
                             </div>
@@ -63,11 +63,11 @@
                     <ul class="an_right_list">
                         <li v-for="item in twelveList" :key="item.id">
                             <div v-if="item.type != 2">
-                                <a class="image" href="javascript:" :title="item.title">
+                                <a class="image"  :title="item.title">
                                     <img :src="item.pics[0]" @click="gotoNews(item.id)">
                                 </a>
                                 <p>
-                                    <a href="javascript:" :title="item.title" @click="gotoNews(item.id)">{{item.title}}</a>
+                                    <a  :title="item.title" @click="gotoNews(item.id)">{{item.title}}</a>
                                 </p>
                             </div>
                             <div v-else @click="clkUxArt(item.id)" class="adver_common_class_u8x2583456" v-html="item.title">
@@ -82,10 +82,10 @@
                         <a href="/">首页</a>
                     </li>
                     <li class="channel">
-                        <a target="_self" href="javascript:" @click="gotoCategry(selectIndex + 1)">频道</a>
+                        <a target="_self"  @click="gotoCategry(selectIndex + 1)">频道</a>
                     </li>
                     <li class="hot">
-                        <a target="_self" href="javascript:" @click="gotoCategry(1)">热点</a>
+                        <a target="_self"  @click="gotoCategry(1)">热点</a>
                     </li>
                     <li class="gototop" v-show="showTopFlag">
                         <a target="_self" href="javascript:window.scrollTo(0,0)">顶部</a>
@@ -215,6 +215,7 @@ export default {
                 query: {id:idx}            
             });
             window.open(routeUrl.href, '_blank');
+            return false;
         },
         playTimeNews(ele = null,isplay = false){
             if(!ele){
