@@ -16,11 +16,11 @@
                     </li>
                 </ul>
             </div>
+        </div>
+        <div class="an_middle">
             <div class="n_title_weather">
                 <iframe allowtransparency="true" frameborder="0" width="317" height="28" scrolling="no" src="//tianqi.2345.com/plugin/widget/index.htm?s=3&amp;z=1&amp;t=1&amp;v=0&amp;d=1&amp;bd=0&amp;k=000000&amp;f=ffffff&amp;ltf=ffffff&amp;htf=ffffff&amp;q=1&amp;e=0&amp;a=1&amp;c=54511&amp;w=317&amp;h=28&amp;align=right"></iframe>
             </div>
-        </div>
-        <div class="an_middle">
             <div class="an_left">
                 <div class="an_left_inner">
                     <div class="an_title_logo" @click="reloadHome()">
@@ -46,7 +46,7 @@
                             <div class="an_content_desc_inner" @click="gotoNews(item.id)">
                                 <h2><a target="_blank" >{{item.title}}</a></h2>
                                 <p class="an_content_info">
-                                    <a target="_self" >{{titleList[selectIndex].cateName}}</a>&nbsp;
+                                    <a target="_self" >{{getCateName()}}</a>&nbsp;
                                     <a target="_self"  v-show="item.from.length > 0">{{item.from}}</a>&nbsp;
                                     <span>{{item.time}}</span>
                                 </p>
@@ -140,13 +140,14 @@ export default {
         dataCenter.get24HoursNews().then(res=>{
             if(res.code != 200) return;
             _this.twelveList = res.data;
-            _this.$nextTick(()=>{
-                let eles = document.getElementsByClassName("adver_common_class_u8x2583456");
-                for(let i = 0;i < eles.length;i++){
-                    let ele = document.getElementsByClassName("adver_common_class_u8x2583456")[0];
-                    Utils.changeAndExecuteJS(ele);
-                }
-            });
+            if(!dataCenter.adverList){
+                dataCenter.getAdverInfo(3).then(()=>{
+                    _this.reRenderNow();
+                });
+            }
+            else{
+                _this.reRenderNow();
+            }
         })
         dataCenter.getTimeNewsList().then(res=>{
             if(res.code != 200) return;
@@ -156,9 +157,6 @@ export default {
                 _this.playTimeNews();
             }
         });
-        setTimeout(()=>{
-            _this.addKitchAdver();
-        },1000);
         document.title = "热点新闻";
         window.onscroll = this.listScroll.bind(this);
         this.listScroll();
@@ -191,6 +189,17 @@ export default {
                 this.gotoCategry(this.selectIndex + 1);
             }
         },
+        getCateName(){
+            let list = this.titleList;
+            let cname = "";
+            for(let cate of list){
+                if(cate.cateId == this.selectIndex + 1){
+                    cname = cate.cateName;
+                    break;
+                }
+            }
+            return cname;
+        },
         addKitchAdver(){
             let had = dataCenter.getRandomAdverInfo(Utils.PositionType.POSITION_HEADER);
             let fad = dataCenter.getRandomAdverInfo(Utils.PositionType.POSITION_FOOTER);
@@ -208,7 +217,20 @@ export default {
         clkUxArt(id){
             console.log("点击了gx   " + id);
         },
+        reRenderNow(){
+            this.$nextTick(()=>{
+                let eles = document.getElementsByClassName("adver_common_class_u8x3032d3");
+                for(let i = 0;i < eles.length;i++){
+                    let ele = document.getElementsByClassName("adver_common_class_u8x3032d3")[0];
+                    Utils.changeAndExecuteJS(ele);
+                }
+                this.addKitchAdver();
+            });
+        },
         gotoCategry(idx){
+            if(idx - 1 != this.selectIndex){
+                this.newsList = [];
+            }
             this.selectIndex = idx - 1;
             let _this = this
             dataCenter.getNewsListById(idx,this.curPageIndex).then(res=>{
@@ -221,6 +243,9 @@ export default {
                     for(let i = 0;i < eles.length;i++){
                         let ele = document.getElementsByClassName("adver_common_class_u8x3032d3")[0];
                         Utils.changeAndExecuteJS(ele);
+                    }
+                    if(_this.curPageIndex <= 1){
+                        window.scrollTo(0,0);
                     }
                 });
             })
@@ -365,8 +390,8 @@ export default {
     }
     .n_title_weather {
         position: absolute;
-        top: 10px;
-        right: 280px;
+        top: -30px;
+        right: 0px;
         overflow: hidden;
         height: 40px;
     }
@@ -524,9 +549,10 @@ export default {
     }
     .an_right {
         width: 336px;
-        position: relative;
-        float: right;
-        right: 4px;
+        position: absolute;
+        top:0px;
+        right: 0px;
+        margin-right: 4px;
         margin-top:10px;
     }
     .an_right_container {

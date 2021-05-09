@@ -12,7 +12,6 @@ class DataCenter {
     
     constructor(){
         this.axios = axios;
-        this.init();
     }
 
     getRandomAdverInfo(position){
@@ -22,21 +21,18 @@ class DataCenter {
         else{
             this._adverIdx++;
         }
-        let info = {};
         let ad = {};
         if(this.adverList){
             ad = this.adverList[position];
         }
-        info.id = this._adverIdx;
-        info.ad_script = ad.ad_script;
-        info.ad_title = ad.ad_title;
+        let info;
+        if(ad){
+            info = {};
+            info.id = this._adverIdx;
+            info.ad_script = ad.ad_script;
+            info.ad_title = ad.ad_title;
+        }
         return info;
-    }
-
-    init(){
-        this.getAdverInfo(1).then(res=>{
-            this.adverList = res.data;
-        });
     }
 
     /**新闻列表 */
@@ -106,7 +102,19 @@ class DataCenter {
             });
         }
         let ext = "v1/adv/index?type=" + type;
-        return this.axios.get(ext).then(res=>res.data);
+        return this.axios.get(ext).then(res=>{
+            let data = res.data.data;
+            let info = this.adverList;
+            if(!info){
+                this.adverList = data;
+            }
+            else{
+                for(let key in data){
+                    info[key] = data[key];
+                }
+            }
+            return res.data;
+        });
     }
 }
 

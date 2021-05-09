@@ -6,6 +6,8 @@ export default class Utils {
         POSITION_SIDE:"side",
         POSITION_HEADER:"header",
         POSITION_FOOTER:"footer",
+        POSITION_MIDDLE:"middle",
+        POSITION_BOTTOM:"bottom"
     }
 
     static escapeHtml(str){

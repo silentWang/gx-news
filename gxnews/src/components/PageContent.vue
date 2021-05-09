@@ -7,24 +7,27 @@
                     <div class="close" title="关闭" @click="checkStayState(false)">×</div>
                 </div>
                 <ul class="an_dialog_list">
-                    <li v-for="item in viewList" :key="item.id">
-                        <div id="next_pic">
-                            <a  target="_blank">
-                                <img :src="item.pics[0]" @click="gotoNews(item.id)"/>
-                            </a>
-                        </div>
-                        <div class="an_dialog_list_news_title_content">
-                            <div>
-                                <a class="bn_left_link"  @click="gotoNews(item.id)">{{item.title}}</a>
+                    <li v-for="item in viewList" :key="item.id + '_' + item.type">
+                        <div v-if="item.type != 2">
+                            <div id="next_pic">
+                                <a  target="_blank">
+                                    <img :src="item.pics[0]" @click="gotoNews(item.id)"/>
+                                </a>
                             </div>
-                            <div class="an_dialog_list_news_tag" @click="gotoNews(item.id)">
-                                <span class="tags_wrapper">
-                                    <a href="#">娱乐</a>&nbsp;
-                                    <a href="#">新闻</a>&nbsp;
-                                </span>
-                                <span>{{item.time}}</span>
+                            <div class="an_dialog_list_news_title_content">
+                                <div>
+                                    <a class="bn_left_link"  @click="gotoNews(item.id)">{{item.title}}</a>
+                                </div>
+                                <div class="an_dialog_list_news_tag" @click="gotoNews(item.id)">
+                                    <span class="tags_wrapper">
+                                        <a href="#">娱乐</a>&nbsp;
+                                        <a href="#">新闻</a>&nbsp;
+                                    </span>
+                                    <span>{{item.time}}</span>
+                                </div>
                             </div>
                         </div>
+                        <div v-else @click="clkUxArt(item.id)" class="adver_common_class_ue52361" v-html="item.title"></div>
                     </li>
                 </ul>
             </div>
@@ -43,40 +46,51 @@
         </div>
         <div class="bn_main">
             <div class="bn_left">
+                <div class="adver_common_class_u9oe3r8d73"></div>
                 <ul class="n_up_list">
                     <h3>今日热点</h3>
-                    <li v-for="item in todayHots" :key="item.id">
-                        <a class="image"  :title="item.title">
-                            <img :src="item.pics[0]" @click="gotoNews(item.cateId)">
-                        </a>
-                        <p>
-                            <a  :title="item.title" @click="gotoNews(item.id)">{{item.title}}</a>
-                        </p>
+                    <li v-for="item in todayHots" :key="item.id + '_' + item.type">
+                        <div v-if="item.type != 2">
+                            <a class="image"  :title="item.title">
+                                <img :src="item.pics[0]" @click="gotoNews(item.cateId)">
+                            </a>
+                            <p>
+                                <a  :title="item.title" @click="gotoNews(item.id)">{{item.title}}</a>
+                            </p>
+                        </div>
+                        <div v-else @click="clkUxArt(item.id)" class="adver_common_class_ude4536" v-html="item.title"></div>
                     </li>
                 </ul>
+                <div class="adver_common_class_u9oe3r8d73"></div>
                 <ul class="n_up_list">
                     <h3>小编精选</h3>
-                    <li v-for="item in choseHots" :key="item.id">
-                        <a class="image"  :title="item.title">
-                            <img :src="item.pics[0]" @click="gotoNews(item.cateId)">
-                        </a>
-                        <p>
-                            <a  :title="item.title" @click="gotoNews(item.id)">{{item.title}}</a>
-                        </p>
+                    <li v-for="item in choseHots" :key="item.id + '_' + item.type">
+                        <div v-if="item.type != 2">
+                            <a class="image"  :title="item.title">
+                                <img :src="item.pics[0]" @click="gotoNews(item.cateId)">
+                            </a>
+                            <p>
+                                <a  :title="item.title" @click="gotoNews(item.id)">{{item.title}}</a>
+                            </p>
+                        </div>
+                        <div v-else @click="clkUxArt(item.id)" class="adver_common_class_ude4536" v-html="item.title"></div>
                     </li>
                 </ul>
+                <div class="adver_common_class_u9oe3r8d73"></div>
                 <ul class="n_up_list">
                     <h3>视角</h3>
-                    <li v-for="item in viewHots" :key="item.id">
-                        <a class="image"  :title="item.title">
-                            <img :src="item.pics[0]" @click="gotoNews(item.cateId)">
-                        </a>
-                        <p>
-                            <a  :title="item.title" @click="gotoNews(item.id)">{{item.title}}</a>
-                        </p>
+                    <li v-for="item in viewHots" :key="item.id + '_' + item.type">
+                        <div v-if="item.type != 2">
+                            <a class="image"  :title="item.title">
+                                <img :src="item.pics[0]" @click="gotoNews(item.cateId)">
+                            </a>
+                            <p>
+                                <a  :title="item.title" @click="gotoNews(item.id)">{{item.title}}</a>
+                            </p>
+                        </div>
+                        <div v-else @click="clkUxArt(item.id)" class="adver_common_class_ude4536" v-html="item.title"></div>
                     </li>
                 </ul>
-                <!-- <ImageSlider></ImageSlider> -->
             </div>
             <div class="bn_content">
                 <h1>{{detailInfo.title}}</h1>
@@ -85,33 +99,36 @@
                     <span v-show="detailInfo.updated_at ? true : false">{{detailInfo.source_time}}&nbsp;&nbsp;&nbsp;{{detailInfo.source_from}}</span>
                     <a target="_blank" >博主</a>
                 </div>
-                <br />
+                <br/>
                 <div class="cls_newscontent" v-html="detailInfo.content"></div>
                 <div class="bn_content_pages">
                     <a v-for="item in allPages" :key="item.id"
                          :class="[item.id == currentPageIndex ? 'bn_content_pages_a_selected' : 'bn_content_pages_a_normal']" 
-                         
                          @click="gotoPage(item.index)">{{item.index}}</a>
                 </div>
+                <div class="adver_common_class_u9803ide66"></div>
                 <ul class="n_next_list">
-                    <li v-for="item in nextHots" :key="item.id">
-                        <div id="next_pic">
-                            <a  target="_blank">
-                                <img :src="item.pics[0]" @click="gotoNews(item.id)"/>
-                            </a>
-                        </div>
-                        <div class="n_next_list_news_title_content">
-                            <div>
-                                <a class="bn_left_link"  @click="gotoNews(item.id)">{{item.title}}</a>
+                    <li v-for="item in nextHots" :key="item.id + '_' + item.type">
+                        <div v-if="item.type != 2">
+                            <div id="next_pic">
+                                <a  target="_blank">
+                                    <img :src="item.pics[0]" @click="gotoNews(item.id)"/>
+                                </a>
                             </div>
-                            <div class="n_next_list_news_tag" @click="gotoNews(item.id)">
-                                <span class="tags_wrapper">
-                                    <a href="#">娱乐</a>&nbsp;
-                                    <a href="#">新闻</a>&nbsp;
-                                </span>
-                                <span>{{item.time}}</span>
+                            <div class="n_next_list_news_title_content">
+                                <div>
+                                    <a class="bn_left_link"  @click="gotoNews(item.id)">{{item.title}}</a>
+                                </div>
+                                <div class="n_next_list_news_tag" @click="gotoNews(item.id)">
+                                    <span class="tags_wrapper">
+                                        <a href="#">娱乐</a>&nbsp;
+                                        <a href="#">新闻</a>&nbsp;
+                                    </span>
+                                    <span>{{item.time}}</span>
+                                </div>
                             </div>
                         </div>
+                        <div v-else @click="clkUxArt(item.id)" class="adver_common_class_ue256652" v-html="item.title"></div>
                     </li>
                 </ul>
             </div>
@@ -212,10 +229,20 @@ export default {
                     this.viewHots = info.list
                 }
             }
+            dataCenter.getAdverInfo(4).then(()=>{
+                this.reRenderNow();
+            });
         })
         dataCenter.getDetailDownNews().then(res=>{
             if(res.code != 200) return
             this.nextHots = res.data
+            _this.$nextTick(()=>{
+                let eles = document.getElementsByClassName("adver_common_class_ue256652");
+                for(let i = 0;i < eles.length;i++){
+                    let ele = document.getElementsByClassName("adver_common_class_ue256652")[0];
+                    Utils.changeAndExecuteJS(ele);
+                }
+            });
         })
         dataCenter.getNewsListById(1).then(res=>{
             if(res.code != 200) return
@@ -223,7 +250,15 @@ export default {
             if(!data || data.length == 0) return;
             _this.viewList = data.slice(0,15);
             _this.checkStayState();
-        })
+            _this.$nextTick(()=>{
+                let eles = document.getElementsByClassName("adver_common_class_ue52361");
+                for(let i = 0;i < eles.length;i++){
+                    let ele = document.getElementsByClassName("adver_common_class_ue52361")[0];
+                    Utils.changeAndExecuteJS(ele);
+                }
+            });
+        });
+        this.addInfoAdver();
         window.onscroll = this.listScroll.bind(this);
         this.listScroll();
     },
@@ -254,6 +289,44 @@ export default {
             }
             rEle.style.top = fVal + "px";
         },
+        addInfoAdver(){
+            dataCenter.getAdverInfo(9).then((res)=>{
+                // let badver = dataCenter.getRandomAdverInfo(Utils.PositionType.POSITION_BOTTOM);
+                // if(!badver) return;
+                if(!res || !res.data) return;
+                let ele = document.getElementsByClassName("adver_common_class_u9803ide66")[0];
+                ele.innerHTML = res.data.ad_script;
+                Utils.changeAndExecuteJS(ele);
+            });
+        },
+        reRenderNow(){
+            this.$nextTick(()=>{
+                let eles = document.getElementsByClassName("adver_common_class_ude4536");
+                for(let i = 0;i < eles.length;i++){
+                    let ele = document.getElementsByClassName("adver_common_class_ude4536")[0];
+                    Utils.changeAndExecuteJS(ele);
+                }
+            });
+            this.addKitchAdver();
+        },
+        addKitchAdver(){
+            let had = dataCenter.getRandomAdverInfo(Utils.PositionType.POSITION_HEADER);
+            let mid = dataCenter.getRandomAdverInfo(Utils.PositionType.POSITION_MIDDLE);
+            let fad = dataCenter.getRandomAdverInfo(Utils.PositionType.POSITION_FOOTER);
+            let ele1 = document.getElementsByClassName("adver_common_class_u9oe3r8d73")[0];
+            let ele2 = document.getElementsByClassName("adver_common_class_u9oe3r8d73")[1];
+            let ele3 = document.getElementsByClassName("adver_common_class_u9oe3r8d73")[2];
+            if(!had && !fad && !mid) return;
+            had = had || mid || fad;
+            mid = mid || had || fad;
+            fad = fad || had || mid;
+            ele1.innerHTML = had.ad_script;
+            ele2.innerHTML = mid.ad_script;
+            ele3.innerHTML = fad.ad_script;
+            Utils.changeAndExecuteJS(ele1);
+            Utils.changeAndExecuteJS(ele2);
+            Utils.changeAndExecuteJS(ele3);
+        },
         gotoCategry(idx){
             let routeUrl = this.$router.resolve({
                 path: "/",
@@ -282,6 +355,13 @@ export default {
             if(!this.screenHandler){
                 this.screenHandler = new ScreenHandler(15000,()=>{
                     _this.showDialogFlag = true;
+                    _this.$nextTick(()=>{
+                        let eles = document.getElementsByClassName("adver_common_class_ue256652");
+                        for(let i = 0;i < eles.length;i++){
+                            let ele = document.getElementsByClassName("adver_common_class_ue256652")[0];
+                            Utils.changeAndExecuteJS(ele);
+                        }
+                    });
                 });
             }
             if(!bool){
@@ -608,6 +688,9 @@ export default {
     .bn_content_pages a:hover {
         color: #fff;
         background-color: #b00101;
+    }
+    .adver_common_class_u9803ide66 {
+        margin-top: 10px;
     }
     .n_next_list{
         list-style-type: none;
