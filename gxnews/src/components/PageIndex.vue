@@ -219,9 +219,9 @@ export default {
         },
         reRenderNow(){
             this.$nextTick(()=>{
-                let eles = document.getElementsByClassName("adver_common_class_u8x3032d3");
+                let eles = document.getElementsByClassName("adver_common_class_u8x2583456");
                 for(let i = 0;i < eles.length;i++){
-                    let ele = document.getElementsByClassName("adver_common_class_u8x3032d3")[0];
+                    let ele = document.getElementsByClassName("adver_common_class_u8x2583456")[0];
                     Utils.changeAndExecuteJS(ele);
                 }
                 this.addKitchAdver();
