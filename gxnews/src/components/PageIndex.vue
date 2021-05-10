@@ -37,7 +37,7 @@
                 </div>
             </div>
             <div class="an_content">
-                <div class="an_content-item" v-for="item in newsList" :key="curPageIndex + '_' + item.id + '_' + item.type">
+                <div class="an_content-item" v-for="(item,index) in newsList" :key="index + '_' + item.id + '_' + item.type">
                     <div v-if="item.type != 2">
                         <div class="an_content_image" @click="gotoNews(item.id)">
                             <a target="_blank"><img :src='item.pics[0]'/></a>
@@ -62,7 +62,7 @@
                     <div class="adver_common_class_u8u756412"></div>
                     <div class="an_right_today"><img src=".././assets/yuandian.png"/>今日热点</div>
                     <ul class="an_right_list">
-                        <li v-for="item in twelveList" :key="item.id + '_' + item.type">
+                        <li v-for="(item,index) in twelveList" :key="index + '_' +item.id + '_' + item.type">
                             <div v-if="item.type != 2">
                                 <a class="image"  :title="item.title">
                                     <img :src="item.pics[0]" @click="gotoNews(item.id)">
@@ -100,11 +100,11 @@
 <script>
 import dataCenter from '@/api/DataCenter'
 import Utils from "@/api/Utils"
+import CompatibleUtils from '@/js/CompatibleUtils'
 import PageTemp from './PageTemp'
-import ImageSlider from './news/ImageSlider'
 let _this;
 export default {
-    components:{PageTemp,ImageSlider},
+    components:{PageTemp},
     data(){
         return {
             currenNewIndex:0,
@@ -159,31 +159,47 @@ export default {
         });
         document.title = "热点新闻";
         window.onscroll = this.listScroll.bind(this);
+        window.onresize = this.listScroll.bind(this);
         this.listScroll();
     },
     methods:{
         listScroll(evt){
             let mEle = document.getElementsByClassName("an_middle")[0];
             let rEle = document.getElementsByClassName("an_right")[0];
-            let scrollTop = document.scrollingElement.scrollTop;
+            let xpos = mEle.offsetLeft || 0;
+            let xwid = mEle.offsetWidth || 1200;
+            let attrs = CompatibleUtils.getCompatibleValue();
+            let scrollTop = attrs.scrollTop;
+            let scrollHgt = attrs.scrollHeight;
+            let clientHgt = attrs.clientHeight;
             let rsHgt = rEle.offsetHeight;
-            let dcHgt = document.documentElement.scrollHeight;
-            let chgt = document.documentElement.clientHeight;
-            let fVal = 0;
-            this.showTopFlag = scrollTop >= chgt;
-            if(chgt >= rsHgt){
-                fVal = scrollTop - 50 < 0 ? 0 : scrollTop - 50;
+            this.showTopFlag = scrollTop >= clientHgt;
+            if(scrollTop <= 60){
+                rEle.style.position = "absolute";
+                rEle.style.left = "";
+                rEle.style.bottom = "";
+                rEle.style.top = "";
             }
-            else if(rsHgt - chgt > scrollTop){
-                fVal = 0;
+            else if(rsHgt <= clientHgt){
+                rEle.style.position = "fixed";
+                rEle.style.top = "0px";
+                rEle.style.bottom = "";
+                rEle.style.left = (xpos + xwid - 336 - 4) + "px";
             }
-            else {
-                fVal = scrollTop - rsHgt + chgt - 50;
+            else if(rsHgt - clientHgt < scrollTop - 10){
+                rEle.style.position = "fixed";
+                rEle.style.top = "";
+                rEle.style.bottom = "10px";
+                rEle.style.left = (xpos + xwid - 336 - 4) + "px";
             }
-            rEle.style.top = fVal + "px";
-            if(dcHgt - scrollTop <= chgt && scrollTop > 0 && !this.isChange){
+            else{
+                rEle.style.position = "absolute";
+                rEle.style.left = "";
+                rEle.style.bottom = "";
+                rEle.style.top = "";
+            }
+            if(scrollHgt - clientHgt <= scrollTop + 5 && scrollTop > 0 && !this.isChange){
                 //到底了
-                console.log("到底了")
                 this.isChange = true;
                 this.curPageIndex++;
                 this.gotoCategry(this.selectIndex + 1);
@@ -230,6 +246,7 @@ export default {
         gotoCategry(idx){
             if(idx - 1 != this.selectIndex){
                 this.newsList = [];
+                this.curPageIndex = 1;
             }
             this.selectIndex = idx - 1;
             let _this = this
@@ -240,7 +257,7 @@ export default {
                 _this.newsList = _this.newsList.concat(news);
                 _this.$nextTick(()=>{
                     let eles = document.getElementsByClassName("adver_common_class_u8x3032d3");
-                    for(let i = 0;i < eles.length;i++){
+                    for(let i = (_this.curPageIndex - 1)*news.length;i < eles.length;i++){
                         let ele = document.getElementsByClassName("adver_common_class_u8x3032d3")[0];
                         Utils.changeAndExecuteJS(ele);
                     }
@@ -550,14 +567,13 @@ export default {
     .an_right {
         width: 336px;
         position: absolute;
-        top:0px;
         right: 0px;
         margin-right: 4px;
         margin-top:10px;
     }
     .an_right_container {
         background-color: #fff;
-        padding: 0 10px 10px 10px;
+        padding:10px;
     }
     .an_right_today {
         font-size: 16px;
@@ -670,6 +686,7 @@ export default {
     }
     .an_sidenav a:hover{
         opacity: 1;
+        color: #fff;
         background-color: #ff0000;
     }
     

@@ -7,7 +7,7 @@
                     <div class="close" title="关闭" @click="checkStayState(false)">×</div>
                 </div>
                 <ul class="an_dialog_list">
-                    <li v-for="item in viewList" :key="item.id + '_' + item.type">
+                    <li v-for="(item,index) in viewList" :key="index + '_' + item.id + '_' + item.type">
                         <div v-if="item.type != 2">
                             <div id="next_pic">
                                 <a  target="_blank">
@@ -49,7 +49,7 @@
                 <div class="adver_common_class_u9oe3r8d73"></div>
                 <ul class="n_up_list">
                     <h3>今日热点</h3>
-                    <li v-for="item in todayHots" :key="item.id + '_' + item.type">
+                    <li v-for="(item,index) in todayHots" :key="index + '_' + item.id + '_' + item.type">
                         <div v-if="item.type != 2">
                             <a class="image"  :title="item.title">
                                 <img :src="item.pics[0]" @click="gotoNews(item.cateId)">
@@ -64,7 +64,7 @@
                 <div class="adver_common_class_u9oe3r8d73"></div>
                 <ul class="n_up_list">
                     <h3>小编精选</h3>
-                    <li v-for="item in choseHots" :key="item.id + '_' + item.type">
+                    <li v-for="(item,index) in choseHots" :key="index + '_' + item.id + '_' + item.type">
                         <div v-if="item.type != 2">
                             <a class="image"  :title="item.title">
                                 <img :src="item.pics[0]" @click="gotoNews(item.cateId)">
@@ -79,7 +79,7 @@
                 <div class="adver_common_class_u9oe3r8d73"></div>
                 <ul class="n_up_list">
                     <h3>视角</h3>
-                    <li v-for="item in viewHots" :key="item.id + '_' + item.type">
+                    <li v-for="(item,index) in viewHots" :key="index + '_' + item.id + '_' + item.type">
                         <div v-if="item.type != 2">
                             <a class="image"  :title="item.title">
                                 <img :src="item.pics[0]" @click="gotoNews(item.cateId)">
@@ -106,9 +106,12 @@
                          :class="[item.id == currentPageIndex ? 'bn_content_pages_a_selected' : 'bn_content_pages_a_normal']" 
                          @click="gotoPage(item.index)">{{item.index}}</a>
                 </div>
+                <div class="bn_bottom_recommond_line">
+                    <span>热门推荐</span>
+                </div>
                 <div class="adver_common_class_u9803ide66"></div>
                 <ul class="n_next_list">
-                    <li v-for="item in nextHots" :key="item.id + '_' + item.type">
+                    <li v-for="(item,index) in nextHots" :key="index + '_' + item.id + '_' + item.type">
                         <div v-if="item.type != 2">
                             <div id="next_pic">
                                 <a  target="_blank">
@@ -154,10 +157,9 @@
 <script>
 import dataCenter from '@/api/DataCenter'
 import Utils from "@/api/Utils"
-import ScreenHandler from "@/scripts/ScreenHandler"
-import ImageSlider from './news/ImageSlider'
+import CompatibleUtils from '@/js/CompatibleUtils'
+import ScreenHandler from "@/js/ScreenHandler"
 export default {
-    components:{ImageSlider},
     data(){
         return {
             showDialogFlag:false,
@@ -193,7 +195,6 @@ export default {
         //     evt.clientY = title.clientLeft;
         //     title.dispatchEvent(evt);
         // }, 1000);
-
 
         dataCenter.getNewsList().then(res=>{
             if(res.code != 200) return;
@@ -270,24 +271,40 @@ export default {
             window.open(routeUrl.href);
         },
         listScroll(){
-            let scrollTop = document.scrollingElement.scrollTop;
-            let chgt = document.documentElement.clientHeight;
-            this.showGoTopFlag = scrollTop >= chgt;
             let rEle = document.getElementsByClassName("bn_left")[0];
+            let cEle = document.getElementsByClassName("bn_main")[0];
             if(!rEle) return;
+            let attrVal = CompatibleUtils.getCompatibleValue();
+            let scrollTop = attrVal.scrollTop;
+            let clientHgt = attrVal.clientHeight;
+            let scrollHgt = attrVal.scrollHeight;
             let rsHgt = rEle.offsetHeight;
-            let dcHgt = document.documentElement.scrollHeight;
-            let fVal = 0;
-            if(chgt >= rsHgt){
-                fVal = scrollTop - 50 < 0 ? 0 : scrollTop - 50;
+            let xpos = cEle.offsetLeft || 0;
+            this.showGoTopFlag = scrollTop >= clientHgt;
+            if(scrollTop <= 60){
+                rEle.style.position = "absolute";
+                rEle.style.top = "";
+                rEle.style.left = "";
+                rEle.style.bottom = "";
             }
-            else if(rsHgt - chgt > scrollTop){
-                fVal = 0;
+            else if(rsHgt <= clientHgt){
+                rEle.style.position = "fixed";
+                rEle.style.top = "0px";
+                rEle.style.bottom = "";
+                rEle.style.left = (xpos) + "px";
             }
-            else {
-                fVal = scrollTop - rsHgt + chgt - 50;
+            else if(rsHgt - clientHgt < scrollTop - 10){
+                rEle.style.position = "fixed";
+                rEle.style.top = "";
+                rEle.style.bottom = "10px";
+                rEle.style.left = (xpos) + "px";
             }
-            rEle.style.top = fVal + "px";
+            else{
+                rEle.style.position = "absolute";
+                rEle.style.top = "";
+                rEle.style.left = "";
+                rEle.style.bottom = "";
+            }
         },
         addInfoAdver(){
             dataCenter.getAdverInfo(9).then((res)=>{
@@ -543,8 +560,7 @@ export default {
         width: 336px;
         margin-top:10px; 
         padding: 10px;
-        float: left;
-        position: relative;
+        position: absolute;
     }
     .bn_content {
         width: 780px;
@@ -552,8 +568,8 @@ export default {
         background: #fff;
         padding: 10px;
         margin-top: 10px;
-        display: block;
         float: left;
+        margin-left: 370px;
     }
     .bn_content_second_title {
         text-align: left;
@@ -660,6 +676,9 @@ export default {
         display: block;
         margin: 0 auto;
     }
+    .cls_newscontent p {
+        text-indent: 36px;
+    }
     .bn_content_pages {
         position: relative;
         width: 320px;
@@ -688,6 +707,19 @@ export default {
     .bn_content_pages a:hover {
         color: #fff;
         background-color: #b00101;
+    }
+    .bn_bottom_recommond_line {
+        text-align: left;
+        margin-top: 10px;
+        width: 100%;
+        border-bottom: 2px solid #ccc;
+    }
+    .bn_bottom_recommond_line span {
+        position: relative;
+        color: #f24e4e;
+        top: -2px;
+        padding-bottom: 3px;
+        border-bottom: 2px solid #f24e4e;
     }
     .adver_common_class_u9803ide66 {
         margin-top: 10px;
