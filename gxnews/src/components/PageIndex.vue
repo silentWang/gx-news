@@ -101,10 +101,8 @@
 import dataCenter from '@/api/DataCenter'
 import Utils from "@/api/Utils"
 import CompatibleUtils from '@/js/CompatibleUtils'
-import PageTemp from './PageTemp'
 let _this;
 export default {
-    components:{PageTemp},
     data(){
         return {
             currenNewIndex:0,
@@ -166,6 +164,7 @@ export default {
         listScroll(evt){
             let mEle = document.getElementsByClassName("an_middle")[0];
             let rEle = document.getElementsByClassName("an_right")[0];
+            if(!mEle || !rEle) return;
             let xpos = mEle.offsetLeft || 0;
             let xwid = mEle.offsetWidth || 1200;
             let attrs = CompatibleUtils.getCompatibleValue();

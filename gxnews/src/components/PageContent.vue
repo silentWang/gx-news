@@ -100,14 +100,14 @@
                     <a target="_blank" >博主</a>
                 </div>
                 <br/>
-                <div class="cls_newscontent" v-html="detailInfo.content"></div>
+                <div class="cls_newscontent" v-html="detailHtml"></div>
                 <div class="bn_content_pages">
-                    <a v-for="item in allPages" :key="item.id"
-                         :class="[item.id == currentPageIndex ? 'bn_content_pages_a_selected' : 'bn_content_pages_a_normal']" 
-                         @click="gotoPage(item.index)">{{item.index}}</a>
+                    <a v-for="(item,index) in allPages" :key="index"
+                         :class="[index == currentPageIndex ? 'bn_content_pages_a_selected' : 'bn_content_pages_a_normal']" 
+                         @click="gotoPage(index)">{{index + 1}}</a>
                 </div>
                 <div class="bn_bottom_recommond_line">
-                    <span>热门推荐</span>
+                    <div>热门推荐</div>
                 </div>
                 <div class="adver_common_class_u9803ide66"></div>
                 <ul class="n_next_list">
@@ -164,7 +164,8 @@ export default {
         return {
             showDialogFlag:false,
             showGoTopFlag:false,
-            currentPageIndex:1,
+            currentPageIndex:0,
+            detailHtml:"",
             allPages:[],
             titleList:[],
             todayHots:[],
@@ -182,10 +183,6 @@ export default {
             return;
         }
         let _this = this;
-        this.allPages = [
-            {id:1,index:1},
-            {id:2,index:2}
-        ];
         //only test
         // setTimeout(() => {
         //     let title = document.getElementsByClassName("bn_title_logo")[0];
@@ -212,9 +209,12 @@ export default {
                 return;
             }
             let info = res.data;
-            info.content = Utils.escapeHtml(info.content);
+            let contents = info.content.split("@@@www@@@www@@@");
+            this.allPages = contents.concat([""]);
+            // info.content = Utils.escapeHtml(info.content);
             _this.detailInfo = info;
             document.title = info.title;
+            this.gotoPage(0);
         })
         dataCenter.getDetailLeftNews().then(res=>{
             if(res.code != 200) return
@@ -273,7 +273,7 @@ export default {
         listScroll(){
             let rEle = document.getElementsByClassName("bn_left")[0];
             let cEle = document.getElementsByClassName("bn_main")[0];
-            if(!rEle) return;
+            if(!rEle || !cEle) return;
             let attrVal = CompatibleUtils.getCompatibleValue();
             let scrollTop = attrVal.scrollTop;
             let clientHgt = attrVal.clientHeight;
@@ -287,13 +287,19 @@ export default {
                 rEle.style.left = "";
                 rEle.style.bottom = "";
             }
-            else if(rsHgt <= clientHgt){
+            else if(rsHgt < clientHgt){
                 rEle.style.position = "fixed";
                 rEle.style.top = "0px";
                 rEle.style.bottom = "";
                 rEle.style.left = (xpos) + "px";
             }
-            else if(rsHgt - clientHgt < scrollTop - 10){
+            else if(rsHgt + 95 >= scrollHgt){
+                rEle.style.position = "absolute";
+                rEle.style.top = "";
+                rEle.style.left = "";
+                rEle.style.bottom = "";
+            }
+            else if(rsHgt - clientHgt < scrollTop){
                 rEle.style.position = "fixed";
                 rEle.style.top = "";
                 rEle.style.bottom = "10px";
@@ -359,12 +365,18 @@ export default {
             window.open(routeUrl.href, '_blank');
         },
         gotoPage(index){
-            if(index == 2){
+            let len = this.allPages.length;
+            if(index >= len - 1){
                 let routeUrl = this.$router.resolve({
                     path: "/",
                     query: {id:1}
                 });
                 window.open(routeUrl.href, '_self');
+            }
+            else{
+                this.currentPageIndex = index;
+                this.detailHtml = Utils.escapeHtml(this.allPages[index]);
+                window.scrollTo(0,0);
             }
         },
         checkStayState(bool = true){
@@ -558,7 +570,8 @@ export default {
         flex-direction: column;
         background-color: #fff;
         width: 336px;
-        margin-top:10px; 
+        margin-top:10px;
+        margin-bottom: 25px; 
         padding: 10px;
         position: absolute;
     }
@@ -711,14 +724,14 @@ export default {
     .bn_bottom_recommond_line {
         text-align: left;
         margin-top: 10px;
+        height: 25px;
         width: 100%;
         border-bottom: 2px solid #ccc;
     }
-    .bn_bottom_recommond_line span {
-        position: relative;
+    .bn_bottom_recommond_line div {
+        display: inline-block;
+        height: 25px;
         color: #f24e4e;
-        top: -2px;
-        padding-bottom: 3px;
         border-bottom: 2px solid #f24e4e;
     }
     .adver_common_class_u9803ide66 {

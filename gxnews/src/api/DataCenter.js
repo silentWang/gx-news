@@ -55,7 +55,26 @@ class DataCenter {
     /**新闻详情 */
     getNewsDetailById(idx){
         if(isLocalTest){
-            let data = {"status":"success","code":200,"data":{"id":20069,"category_id":1,"article_id":1136943,"title":"\u4fc4\u201c\u5580\u5c71\u201d\u53f7\u6838\u6f5c\u8247\u5c06\u4e8e5\u67087\u65e5\u670d\u5f79\uff0c\u5df2\u7ecf\u62d6\u5ef6\u4e24\u5e74","keywords":"\u5580\u5c71,\u767d\u8721\u6811,\u6838\u6f5c\u8247","description":"","content":"<div id=\"main-content\" class=\"content\">\r\n                        \r\n                        <p>\u3010\u73af\u7403\u7f51\u519b\u4e8b\u62a5\u9053\u3011\u4fc4\u7f57\u65af\u536b\u661f\u65b0\u95fb\u901a\u8baf\u793e5\u67086\u65e5\u62a5\u9053\uff0c\u4fc4\u7f57\u65af\u56fd\u9632\u90e8\u4fe1\u606f\u548c\u5927\u4f17\u4f20\u64ad\u53f8\u8868\u793a\uff0c\"\u5580\u5c71\"\u53f7885M\u578b\uff08\"\u767d\u8721\u6811-M\"\u7ea7\uff09\u591a\u7528\u9014\u6838\u6f5c\u8247\u5c06\u4e8e5\u67087\u65e5\u5165\u5217\u4fc4\u7f57\u65af\u6d77\u519b\u3002<\/p>\n<p>\u4fc4\u56fd\u9632\u90e8\u5728\u6d88\u606f\u4e2d\u79f0\uff0c\"\u767d\u8721\u6811-M\"\u7ea7\u7684\"\u5580\u5c71\"\u53f7\u5bfc\u5f39\u6838\u6f5c\u8247\u7684\u5165\u5217\u6d77\u519b\u4eea\u5f0f\u5c06\u4e8e5\u67087\u65e5\u5728\u4fc4\u7f57\u65af\u6d77\u519b\u603b\u53f8\u4ee4\u5c3c\u53e4\u62c9\u00b7\u53f6\u592b\u6885\u8bfa\u592b\u6d77\u519b\u4e0a\u5c06\u7684\u4e3b\u6301\u4e0b\u4e3e\u884c\u3002<\/p>\n<p><em class=\"pic-con\"><img itemprop=\"image\" data-alt=\"885M\u578b\u6838\u6f5c\u8247\" src=\"\/\/k-static.xsfaya.com\/uploads\/allimg\/210506\/11002031Y-0.jpg\" \/><script>article.mmbox.load();<\/script><\/em><\/p>\n<p>\u636e\u6089\uff0c\u5165\u5217\u4eea\u5f0f\u5c06\u5728\u5efa\u9020\u6f5c\u8247\u7684\u5317\u5fb7\u6587\u65af\u514b\u7684\u5317\u65b9\u673a\u68b0\u5236\u9020\u5382\u4e3e\u884c\u3002\u4eea\u5f0f\u4e0a\u8fd8\u5c06\u5ba3\u8bfb\u6d77\u519b\u603b\u53f8\u4ee4\u4e0b\u8fbe\u7684\u6f5c\u8247\u5165\u5217\u6d77\u519b\u7684\u547d\u4ee4\u3002\"\u5580\u5c71\"\u53f7\u6210\u529f\u901a\u8fc7\u6d4b\u8bd5\u7684\u8ba4\u8bc1\u5df2\u7ecf\u5f97\u5230\u6279\u51c6\u3002<\/p>\n<p>\u62a5\u9053\u79f0\uff0c\u8fd9\u8258\u6f5c\u8247\u539f\u672c\u5e94\u8be5\u57282019\u5e74\u4ea4\u4ed8\u7ed9\u8230\u961f\uff0c\u4f46\u662f\u5bf9\u6539\u8fdb\u578b\"\u767d\u8721\u6811\"\u7ea7\u9879\u76ee\u7684\u6d4b\u8bd5\u62d6\u5ef6\u4e86\u4ea4\u671f\uff0c\"\u5580\u5c71\"\u53f7\u6838\u6f5c\u8247\u7684\u4ea4\u4ed8\u5148\u662f\u88ab\u63a8\u8fdf\u5230\u4e862020\u5e74\uff0c\u540e\u53c8\u88ab\u63a8\u8fdf\u52302021\u5e74\u3002<\/p>\n<p>\u4fc4\u7f57\u65af\u7684\u8230\u961f\u4e2d\u73b0\u6709\u4e00\u8258\"\u5317\u5fb7\u6587\u65af\u514b\"\u53f7\u6838\u6f5c\u8247\uff0c\u8be5\u6f5c\u8247\u662f\u6309\u7167\u7c7b\u4f3c\u4f46\u672a\u6539\u8fdb\u7684885\u578b\"\u767d\u8721\u6811\"\u7ea7\u9879\u76ee\u5efa\u9020\u7684\u3002<\/p>\n\r\n                        \r\n                    <\/div>\r\n                    \r\n                    ","click":0,"thumb":"\/\/k-static.xsfaya.com\/uploads\/allimg\/210506\/11002031Y-0-lp.jpg","source_from":"\u73af\u7403\u7f51","source_time":"2021\/05\/06","data_source":"\u70ed\u70b9\u65b0\u95fb_\u770b\u770b\u5934\u6761_\u4e2d\u534e\u7f51","created_at":"2021-05-06 11:30:02","updated_at":"2021-05-06 11:31:02"}}
+            let data = {
+                "status": "success", 
+                "code": 200, 
+                "data": {
+                    "id": 20069, 
+                    "category_id": 1, 
+                    "article_id": 1136943, 
+                    "title": "俄“喀山”号核潜艇将于5月7日服役，已经拖延两年", 
+                    "keywords": "喀山,白蜡树,核潜艇", 
+                    "description": "", 
+                    "content": "<div id=\"main-content\" class=\"content\"><p>【环球网军事报道】俄罗斯卫星新闻通讯社5月6日报道，俄罗斯国防部信息和大众传播司表示，\"喀山\"号885M型（\"白蜡树-M\"级）多用途核潜艇将于5月7日入列俄罗斯海军。</p><p>俄国防部在消息中称，\"白蜡树-M\"级的\"喀山\"号导弹核潜艇的入列海军仪式将于5月7日在俄罗斯海军总司令尼古拉·叶夫梅诺夫海军上将的主持下举行。</p><p><em class=\"pic-con\"><img itemprop=\"image\" data-alt=\"885M型核潜艇\" src=\"//k-static.xsfaya.com/uploads/allimg/210506/11002031Y-0.jpg\" /><script>article.mmbox.load();</script></em></p><p>据悉，入列仪式将在建造潜艇的北德文斯克的北方机械制造厂举行。仪式上还将宣读海军总司令下达的潜艇入列海军的命令。\"喀山\"号成功通过测试的认证已经得到批准。</p><p>报道称，这艘潜艇原本应该在2019年交付给舰队，但是对改进型\"白蜡树\"级项目的测试拖延了交期，\"喀山\"号核潜艇的交付先是被推迟到了2020年，后又被推迟到2021年。</p><p>俄罗斯的舰队中现有一艘\"北德文斯克\"号核潜艇，该潜艇是按照类似但未改进的885型\"白蜡树\"级项目建造的。</p></div>@@@www@@@www@@@<div><p>hello world1</p></div>@@@www@@@www@@@<div><p>hello world2</p></div>@@@www@@@www@@@<div><p>hello world3</p></div>@@@www@@@www@@@<div><p>hello world end</p></div>", 
+                    "click": 0, 
+                    "thumb": "//k-static.xsfaya.com/uploads/allimg/210506/11002031Y-0-lp.jpg", 
+                    "source_from": "环球网", 
+                    "source_time": "2021/05/06", 
+                    "data_source": "热点新闻_看看头条_中华网", 
+                    "created_at": "2021-05-06 11:30:02", 
+                    "updated_at": "2021-05-06 11:31:02"
+                }
+            }
             return new Promise((resolve,reject)=>{resolve(data)})
         }
         let ext = "v1/news/detail?id=" + idx
