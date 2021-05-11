@@ -210,7 +210,7 @@ export default {
             }
             let info = res.data;
             let contents = info.content.split("@@@www@@@www@@@");
-            this.allPages = contents.concat([""]);
+            this.allPages = contents;
             // info.content = Utils.escapeHtml(info.content);
             _this.detailInfo = info;
             document.title = info.title;
