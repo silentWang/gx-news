@@ -102,14 +102,16 @@
                 <br/>
                 <div class="cls_newscontent" v-html="detailHtml"></div>
                 <div class="bn_content_pages">
+                    <a class="bn_content_pages_a_normal" v-show="currentPageIndex > 0" @click="gotoPage(currentPageIndex - 1)">上一页</a>
                     <a v-for="(item,index) in allPages" :key="index"
                          :class="[index == currentPageIndex ? 'bn_content_pages_a_selected' : 'bn_content_pages_a_normal']" 
                          @click="gotoPage(index)">{{index + 1}}</a>
+                    <a class="bn_content_pages_a_normal" @click="gotoPage(currentPageIndex + 1)">下一页</a>
                 </div>
+                <div class="adver_common_class_u9803ide66"></div>
                 <div class="bn_bottom_recommond_line">
                     <div>热门推荐</div>
                 </div>
-                <div class="adver_common_class_u9803ide66"></div>
                 <ul class="n_next_list">
                     <li v-for="(item,index) in nextHots" :key="index + '_' + item.id + '_' + item.type">
                         <div v-if="item.type != 2">
@@ -185,13 +187,15 @@ export default {
         let _this = this;
         //only test
         // setTimeout(() => {
-        //     let title = document.getElementsByClassName("bn_title_logo")[0];
-        //     let evt = document.createEvent("UIEvent");
-        //     evt.initEvent("click",false,false);
-        //     evt.clientX = title.clientLeft;
-        //     evt.clientY = title.clientLeft;
-        //     title.dispatchEvent(evt);
-        // }, 1000);
+            // let title = document.getElementsByClassName("bn_title_logo")[0];
+            // let evt = document.createEvent("UIEvent");
+            // evt.initEvent("click",false,false);
+            // evt.clientX = title.clientLeft;
+            // evt.clientY = title.clientLeft;
+            // title.dispatchEvent(evt);
+        //     let ele = document.getElementsByClassName("adver_common_class_ue52361")[0];
+        //     ele.click();
+        // }, 5000);
 
         dataCenter.getNewsList().then(res=>{
             if(res.code != 200) return;
@@ -378,6 +382,9 @@ export default {
                 this.detailHtml = Utils.escapeHtml(this.allPages[index]);
                 window.scrollTo(0,0);
             }
+        },
+        clkUxArt(id){
+            console.log(id);
         },
         checkStayState(bool = true){
             let _this = this;
@@ -693,9 +700,9 @@ export default {
         text-indent: 36px;
     }
     .bn_content_pages {
-        position: relative;
-        width: 320px;
-        margin: 0 auto;
+        width: 100%;
+        margin-top: 25px;
+        margin-bottom: 25px;
     }
     .bn_content_pages_a_selected {
         background-color: #b00101;

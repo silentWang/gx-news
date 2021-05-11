@@ -6,6 +6,17 @@ axios.defaults.headers['X-APP-KEY'] = 'A000001'
 axios.defaults.timeout = 60000
 axios.defaults.baseURL = process.env.API_ROOT
 axios.defaults.withCredentials = false
+axios.defaults.headers["userId"] = (()=>{
+  let userid = localStorage.getItem("rdxw_15de_userId");
+  if(userid && parseInt(userid) > 0){
+      let last = parseInt(userid);
+      let now = new Date().getTime();
+      if(now - last <= 604800) return last;
+  }
+  let ranid = new Date().getTime();
+  localStorage.setItem("rdxw_15de_userId",ranid);
+  return ranid;
+})();
 
 // 服务器响应拦截器，这里拦截403错误
 axios.interceptors.response.use(
