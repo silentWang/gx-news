@@ -32,5 +32,22 @@ export default class CompatibleUtils {
         let clientHeight = document.documentElement.clientHeight || document.body.clientHeight;
         return {clientWidth,clientHeight};
     }
-    /**get  */
+    /**添加事件 兼容*/
+    static addEvent(target,eventType,listen,context){
+        if(document.addEventListener){
+            target.addEventListener(eventType,listen.bind(context));
+        }
+        else{
+            target.attachEvent(eventType,listen.bind(context));
+        }
+    }
+    /**移除事件 */
+    static removeEvent(target,eventType,listen){
+        if(document.removeEventListener){
+            target.removeEventListener(eventType,listen);
+        }
+        else {
+            target.detachEvent(eventType,listen);
+        }
+    }
 }

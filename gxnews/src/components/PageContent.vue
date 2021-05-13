@@ -143,7 +143,7 @@
                         <a href="/">首页</a>
                     </li>
                     <li class="channel">
-                        <a target="_self"  @click="gotoCategry(selectIndex + 1)">频道</a>
+                        <a target="_self"  @click="gotoCategry(detailInfo.category_id)">频道</a>
                     </li>
                     <li class="hot">
                         <a target="_self"  @click="gotoCategry(1)">热点</a>
@@ -154,6 +154,7 @@
                 </ul>
             </div>
         </div>
+        <!-- <div style="position:fixed;width:100%;height:100%;background:#ff0000;opacity:0.1;z-index:100;" class="adver_common_class_u9803ide66"></div> -->
     </div>
 </template>
 <script>
@@ -187,14 +188,7 @@ export default {
         let _this = this;
         //only test
         // setTimeout(() => {
-            // let title = document.getElementsByClassName("bn_title_logo")[0];
-            // let evt = document.createEvent("UIEvent");
-            // evt.initEvent("click",false,false);
-            // evt.clientX = title.clientLeft;
-            // evt.clientY = title.clientLeft;
-            // title.dispatchEvent(evt);
-        //     let ele = document.getElementsByClassName("adver_common_class_ue52361")[0];
-        //     ele.click();
+            
         // }, 5000);
 
         dataCenter.getNewsList().then(res=>{
@@ -253,7 +247,7 @@ export default {
             if(res.code != 200) return
             let data = res.data;
             if(!data || data.length == 0) return;
-            _this.viewList = data.slice(0,15);
+            _this.viewList = data.slice(2,22);
             _this.checkStayState();
             _this.$nextTick(()=>{
                 let eles = document.getElementsByClassName("adver_common_class_ue52361");
@@ -384,7 +378,7 @@ export default {
             }
         },
         clkUxArt(id){
-            console.log(id);
+            console.log("clickId:" + id);
         },
         checkStayState(bool = true){
             let _this = this;
@@ -702,7 +696,7 @@ export default {
     .bn_content_pages {
         width: 100%;
         margin-top: 25px;
-        margin-bottom: 25px;
+        /* margin-bottom: 25px; */
     }
     .bn_content_pages_a_selected {
         background-color: #b00101;

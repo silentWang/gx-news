@@ -1,3 +1,4 @@
+import CompatibleUtils from './CompatibleUtils'
 export default class ScreenHandler {
     
     constructor(timeout,backFunc){
@@ -8,10 +9,14 @@ export default class ScreenHandler {
         this.reWatch();
     }
     addEvent(){
-        document.body.onmousemove = this.triggerEvent.bind(this);
-        document.body.onmousedown = this.triggerEvent.bind(this);
-        document.body.onkeydown = this.triggerEvent.bind(this);
-        document.body.onkeypress = this.triggerEvent.bind(this);
+        CompatibleUtils.addEvent(document.body,"mousemove",this.triggerEvent,this);
+        CompatibleUtils.addEvent(document.body,"mousedown",this.triggerEvent,this);
+        CompatibleUtils.addEvent(document.body,"click",this.triggerEvent,this);
+        CompatibleUtils.addEvent(document.body,"mouseup",this.triggerEvent,this);
+        CompatibleUtils.addEvent(window,"mousewheel",this.triggerEvent,this);
+        CompatibleUtils.addEvent(document.body,"keydown",this.triggerEvent,this);
+        CompatibleUtils.addEvent(document.body,"keypress",this.triggerEvent,this);
+        CompatibleUtils.addEvent(document.body,"keyup",this.triggerEvent,this);
     }
     triggerEvent(){
         this.curTime = new Date().getTime();
