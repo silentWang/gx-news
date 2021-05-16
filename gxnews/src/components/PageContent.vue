@@ -181,6 +181,7 @@ export default {
     },
     created(){
         let query = this.$route.query;
+        dataCenter.setQid(query.qid);
         if(!query && !query.id) {
             this.$router.push({path:'/'});
             return;

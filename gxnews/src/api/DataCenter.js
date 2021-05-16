@@ -14,6 +14,10 @@ class DataCenter {
         this.axios = axios;
     }
 
+    setQid(qid){
+        axios.defaults.headers["qid"] = qid ? qid : ""
+    }
+
     getRandomAdverInfo(position){
         if(!this._adverIdx){
             this._adverIdx = 110000;

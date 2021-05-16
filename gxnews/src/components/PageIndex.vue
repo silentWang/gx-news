@@ -119,6 +119,8 @@ export default {
     },
     mounted(){
         _this = this;
+        let query = this.$route.query;
+        dataCenter.setQid(query.qid);
         dataCenter.getNewsList().then(res=>{
             if(res.code != 200) return;
             let list = res.data;
@@ -128,7 +130,6 @@ export default {
                 arr.push({id:cate.cateId - 1,cateId:cate.cateId,cateName:cate.cateName})
             }
             _this.titleList = arr;
-            let query = this.$route.query;
             let cateId = arr[0].cateId;
             if(query && query.id >= 0){
                 cateId = query.id;
