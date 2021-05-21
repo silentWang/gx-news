@@ -1,0 +1,330 @@
+<template>
+    <div class="mini_main">
+        <div class="mini_main_title">
+            <ul class="mini_main_title_ul">
+                <li v-for="(item) in titleList" :key="item.cateId">
+                    <a  @click="gotoCategry(item.cateId)" :class="[selectIndex == item.id ? 'mini_navLink_selected':'mini_navLink']">{{item.cateName}}</a>
+                </li>
+            </ul>
+        </div>
+        <div class="mini_middle">
+            <!-- <div class="n_title_weather">
+                <iframe allowtransparency="true" frameborder="0" width="317" height="28" scrolling="no" src="//tianqi.2345.com/plugin/widget/index.htm?s=3&amp;z=1&amp;t=1&amp;v=0&amp;d=1&amp;bd=0&amp;k=000000&amp;f=ffffff&amp;ltf=ffffff&amp;htf=ffffff&amp;q=1&amp;e=0&amp;a=1&amp;c=54511&amp;w=317&amp;h=28&amp;align=right"></iframe>
+            </div> -->
+            <div class="mini_content">
+                <div class="mini_content_item" v-for="(item,index) in newsList" :key="index + '_' + item.id + '_' + item.type">
+                    <div v-if="item.type != 2">
+                        <h4><a target="_blank" @click="gotoNews(item.id)">{{item.title}}</a></h4>
+                        <div class="mini_content_image" @click="gotoNews(item.id)">
+                            <a target="_blank"><img :src='item.pics[0]'/></a>
+                            <a target="_blank"><img :src='item.pics[0]'/></a>
+                            <a target="_blank"><img :src='item.pics[0]'/></a>
+                            <a target="_blank"><img :src='item.pics[0]'/></a>
+                        </div>
+                    </div>
+                    <div v-else @click="clkUxArt(item.id)" class="adver_common_class_u8x3526de8" v-html="item.title">
+                    </div>
+                </div>
+            </div>
+            <div class="mini_right">
+                <ul class="mini_right_list">
+                    <li v-for="(item,index) in twelveList" :key="index + '_' +item.id + '_' + item.type">
+                        <div v-if="item.type != 2">
+                            <a class="mini_right_list_image"  :title="item.title">
+                                <img :src="item.pics[0]" @click="gotoNews(item.id)">
+                            </a>
+                            <a class="mini_right_list_title" :title="item.title" @click="gotoNews(item.id)">{{item.title}}</a>
+                        </div>
+                        <div v-else @click="clkUxArt(item.id)" class="adver_common_class_u8x2583456" v-html="item.title">
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</template>
+<script>
+import dataCenter from '@/api/DataCenter'
+import Utils from "@/api/Utils"
+let _this;
+export default {
+    data(){
+        return {
+            todayWeather:"",
+            showTopFlag:false,
+            selectIndex:0,
+            curPageIndex:1,
+            isChange:false,
+            titleList:[],
+            newsList:[],
+            twelveList:[]
+        }
+    },
+    mounted(){
+        _this = this;
+        let query = this.$route.query;
+        dataCenter.setQid(query.qid);
+        dataCenter.getNewsList().then(res=>{
+            if(res.code != 200) return;
+            let list = res.data;
+            let arr = [];
+            for(let i = 0;i < list.length;i++){
+                let cate = list[i];
+                arr.push({id:cate.cateId - 1,cateId:cate.cateId,cateName:cate.cateName})
+            }
+            arr.push({id:-1,cateId:-1,cateName:'更多'})
+            _this.titleList = arr;
+            let cateId = arr[0].cateId;
+            if(query && query.id >= 0){
+                cateId = query.id;
+            }
+            _this.gotoCategry(cateId);
+        })
+        dataCenter.get24HoursNews().then(res=>{
+            if(res.code != 200) return;
+            _this.twelveList = res.data;
+            if(!dataCenter.adverList){
+                dataCenter.getAdverInfo(3).then(()=>{
+                    _this.reRenderNow();
+                });
+            }
+            else{
+                _this.reRenderNow();
+            }
+        })
+        document.title = "MiniPage";
+    },
+    methods:{
+        getCateName(){
+            let list = this.titleList;
+            let cname = "";
+            for(let cate of list){
+                if(cate.cateId == this.selectIndex + 1){
+                    cname = cate.cateName;
+                    break;
+                }
+            }
+            return cname;
+        },
+        reRenderNow(){
+            this.$nextTick(()=>{
+                let eles = document.getElementsByClassName("adver_common_class_u8x2583456");
+                for(let i = 0;i < eles.length;i++){
+                    let ele = document.getElementsByClassName("adver_common_class_u8x2583456")[0];
+                    Utils.changeAndExecuteJS(ele);
+                }
+            });
+        },
+        gotoCategry(idx){
+            if(idx < 0){
+                window.open("/", '_blank');
+                return
+            }
+            if(idx - 1 != this.selectIndex){
+                this.newsList = [];
+                this.curPageIndex = 1;
+            }
+            this.selectIndex = idx - 1;
+            let _this = this
+            dataCenter.getNewsListById(idx,this.curPageIndex).then(res=>{
+                _this.isChange = false;
+                if(res.code != 200) return
+                let news = res.data;
+                _this.newsList = _this.newsList.concat(news);
+                _this.$nextTick(()=>{
+                    let eles = document.getElementsByClassName("adver_common_class_u8x3526de8");
+                    for(let i = (_this.curPageIndex - 1)*news.length;i < eles.length;i++){
+                        let ele = document.getElementsByClassName("adver_common_class_u8x3526de8")[0];
+                        Utils.changeAndExecuteJS(ele);
+                    }
+                    if(_this.curPageIndex <= 1){
+                        window.scrollTo(0,0);
+                    }
+                });
+            })
+        },
+        gotoNews(idx){
+            let routeUrl = this.$router.resolve({
+                path: "/content",
+                query: {id:idx}            
+            });
+            window.open(routeUrl.href, '_blank');
+            return false;
+        }
+    }
+}
+</script>
+<style>
+    * {
+        margin:0px;
+        padding:0px;
+    }
+    html {
+        top:0;
+        left: 0;
+        height: 100%;
+    }
+    body {
+        background: #f5f5f5;
+    }
+    a {
+        color: #333;
+        text-decoration: none;
+        cursor: pointer;
+    }
+    a:hover{ 
+        color:#f24e4e;
+    }
+    .mini_main {
+        display: block;
+        margin: 0 auto;
+        width: 898px;
+        height: 599px;
+        background: #ffffff;
+        overflow: hidden;
+    }
+    .mini_main_title {
+        width: 848px;
+        height: 40px;
+        position: fixed;
+        padding-bottom: 5px;
+        margin-left: 20px;
+        top: 0px;
+        z-index: 99;
+        background: #fff;
+        border-bottom: 2px solid #eee;
+    }
+    .mini_main_title_ul {
+        width: 878px;
+        white-space:nowrap;
+        display: block;
+        padding-top: 6px;
+        text-align: left;
+    }
+    .mini_main_title_ul li {
+        margin:4px 15px 4px 0px;
+        padding: 0 5px 0 0px;
+        display:inline-block;
+    }
+    .mini_navLink {
+        color: #000;
+        font-size: 16px;
+        font-weight: 600;
+        text-decoration: none;
+        padding: 10px;
+    }
+    .mini_navLink:hover {
+        color:#fff;
+        background: #f24e4e;
+        border-radius: 5px;
+    }
+    .mini_navLink_selected {
+        font-size: 16px;
+        font-weight: 600;
+        text-decoration: none;
+        color:#fff;
+        background: #f24e4e;
+        border-radius: 5px;
+        padding: 10px;
+    }
+    .mini_navLink_selected:hover {
+        color: #fff;
+    }
+    .n_title_weather {
+        position: absolute;
+        top: -30px;
+        right: 0px;
+        overflow: hidden;
+        height: 40px;
+    }
+    .mini_middle {
+        width: 878px;
+        height: 550px;
+        position: relative;
+        left: 20px;
+        top: 54px;
+        overflow-y: scroll;
+    }
+    .mini_content {
+        width: 560px;
+        height: 550px;
+        padding: 10px 10px 10px 0px;
+    }
+    .mini_content_item {
+        overflow: hidden;
+        zoom: 1;
+        margin-bottom: 10px;
+        padding-bottom: 4px;
+        border-bottom: 2px solid #eee;
+        text-align: left;
+    }
+    .mini_content_image {
+        display: block;
+        overflow: hidden;
+    }
+    .mini_content_image a {
+        display: block;
+        width: 130px;
+        height: 95px;
+        background-color: #f1f1f1;
+        overflow: hidden;
+        margin: 5px 10px 5px 0px;
+        float: left;
+    }
+    .mini_content_image img {
+        width: 130px;
+        height: 95px;
+        transition: all 0.6s;
+    }
+    .mini_content_image img:hover {
+        transform: scale(1.2);
+    }
+    .mini_right {
+        width: 244px;
+        position: absolute;
+        top: 0px;
+        right: 10px;
+    }
+    .mini_right_list {
+        list-style: none;
+        font-size: 12px;
+        margin-block-start: 1em;
+        margin-inline-start: 0px;
+        margin-inline-end: 0px;
+    }
+    .mini_right_list li {
+        height: 128px;
+        overflow: hidden;
+        zoom: 1;
+        margin-bottom:10px
+    }
+    .mini_right_list_image {
+        display: block;
+        overflow: hidden;
+        margin-right: 10px;
+        background: #f1f1f1;
+        position: relative;
+        cursor: pointer;
+    }
+    .mini_right_list_title {
+        display: block;
+        width: 232px;
+        height: 36px;
+        float: left;
+        position: relative;
+        padding-left: 2px;
+        bottom: 36px;
+        background-color: rgba(0, 0, 0, 0.7);
+        text-align: left;
+        color: seashell;
+    }
+    .mini_right_list_image img {
+        width: 234px;
+        height: 128px;
+        transition: all 0.6s;
+    }
+    .mini_right_list_image img:hover {
+        transform: scale(1.2);
+    }
+    
+</style>

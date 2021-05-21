@@ -435,6 +435,10 @@ export default {
     .an_title_logo img {
         width: 140px;
         height: 55px;
+        transition: all 0.6s;
+    }
+    .an_title_logo img:hover {
+        transform: scale(1.1);
     }
     .an_left_ul {
         list-style-type: none;
@@ -512,6 +516,10 @@ export default {
         vertical-align: middle;
         width: 154px;
         height: auto;
+        transition: all 0.6s;
+    }
+    .an_content_image img:hover {
+        transform: scale(1.2);
     }
     .an_content_desc {
         width: 495px;
@@ -615,7 +623,12 @@ export default {
     }
     .an_right_list li .image img {
         vertical-align: middle;
-        transition: transform .5s ease-in;
+        width: 100px;
+        height: 57px;
+        transition: all 0.6s;
+    }
+    .an_right_list li .image img:hover {
+       transform: scale(1.2);
     }
     .an_right_list li p {
         width: 206px;

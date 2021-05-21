@@ -51,7 +51,7 @@
                     <h3>今日热点</h3>
                     <li v-for="(item,index) in todayHots" :key="index + '_' + item.id + '_' + item.type">
                         <div v-if="item.type != 2">
-                            <a class="image"  :title="item.title">
+                            <a class="n_up_image_a"  :title="item.title">
                                 <img :src="item.pics[0]" @click="gotoNews(item.cateId)">
                             </a>
                             <p>
@@ -66,7 +66,7 @@
                     <h3>小编精选</h3>
                     <li v-for="(item,index) in choseHots" :key="index + '_' + item.id + '_' + item.type">
                         <div v-if="item.type != 2">
-                            <a class="image"  :title="item.title">
+                            <a class="n_up_image_a"  :title="item.title">
                                 <img :src="item.pics[0]" @click="gotoNews(item.cateId)">
                             </a>
                             <p>
@@ -81,7 +81,7 @@
                     <h3>视角</h3>
                     <li v-for="(item,index) in viewHots" :key="index + '_' + item.id + '_' + item.type">
                         <div v-if="item.type != 2">
-                            <a class="image"  :title="item.title">
+                            <a class="n_up_image_a"  :title="item.title">
                                 <img :src="item.pics[0]" @click="gotoNews(item.cateId)">
                             </a>
                             <p>
@@ -524,7 +524,6 @@ export default {
         font-size: 12px;
         color: #bbb;
     }
-
     .bn_title {
         width: 100%;
         height: 40px;
@@ -553,6 +552,10 @@ export default {
     .bn_title_logo img {
         width: 140px;
         height: 55px;
+        transition: all 0.6s;
+    }
+    .bn_title_logo img:hover {
+        transform: scale(1.1);
     }
     .bn_title_ul li {
         margin:4px;
@@ -636,7 +639,7 @@ export default {
         padding-bottom: 10px;
         border-bottom: 1px solid #eee;
     }
-    .n_up_list li a.image {
+    .n_up_image_a {
         float: left;
         width: 100px;
         height: 57px;
@@ -647,9 +650,14 @@ export default {
         position: relative;
         cursor: pointer;
     }
-    .n_up_list li .image img {
+    .n_up_image_a img {
+        width: 100px;
+        height: 57px;
         vertical-align: middle;
-        transition: transform .5s ease-in;
+        transition: all 0.6s;
+    }
+    .n_up_image_a img:hover {
+        transform: scale(1.2);
     }
     .n_up_list li p {
         width: 206px;
@@ -675,12 +683,6 @@ export default {
         bottom: 0px;
         size: 14px;
         color: #9b9597;
-        cursor: pointer;
-    }
-    #pic img{
-        width: 118px;
-        height: 66px;
-        margin-right: 5px;
         cursor: pointer;
     }
     .cls_newscontent {
@@ -779,8 +781,13 @@ export default {
     }
     #next_pic img {
         width: 177px;
+        height: 100px;
         overflow: hidden;
         padding: 0px;
+        transition: all 0.6s;
+    }
+    #next_pic img:hover {
+        transform: scale(1.2);
     }
     .n_next_list_news_tag {
         position: absolute;
