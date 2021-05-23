@@ -139,6 +139,15 @@ class DataCenter {
             return res.data;
         });
     }
+    /**mini页list信息 */
+    getMiniList(idx){
+        let ext = "v1/news/minimain?id=" + idx
+        return this.axios.get(ext).then(res=>res.data)
+    }
+    /**mini页右侧list */
+    getMiniRightList(){
+        return this.axios.get("v1/news/mini").then(res=>res.data)
+    }
 }
 
 export default DataCenter.instance();

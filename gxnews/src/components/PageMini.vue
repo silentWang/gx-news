@@ -7,38 +7,48 @@
                 </li>
             </ul>
         </div>
+        <div class="mini_right">
+            <ul class="mini_right_list">
+                <li v-for="(item,index) in rightList" :key="index + '_' +item.id + '_' + item.type">
+                    <div v-if="item.type != 2">
+                        <a class="mini_right_list_image"  :title="item.list.title">
+                            <img :src="item.list.pics[0]" @click="gotoNews(item.list.id)">
+                        </a>
+                        <a class="mini_right_list_title" :title="item.list.title" @click="gotoNews(item.list.id)">{{item.list.title}}</a>
+                    </div>
+                    <div v-else @click="clkUxArt(item.id)" class="adver_common_class_u8x2583456" v-html="item.list">
+                    </div>
+                </li>
+            </ul>
+        </div>
         <div class="mini_middle">
             <!-- <div class="n_title_weather">
                 <iframe allowtransparency="true" frameborder="0" width="317" height="28" scrolling="no" src="//tianqi.2345.com/plugin/widget/index.htm?s=3&amp;z=1&amp;t=1&amp;v=0&amp;d=1&amp;bd=0&amp;k=000000&amp;f=ffffff&amp;ltf=ffffff&amp;htf=ffffff&amp;q=1&amp;e=0&amp;a=1&amp;c=54511&amp;w=317&amp;h=28&amp;align=right"></iframe>
             </div> -->
             <div class="mini_content">
                 <div class="mini_content_item" v-for="(item,index) in newsList" :key="index + '_' + item.id + '_' + item.type">
-                    <div v-if="item.type != 2">
-                        <h4><a target="_blank" @click="gotoNews(item.id)">{{item.title}}</a></h4>
+                    <div v-if='item.type == 2' class="adver_common_class_u8xef3e23d" v-html="item.title">
+                    </div>
+                    <div v-else-if="item.pics.length >= 3">
+                        <a target="_blank" @click="gotoNews(item.id)">{{item.title}}</a>
                         <div class="mini_content_image" @click="gotoNews(item.id)">
                             <a target="_blank"><img :src='item.pics[0]'/></a>
-                            <a target="_blank"><img :src='item.pics[0]'/></a>
-                            <a target="_blank"><img :src='item.pics[0]'/></a>
+                            <a target="_blank"><img :src='item.pics[1]'/></a>
+                            <a target="_blank"><img :src='item.pics[2]'/></a>
+                            <div class="mini_content_more" target="_blank"><span>查看更多>></span></div>
+                        </div>
+                        <p class="mini_content_image_p">{{getCateName()}}&nbsp;&nbsp;&nbsp;&nbsp;{{item.from ? item.from : ''}}</p>
+                    </div>
+                    <div v-else>
+                        <div class="mini_content_one_image" @click="gotoNews(item.id)">
                             <a target="_blank"><img :src='item.pics[0]'/></a>
                         </div>
-                    </div>
-                    <div v-else @click="clkUxArt(item.id)" class="adver_common_class_u8x3526de8" v-html="item.title">
+                        <div class="mini_content_one_image_title">
+                            <a target="_blank" @click="gotoNews(item.id)">{{item.title}}</a>
+                            <p>{{getCateName()}}&nbsp;&nbsp;&nbsp;&nbsp;{{item.from ? item.from : ''}}</p>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="mini_right">
-                <ul class="mini_right_list">
-                    <li v-for="(item,index) in twelveList" :key="index + '_' +item.id + '_' + item.type">
-                        <div v-if="item.type != 2">
-                            <a class="mini_right_list_image"  :title="item.title">
-                                <img :src="item.pics[0]" @click="gotoNews(item.id)">
-                            </a>
-                            <a class="mini_right_list_title" :title="item.title" @click="gotoNews(item.id)">{{item.title}}</a>
-                        </div>
-                        <div v-else @click="clkUxArt(item.id)" class="adver_common_class_u8x2583456" v-html="item.title">
-                        </div>
-                    </li>
-                </ul>
             </div>
         </div>
     </div>
@@ -53,17 +63,15 @@ export default {
             todayWeather:"",
             showTopFlag:false,
             selectIndex:0,
-            curPageIndex:1,
             isChange:false,
             titleList:[],
             newsList:[],
-            twelveList:[]
+            rightList:[]
         }
     },
     mounted(){
         _this = this;
         let query = this.$route.query;
-        dataCenter.setQid(query.qid);
         dataCenter.getNewsList().then(res=>{
             if(res.code != 200) return;
             let list = res.data;
@@ -72,25 +80,25 @@ export default {
                 let cate = list[i];
                 arr.push({id:cate.cateId - 1,cateId:cate.cateId,cateName:cate.cateName})
             }
-            arr.push({id:-1,cateId:-1,cateName:'更多'})
+            arr.push({id:-1,cateId:-1,cateName:'更多 >>'})
             _this.titleList = arr;
-            let cateId = arr[0].cateId;
-            if(query && query.id >= 0){
-                cateId = query.id;
-            }
-            _this.gotoCategry(cateId);
+            _this.gotoCategry(arr[0].cateId);
         })
-        dataCenter.get24HoursNews().then(res=>{
+        dataCenter.getMiniRightList().then(res=>{
             if(res.code != 200) return;
-            _this.twelveList = res.data;
-            if(!dataCenter.adverList){
-                dataCenter.getAdverInfo(3).then(()=>{
-                    _this.reRenderNow();
-                });
+            let data = res.data
+            let arr = [];
+            for(let i = 0;i < data.length;i++){
+                let info = data[i]
+                if(info.name == "adv_list_1" || info.name == "adv_list_3"){
+                    arr.push({type:1,list:info.list[0] ? info.list[0] : {pics:[]}})
+                }
+                else{
+                    arr.push({type:2,list:info.list})
+                }
             }
-            else{
-                _this.reRenderNow();
-            }
+            _this.rightList = arr;
+            _this.reRenderNow();
         })
         document.title = "MiniPage";
     },
@@ -116,37 +124,30 @@ export default {
             });
         },
         gotoCategry(idx){
-            if(idx < 0){
-                window.open("/", '_blank');
-                return
-            }
             if(idx - 1 != this.selectIndex){
                 this.newsList = [];
-                this.curPageIndex = 1;
             }
             this.selectIndex = idx - 1;
             let _this = this
-            dataCenter.getNewsListById(idx,this.curPageIndex).then(res=>{
+            dataCenter.getMiniList(idx).then(res=>{
                 _this.isChange = false;
                 if(res.code != 200) return
                 let news = res.data;
                 _this.newsList = _this.newsList.concat(news);
                 _this.$nextTick(()=>{
-                    let eles = document.getElementsByClassName("adver_common_class_u8x3526de8");
-                    for(let i = (_this.curPageIndex - 1)*news.length;i < eles.length;i++){
-                        let ele = document.getElementsByClassName("adver_common_class_u8x3526de8")[0];
+                    let eles = document.getElementsByClassName("adver_common_class_u8xef3e23d");
+                    for(let i = 0;i < eles.length;i++){
+                        let ele = document.getElementsByClassName("adver_common_class_u8xef3e23d")[0];
                         Utils.changeAndExecuteJS(ele);
                     }
-                    if(_this.curPageIndex <= 1){
-                        window.scrollTo(0,0);
-                    }
+                    window.scrollTo(0,0)
                 });
             })
         },
         gotoNews(idx){
             let routeUrl = this.$router.resolve({
                 path: "/content",
-                query: {id:idx}            
+                query: {id:idx,qid:"ludashi"}            
             });
             window.open(routeUrl.href, '_blank');
             return false;
@@ -166,6 +167,7 @@ export default {
     }
     body {
         background: #f5f5f5;
+        font-family: "Microsoft YaHei", Arial, sans-serif;
     }
     a {
         color: #333;
@@ -177,6 +179,7 @@ export default {
     }
     .mini_main {
         display: block;
+        position: relative;
         margin: 0 auto;
         width: 898px;
         height: 599px;
@@ -202,7 +205,7 @@ export default {
         text-align: left;
     }
     .mini_main_title_ul li {
-        margin:4px 15px 4px 0px;
+        margin:4px 10px 4px 0px;
         padding: 0 5px 0 0px;
         display:inline-block;
     }
@@ -246,21 +249,29 @@ export default {
         overflow-y: scroll;
     }
     .mini_content {
-        width: 560px;
+        width: 580px;
         height: 550px;
         padding: 10px 10px 10px 0px;
     }
     .mini_content_item {
         overflow: hidden;
         zoom: 1;
-        margin-bottom: 10px;
+        margin-bottom: 5px;
         padding-bottom: 4px;
-        border-bottom: 2px solid #eee;
+        border-bottom: 1px solid #eee;
         text-align: left;
+        font-size: 15px;
+        font-weight: bold;
     }
     .mini_content_image {
         display: block;
         overflow: hidden;
+    }
+    .mini_content_image_p {
+        font-size: 12px;
+        color: #bbb;
+        margin-top: 4px;
+        text-align: left;
     }
     .mini_content_image a {
         display: block;
@@ -268,7 +279,7 @@ export default {
         height: 95px;
         background-color: #f1f1f1;
         overflow: hidden;
-        margin: 5px 10px 5px 0px;
+        margin: 5px 15px 5px 0px;
         float: left;
     }
     .mini_content_image img {
@@ -279,11 +290,59 @@ export default {
     .mini_content_image img:hover {
         transform: scale(1.2);
     }
+    .mini_content_more {
+        width: 130px;
+        height: 60px;
+        background: #eeeeee;
+        cursor: pointer;
+        color: #333;
+        float: left;
+        text-align: center;
+        margin: 5px 10px 5px 0px;
+        padding-top: 35px;
+    }
+    .mini_content_more span {
+        padding-top: 30px;
+    }
+    .mini_content_one_image {
+        width: 150px;
+        float: left;
+    }
+    .mini_content_one_image a {
+        display: block;
+        width: 150px;
+        height: 95px;
+        background-color: #f1f1f1;
+        overflow: hidden;
+        margin: 5px 10px 5px 0px;
+        float: left;
+    }
+    .mini_content_one_image img {
+        width: 150px;
+        height: 95px;
+        transition: all 0.6s;
+    }
+    .mini_content_one_image img:hover {
+        transform: scale(1.2);
+    }
+    .mini_content_one_image_title {
+        width: 420px;
+        padding: 8px 0px 8px 0px;
+        float: right;
+    }
+    .mini_content_one_image_title p {
+        display: block;
+        font-size: 12px;
+        color: #bbb;
+        text-align: left;
+        margin-top: 30px;
+    }
     .mini_right {
         width: 244px;
         position: absolute;
-        top: 0px;
-        right: 10px;
+        top:45px;
+        right: 25px;
+        z-index: 10;
     }
     .mini_right_list {
         list-style: none;
@@ -296,7 +355,7 @@ export default {
         height: 128px;
         overflow: hidden;
         zoom: 1;
-        margin-bottom:10px
+        margin-bottom:6px
     }
     .mini_right_list_image {
         display: block;
@@ -312,11 +371,14 @@ export default {
         height: 36px;
         float: left;
         position: relative;
-        padding-left: 2px;
+        padding-left: 3px;
+        padding-top: 2px;
         bottom: 36px;
         background-color: rgba(0, 0, 0, 0.7);
         text-align: left;
         color: seashell;
+        font-size: 14px;
+        line-height: 100%;
     }
     .mini_right_list_image img {
         width: 234px;
