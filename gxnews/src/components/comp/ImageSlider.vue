@@ -1,6 +1,6 @@
 <template>
     <div id="slider">
-        <div class="cls_panel" @mouseover="stop" @mouseleave="play">
+        <div class="cls_panel" @mouseover="stop()" @mouseleave="play()">
             <ul class="cls_container" :style="containerStyle">
                 <li>
                     <img :src="sliders[sliders.length - 1].img" alt="">

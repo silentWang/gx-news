@@ -159,7 +159,7 @@
 </template>
 <script>
 import dataCenter from '@/api/DataCenter'
-import Utils from "@/api/Utils"
+import Utils from "@/js/Utils"
 import CompatibleUtils from '@/js/CompatibleUtils'
 import ScreenHandler from "@/js/ScreenHandler"
 export default {
@@ -693,6 +693,7 @@ export default {
         text-align: left;
     }
     .cls_newscontent img {
+        max-width: 780px;
         display: block;
         margin: 0 auto;
     }

@@ -124,5 +124,42 @@ export default class Utils {
         }
         return obj;
     }
+    /**timer delay */
+    static addDelay(delay,func,context,times){
+        if(!Utils.delayFuns){
+            Utils.delayFuns = [];
+            Utils.delayIntervalId = setInterval(() => {
+                let funs = Utils.delayFuns;
+                if(!funs || funs.length == 0) return;
+                let len = funs.length;
+                let now = new Date().getTime();
+                for(let i = len - 1;i >= 0;i--){
+                    let fobj = funs[i];
+                    if(now - fobj.curTime >= delay){
+                        fobj.curTime = now;
+                        if(!fobj.func){
+                            funs.splice(i,1);
+                        }
+                        else{
+                            if(fobj.context){
+                                fobj.func.call(fobj.context);
+                            }
+                            else{
+                                fobj.func();
+                            }
+                            if(fobj.times && fobj.times > 0){
+                                fobj.count++;
+                                if(fobj.count >= fobj.times){
+                                    funs.splice(i,1);
+                                }
+                            }
+                        }
+                    }
+                }
+            }, 100);
+        }
+        let curTime = new Date().getTime();
+        Utils.delayFuns.push({curTime,delay,func,context,times,count:0});
+    }
 
 }

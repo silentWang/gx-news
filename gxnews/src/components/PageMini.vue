@@ -3,7 +3,7 @@
         <div class="mini_main_title">
             <ul class="mini_main_title_ul">
                 <li v-for="(item) in titleList" :key="item.cateId">
-                    <a  @click="gotoCategry(item.cateId)" :class="[selectIndex == item.id ? 'mini_navLink_selected':'mini_navLink']">{{item.cateName}}</a>
+                    <a @click="gotoCategry(item.cateId)" :class="[selectIndex == item.id ? 'mini_navLink_selected':'mini_navLink']">{{item.cateName}}</a>
                 </li>
             </ul>
         </div>
@@ -11,10 +11,11 @@
             <ul class="mini_right_list">
                 <li v-for="(item,index) in rightList" :key="index + '_' +item.id + '_' + item.type">
                     <div v-if="item.type != 2">
-                        <a class="mini_right_list_image"  :title="item.list.title">
+                        <NewsSlider v-on:gotoNews="gotoNews" :nsId="index" nWidth="244" nHeight="128" v-bind:newsList="getSlideNewsList(item.list)"></NewsSlider>
+                        <!-- <a class="mini_right_list_image"  :title="item.list.title">
                             <img :src="item.list.pics[0]" @click="gotoNews(item.list.id)">
                         </a>
-                        <a class="mini_right_list_title" :title="item.list.title" @click="gotoNews(item.list.id)">{{item.list.title}}</a>
+                        <a class="mini_right_list_title" :title="item.list.title" @click="gotoNews(item.list.id)">{{item.list.title}}</a> -->
                     </div>
                     <div v-else @click="clkUxArt(item.id)" class="adver_common_class_u8x2583456" v-html="item.list">
                     </div>
@@ -37,7 +38,7 @@
                             <a target="_blank"><img :src='item.pics[2]'/></a>
                             <div class="mini_content_more" target="_blank"><span>查看更多>></span></div>
                         </div>
-                        <p class="mini_content_image_p">{{getCateName()}}&nbsp;&nbsp;&nbsp;&nbsp;{{item.from ? item.from : ''}}</p>
+                        <span class="mini_content_image_p">{{getCateName()}}&nbsp;&nbsp;&nbsp;&nbsp;{{item.from ? item.from : ''}}</span>
                     </div>
                     <div v-else>
                         <div class="mini_content_one_image" @click="gotoNews(item.id)">
@@ -45,7 +46,7 @@
                         </div>
                         <div class="mini_content_one_image_title">
                             <a target="_blank" @click="gotoNews(item.id)">{{item.title}}</a>
-                            <p>{{getCateName()}}&nbsp;&nbsp;&nbsp;&nbsp;{{item.from ? item.from : ''}}</p>
+                            <span>{{getCateName()}}&nbsp;&nbsp;&nbsp;&nbsp;{{item.from ? item.from : ''}}</span>
                         </div>
                     </div>
                 </div>
@@ -54,10 +55,14 @@
     </div>
 </template>
 <script>
+import NewsSlider from './comp/NewsSlider'
 import dataCenter from '@/api/DataCenter'
-import Utils from "@/api/Utils"
+import Utils from "@/js/Utils"
 let _this;
 export default {
+    components:{
+        NewsSlider
+    },
     data(){
         return {
             todayWeather:"",
@@ -71,7 +76,6 @@ export default {
     },
     mounted(){
         _this = this;
-        let query = this.$route.query;
         dataCenter.getNewsList().then(res=>{
             if(res.code != 200) return;
             let list = res.data;
@@ -86,18 +90,7 @@ export default {
         })
         dataCenter.getMiniRightList().then(res=>{
             if(res.code != 200) return;
-            let data = res.data
-            let arr = [];
-            for(let i = 0;i < data.length;i++){
-                let info = data[i]
-                if(info.name == "adv_list_1" || info.name == "adv_list_3"){
-                    arr.push({type:1,list:info.list[0] ? info.list[0] : {pics:[]}})
-                }
-                else{
-                    arr.push({type:2,list:info.list})
-                }
-            }
-            _this.rightList = arr;
+            _this.rightList = res.data;
             _this.reRenderNow();
         })
         document.title = "MiniPage";
@@ -124,6 +117,10 @@ export default {
             });
         },
         gotoCategry(idx){
+            if(idx < 0){
+                window.open("/","blank")
+                return;
+            }
             if(idx - 1 != this.selectIndex){
                 this.newsList = [];
             }
@@ -151,6 +148,17 @@ export default {
             });
             window.open(routeUrl.href, '_blank');
             return false;
+        },
+        getSlideNewsList(list){
+            let arr = [];
+            if(list && list.length > 0){
+                for(let i = 0;i < list.length;i++){
+                    let obj = list[i];
+                    arr.push({id:obj.id,title:obj.title,pic:obj.pics[0]})
+                }
+                arr.push(arr[0])
+            }
+            return arr;
         }
     }
 }
@@ -327,21 +335,21 @@ export default {
     }
     .mini_content_one_image_title {
         width: 420px;
-        padding: 8px 0px 8px 0px;
+        padding: 8px 0px 4px 0px;
         float: right;
     }
-    .mini_content_one_image_title p {
+    .mini_content_one_image_title span {
         display: block;
         font-size: 12px;
         color: #bbb;
         text-align: left;
-        margin-top: 30px;
+        margin-top: 56px;
     }
     .mini_right {
         width: 244px;
         position: absolute;
         top:45px;
-        right: 25px;
+        right: 30px;
         z-index: 10;
     }
     .mini_right_list {
@@ -355,33 +363,32 @@ export default {
         height: 128px;
         overflow: hidden;
         zoom: 1;
-        margin-bottom:6px
+        margin-bottom:6px;
     }
     .mini_right_list_image {
         display: block;
         overflow: hidden;
-        margin-right: 10px;
         background: #f1f1f1;
         position: relative;
         cursor: pointer;
     }
     .mini_right_list_title {
         display: block;
-        width: 232px;
+        width: 242px;
         height: 36px;
         float: left;
         position: relative;
         padding-left: 3px;
-        padding-top: 2px;
+        padding-top: 3px;
         bottom: 36px;
         background-color: rgba(0, 0, 0, 0.7);
         text-align: left;
         color: seashell;
-        font-size: 14px;
+        font-size: 13px;
         line-height: 100%;
     }
     .mini_right_list_image img {
-        width: 234px;
+        width: 244px;
         height: 128px;
         transition: all 0.6s;
     }

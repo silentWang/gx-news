@@ -30,7 +30,7 @@
                         <li v-for="item in titleList" 
                             :key="item.id"
                             @click="gotoCategry(item.cateId)">
-                            <a target="_self" href='javascript:' :class="[item.id == selectIndex ? 'a_active' : 'a_inactive']">{{item.cateName}}</a>
+                            <a target="_self" :class="[item.id == selectIndex ? 'a_active' : 'a_inactive']">{{item.cateName}}</a>
                             <img v-show="item.id == selectIndex" src=".././assets/refresh.png">
                         </li>
                     </ul>
@@ -99,7 +99,7 @@
 </template>
 <script>
 import dataCenter from '@/api/DataCenter'
-import Utils from "@/api/Utils"
+import Utils from "@/js/Utils"
 import CompatibleUtils from '@/js/CompatibleUtils'
 let _this;
 export default {
