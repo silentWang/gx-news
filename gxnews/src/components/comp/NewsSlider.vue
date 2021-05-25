@@ -9,10 +9,10 @@
                     </div>
                 </li>
             </ul>
-            <!-- <div class="ns_slide_arrow">
-                <div class="ns_slide_arrow_left">《</div>
-                <div class="ns_slide_arrow_left">》</div>
-            </div> -->
+            <div v-show="newsList && newsList.length > 1" class="ns_slide_arrow">
+                <div @click="lookAt(-1)" class="ns_slide_arrow_left"><span>〈</span></div>
+                <div @click="lookAt(1)" class="ns_slide_arrow_right"><span>〉</span></div>
+            </div>
         </div>
     </div>
 </template>
@@ -46,7 +46,7 @@ export default {
     mounted(){
         this.initAll();
         if(this.newsList && this.newsList.length > 1){
-            Utils.addDelay(5000,this.playNext,this)
+            Utils.addDelay(this.playNext,this,5000,0)
         }
     },
     methods:{
@@ -79,6 +79,21 @@ export default {
                 str = "ns_slider_ul";
             }
             return str +"_"+ this.nsId;
+        },
+        lookAt(direction){
+            let index = -1;
+            if(direction < 0){
+                index = this.currentIndex + (this.currentIndex <= 0 ? 0 : -1);
+            }
+            else if(direction > 0){
+                let len = this.newsList.length;
+                index = this.currentIndex + (this.currentIndex >= len - 1 ? 0 : 1);
+            }
+            if(this.currentIndex == index || index < 0) return;
+            this.currentIndex = index;
+            let eul = document.getElementById(this.getNsId(2));
+            eul.style.transition = "all 1s";
+            eul.style.marginLeft = `-${index*this.nWidth}px`;
         },
         slideStop(){
             this.isPlay = false;
@@ -116,7 +131,6 @@ export default {
         flex-direction: row;
         flex-wrap: nowrap;
         align-items:center;
-        z-index: 100;
         transition: all 1s;
     }
     .ns_slide_image {
@@ -134,7 +148,7 @@ export default {
         overflow: hidden;
         padding: 1px 1px 0px 2px;
         text-align: left;
-        background: rgba(0, 0, 0, 0.7);
+        background: #555;
     }
     .ns_slide_title a {
         color: #fff;
@@ -143,13 +157,40 @@ export default {
         color: #f24e4e;
     }
     .ns_slide_arrow {
-        width: 100%;
-        position: relative;
-        top:60px;
+        position: absolute;
+        height: 42px;
+        top:40px;
     }
     .ns_slide_arrow_left {
-        width: 30px;
-        height: 30px;
-        background: rgba(0, 0, 0, 0.8);
+        width: 20px;
+        height: 24px;
+        padding:8px 0px 10px 0px;
+        color: #fff;
+        border-radius: 0px 5px 5px 0px;
+        font-size: 18px;
+        cursor:pointer;
+        background: rgba(0, 0, 0, 0.7);
+        overflow: hidden;
+    }
+    .ns_slide_arrow_right {
+        width: 20px;
+        height: 24px;
+        position: relative;
+        left: 224px;
+        top: -42px;
+        float: right;
+        padding:8px 0px 10px 0px;
+        color: #fff;
+        border-radius: 5px 0px 0px 5px;
+        font-size: 18px;
+        cursor:pointer;
+        background: rgba(0, 0, 0, 0.7);
+        overflow: hidden;
+    }
+    .ns_slide_arrow_left span {
+        margin-left: -8px;
+    }
+    .ns_slide_arrow_right span {
+        margin-left: 5px;
     }
 </style>

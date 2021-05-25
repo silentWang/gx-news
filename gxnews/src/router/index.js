@@ -7,6 +7,15 @@ import PageMini from '@/components/PageMini'
 
 Vue.use(Router)
 
+window.requestAnimFrame = (function () {
+    return window.requestAnimationFrame ||
+        window.webkitRequestAnimationFrame ||
+        window.mozRequestAnimationFrame ||
+        function (callback) {
+            window.setTimeout(callback, 6000 / 60);
+        };
+})();
+
 export default new Router({
   routes: [
     {

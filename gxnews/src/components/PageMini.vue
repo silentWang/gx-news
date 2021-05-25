@@ -22,12 +22,12 @@
                 </li>
             </ul>
         </div>
-        <div class="mini_middle">
+        <div class="mini_middle" @scroll="scrollHandler">
             <!-- <div class="n_title_weather">
                 <iframe allowtransparency="true" frameborder="0" width="317" height="28" scrolling="no" src="//tianqi.2345.com/plugin/widget/index.htm?s=3&amp;z=1&amp;t=1&amp;v=0&amp;d=1&amp;bd=0&amp;k=000000&amp;f=ffffff&amp;ltf=ffffff&amp;htf=ffffff&amp;q=1&amp;e=0&amp;a=1&amp;c=54511&amp;w=317&amp;h=28&amp;align=right"></iframe>
             </div> -->
             <div class="mini_content">
-                <div class="mini_content_item" v-for="(item,index) in newsList" :key="index + '_' + item.id + '_' + item.type">
+                <div class="mini_content_item" v-for="(item,index) in pageNewsList" :key="index + '_' + item.id + '_' + item.type">
                     <div v-if='item.type == 2' class="adver_common_class_u8xef3e23d" v-html="item.title">
                     </div>
                     <div v-else-if="item.pics.length >= 3">
@@ -52,6 +52,7 @@
                 </div>
             </div>
         </div>
+        <div v-show="moreFlag" class="mini_bottom_more" @click="gotoNextPage()">更多未读资讯<span>››</span></div>
     </div>
 </template>
 <script>
@@ -66,9 +67,9 @@ export default {
     data(){
         return {
             todayWeather:"",
-            showTopFlag:false,
             selectIndex:0,
-            isChange:false,
+            currentPage:1,
+            moreFlag:true,
             titleList:[],
             newsList:[],
             rightList:[]
@@ -95,7 +96,28 @@ export default {
         })
         document.title = "MiniPage";
     },
+    computed:{
+        pageNewsList(){
+            return this.newsList.slice(0,this.currentPage*10);
+        }
+    },
     methods:{
+        scrollHandler(e){
+            let ele = e.srcElement ? e.srcElement : e.target;
+            if(!ele) return;
+            if(ele.scrollTop + ele.offsetHeight > ele.scrollHeight - 100){
+                let page = this.currentPage + 1;
+                let len = this.newsList.length;
+                let um = Math.ceil(len/10);
+                if(page < um){
+                    this.currentPage++;
+                }
+            }
+            if(this.moreFlag){
+                this.moreFlag = false;
+                Utils.addDelay(this.checkIsMore,this,10000)
+            }
+        },
         getCateName(){
             let list = this.titleList;
             let cname = "";
@@ -127,17 +149,18 @@ export default {
             this.selectIndex = idx - 1;
             let _this = this
             dataCenter.getMiniList(idx).then(res=>{
-                _this.isChange = false;
                 if(res.code != 200) return
                 let news = res.data;
-                _this.newsList = _this.newsList.concat(news);
+                _this.newsList = news;
+                this.currentPage = 1;
+                let cele = document.getElementsByClassName("mini_middle")[0]
+                cele.scrollTop = 0;
                 _this.$nextTick(()=>{
                     let eles = document.getElementsByClassName("adver_common_class_u8xef3e23d");
                     for(let i = 0;i < eles.length;i++){
                         let ele = document.getElementsByClassName("adver_common_class_u8xef3e23d")[0];
                         Utils.changeAndExecuteJS(ele);
                     }
-                    window.scrollTo(0,0)
                 });
             })
         },
@@ -148,6 +171,27 @@ export default {
             });
             window.open(routeUrl.href, '_blank');
             return false;
+        },
+        gotoNextPage(){
+            let page = this.currentPage + 1;
+            let len = this.newsList.length;
+            let um = Math.ceil(len/10);
+            if(page > um) return;
+            this.currentPage++;
+            this.moreFlag = false;
+            Utils.addDelay((bool)=>{
+                let mele = document.getElementsByClassName("mini_middle")[0]
+                let scrollTop = mele.scrollTop;
+                mele.scrollTop = scrollTop + 55;
+                if(bool){
+                    Utils.addDelay(this.checkIsMore,this,100)
+                }
+            },this,1,10)
+        },
+        checkIsMore(){
+            let len = this.newsList.length;
+            let um = Math.ceil(len/10);
+            this.moreFlag = this.currentPage < um;
         },
         getSlideNewsList(list){
             let arr = [];
@@ -254,7 +298,7 @@ export default {
         position: relative;
         left: 20px;
         top: 54px;
-        overflow-y: scroll;
+        overflow-y: auto;
     }
     .mini_content {
         width: 580px;
@@ -344,6 +388,28 @@ export default {
         color: #bbb;
         text-align: left;
         margin-top: 56px;
+    }
+    .mini_bottom_more {
+        width: 100%;
+        height: 30px;
+        position: absolute;
+        line-height: 30px;
+        bottom: 0px;
+        text-align: center;
+        background-color: rgba(237,64,64,0.7);
+        cursor: pointer;
+        font-size: 14px;
+        color: #fff;
+        z-index: 20;
+    }
+    .mini_bottom_more span {
+        width: 16px;
+        height: 16px;
+        display: inline-block;
+        line-height: 16px;
+        text-align: center;
+        font-size: 16px;
+        transform: rotate(90deg);
     }
     .mini_right {
         width: 244px;

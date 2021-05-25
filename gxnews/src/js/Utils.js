@@ -1,5 +1,7 @@
 export default class Utils {
-    constructor(){}
+    constructor(){
+
+    }
 
     static PositionType = {
         POSITION_MAIN:"main",
@@ -125,41 +127,52 @@ export default class Utils {
         return obj;
     }
     /**timer delay */
-    static addDelay(delay,func,context,times){
+    static addDelay(func,context,delay = 1000,times = 1){
+        if(!func) return;
         if(!Utils.delayFuns){
             Utils.delayFuns = [];
-            Utils.delayIntervalId = setInterval(() => {
-                let funs = Utils.delayFuns;
-                if(!funs || funs.length == 0) return;
-                let len = funs.length;
-                let now = new Date().getTime();
-                for(let i = len - 1;i >= 0;i--){
-                    let fobj = funs[i];
-                    if(now - fobj.curTime >= delay){
-                        fobj.curTime = now;
-                        if(!fobj.func){
-                            funs.splice(i,1);
-                        }
-                        else{
-                            if(fobj.context){
-                                fobj.func.call(fobj.context);
-                            }
-                            else{
-                                fobj.func();
-                            }
-                            if(fobj.times && fobj.times > 0){
-                                fobj.count++;
-                                if(fobj.count >= fobj.times){
-                                    funs.splice(i,1);
-                                }
-                            }
-                        }
-                    }
-                }
-            }, 100);
+            window.requestAnimationFrame(Utils.customUpdateFrame)
         }
         let curTime = new Date().getTime();
-        Utils.delayFuns.push({curTime,delay,func,context,times,count:0});
+        let funs = Utils.delayFuns;
+        let fo = {fc:func,tc:context,tn:times,cn:0}
+        let ishave = false;
+        for(let i = 0;i < funs.length;i++){
+            let vo = funs[i];
+            if(vo.d == delay){
+                vo.fs.push(fo)
+                ishave = true;
+                break;
+            }
+        }
+        if(ishave) return;
+        funs.push({d:delay,c:curTime,fs:[fo]});
+    }
+
+    static updateDelay(){
+        let ds = Utils.delayFuns;
+        if(!ds || ds.length <= 0) return;
+        let n = new Date().getTime();
+        for(let i = ds.length - 1;i >= 0;i--){
+            let f = ds[i];
+            if(n - f.c >= f.d){
+                f.c = n;
+                let fs = f.fs;
+                for(let j = fs.length - 1;j >= 0;j--){
+                    let s = fs[j];
+                    s.cn++;
+                    let b = s.tn && s.tn > 0 && s.cn >= s.tn;
+                    b && fs.splice(j,1);
+                    s.tc ? s.fc.call(s.tc,b):s.fc(b)
+                }
+                fs.length == 0 && ds.splice(i,1);
+            }
+        }
+    }
+
+    static customUpdateFrame(stamp){
+        Utils.updateDelay();
+        window.requestAnimationFrame(Utils.customUpdateFrame)
     }
 
 }
