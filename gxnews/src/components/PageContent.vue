@@ -240,11 +240,7 @@ export default {
             if(res.code != 200) return
             this.nextHots = res.data
             _this.$nextTick(()=>{
-                let eles = document.getElementsByClassName("adver_common_class_ue256652");
-                for(let i = 0;i < eles.length;i++){
-                    let ele = document.getElementsByClassName("adver_common_class_ue256652")[0];
-                    Utils.changeAndExecuteJS(ele);
-                }
+                dataCenter.addAdsByClassName("adver_common_class_ue256652");
             });
         })
         dataCenter.getNewsListById(1).then(res=>{
@@ -254,11 +250,7 @@ export default {
             _this.viewList = data.slice(2,22);
             _this.checkStayState();
             _this.$nextTick(()=>{
-                let eles = document.getElementsByClassName("adver_common_class_ue52361");
-                for(let i = 0;i < eles.length;i++){
-                    let ele = document.getElementsByClassName("adver_common_class_ue52361")[0];
-                    Utils.changeAndExecuteJS(ele);
-                }
+                dataCenter.addAdsByClassName("adver_common_class_ue52361");
             });
         });
         this.addInfoAdver();
@@ -316,8 +308,6 @@ export default {
         },
         addInfoAdver(){
             dataCenter.getAdverInfo(9).then((res)=>{
-                // let badver = dataCenter.getRandomAdverInfo(Utils.PositionType.POSITION_BOTTOM);
-                // if(!badver) return;
                 if(!res || !res.data) return;
                 let ele = document.getElementsByClassName("adver_common_class_u9803ide66")[0];
                 ele.innerHTML = res.data.ad_script;
@@ -326,11 +316,7 @@ export default {
         },
         reRenderNow(){
             this.$nextTick(()=>{
-                let eles = document.getElementsByClassName("adver_common_class_ude4536");
-                for(let i = 0;i < eles.length;i++){
-                    let ele = document.getElementsByClassName("adver_common_class_ude4536")[0];
-                    Utils.changeAndExecuteJS(ele);
-                }
+                dataCenter.addAdsByClassName("adver_common_class_ude4536");
             });
             this.addKitchAdver();
         },
@@ -390,11 +376,7 @@ export default {
                 this.screenHandler = new ScreenHandler(15000,()=>{
                     _this.showDialogFlag = true;
                     _this.$nextTick(()=>{
-                        let eles = document.getElementsByClassName("adver_common_class_ue256652");
-                        for(let i = 0;i < eles.length;i++){
-                            let ele = document.getElementsByClassName("adver_common_class_ue256652")[0];
-                            Utils.changeAndExecuteJS(ele);
-                        }
+                        dataCenter.addAdsByClassName("adver_common_class_ue256652");
                     });
                 });
             }

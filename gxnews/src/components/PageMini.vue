@@ -92,12 +92,17 @@ export default {
         dataCenter.getMiniRightList().then(res=>{
             if(res.code != 200) return;
             _this.rightList = res.data;
-            _this.reRenderNow();
+            _this.$nextTick(()=>{
+                dataCenter.addAdsByClassName("adver_common_class_u8x2583456");
+            });
         })
         document.title = "MiniPage";
     },
     computed:{
         pageNewsList(){
+            this.$nextTick(()=>{
+                dataCenter.addAdsByClassName("adver_common_class_u8xef3e23d");
+            });
             return this.newsList.slice(0,this.currentPage*10);
         }
     },
@@ -129,15 +134,6 @@ export default {
             }
             return cname;
         },
-        reRenderNow(){
-            this.$nextTick(()=>{
-                let eles = document.getElementsByClassName("adver_common_class_u8x2583456");
-                for(let i = 0;i < eles.length;i++){
-                    let ele = document.getElementsByClassName("adver_common_class_u8x2583456")[0];
-                    Utils.changeAndExecuteJS(ele);
-                }
-            });
-        },
         gotoCategry(idx){
             if(idx < 0){
                 window.open("/","blank")
@@ -156,11 +152,8 @@ export default {
                 let cele = document.getElementsByClassName("mini_middle")[0]
                 cele.scrollTop = 0;
                 _this.$nextTick(()=>{
-                    let eles = document.getElementsByClassName("adver_common_class_u8xef3e23d");
-                    for(let i = 0;i < eles.length;i++){
-                        let ele = document.getElementsByClassName("adver_common_class_u8xef3e23d")[0];
-                        Utils.changeAndExecuteJS(ele);
-                    }
+                    dataCenter.addAdsByClassName("adver_common_class_u8xef3e23d");
+                    _this.checkIsMore();
                 });
             })
         },
@@ -382,12 +375,15 @@ export default {
         padding: 8px 0px 4px 0px;
         float: right;
     }
+    .mini_content_one_image_title a {
+        height: 74px;
+        display: inline-block;
+    }
     .mini_content_one_image_title span {
         display: block;
         font-size: 12px;
         color: #bbb;
         text-align: left;
-        margin-top: 56px;
     }
     .mini_bottom_more {
         width: 100%;

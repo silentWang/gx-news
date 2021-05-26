@@ -38,7 +38,26 @@ class DataCenter {
         }
         return info;
     }
-
+    /**加载广告 */
+    addAdsByClassName(classname,force = false){
+        if(!classname) return;
+        let elements = document.getElementsByClassName(classname);
+        if(!elements || elements.length == 0) return;
+        let len = elements.length;
+        for(let i = 0;i < len;i++){
+            let element = elements[i];
+            if(!element.isAdLoaded || force){
+                let sScript = element.getElementsByTagName("script")[0];
+                if(!sScript) continue;
+                element.removeChild(sScript);
+                let nScript = document.createElement("script");
+                nScript.type = "text/javascript";
+                nScript.innerHTML = sScript.innerHTML;
+                element.appendChild(nScript);
+                element.isAdLoaded = true;
+            }
+        }
+    }
     /**新闻列表 */
     getNewsList(){
         if(isLocalTest){

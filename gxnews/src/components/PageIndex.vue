@@ -235,11 +235,7 @@ export default {
         },
         reRenderNow(){
             this.$nextTick(()=>{
-                let eles = document.getElementsByClassName("adver_common_class_u8x2583456");
-                for(let i = 0;i < eles.length;i++){
-                    let ele = document.getElementsByClassName("adver_common_class_u8x2583456")[0];
-                    Utils.changeAndExecuteJS(ele);
-                }
+                dataCenter.addAdsByClassName("adver_common_class_u8x2583456");
                 this.addKitchAdver();
             });
         },
@@ -256,11 +252,7 @@ export default {
                 let news = res.data;
                 _this.newsList = _this.newsList.concat(news);
                 _this.$nextTick(()=>{
-                    let eles = document.getElementsByClassName("adver_common_class_u8x3032d3");
-                    for(let i = (_this.curPageIndex - 1)*news.length;i < eles.length;i++){
-                        let ele = document.getElementsByClassName("adver_common_class_u8x3032d3")[0];
-                        Utils.changeAndExecuteJS(ele);
-                    }
+                    dataCenter.addAdsByClassName("adver_common_class_u8x3032d3");
                     if(_this.curPageIndex <= 1){
                         window.scrollTo(0,0);
                     }
