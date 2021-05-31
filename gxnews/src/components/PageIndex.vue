@@ -37,7 +37,7 @@
                 </div>
             </div>
             <div class="an_content">
-                <div class="an_content-item" v-for="(item,index) in newsList" :key="index + '_' + item.id + '_' + item.type">
+                <div class="an_content_item" v-for="(item,index) in newsList" :key="index + '_' + item.id + '_' + item.type">
                     <div v-if="item.type != 2">
                         <div class="an_content_image" @click="gotoNews(item.id)">
                             <a target="_blank"><img :src='item.pics[0]'/></a>
@@ -480,7 +480,7 @@ export default {
     .an_content p {
         font-size: 8px;
     }
-    .an_content-item {
+    .an_content_item {
         width: 100%;
         overflow: hidden;
         zoom: 1;

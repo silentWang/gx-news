@@ -25,15 +25,12 @@ export default {
             required:true
         },
         nWidth:{
-            type:String,
             default:"200"
         },
         nHeight:{
-            type:String,
             default:"200"
         },
         nsId:{
-            type:Number,
             required:true
         }
     },

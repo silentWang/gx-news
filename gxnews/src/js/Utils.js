@@ -175,4 +175,19 @@ export default class Utils {
         window.requestAnimationFrame(Utils.customUpdateFrame)
     }
 
+    /**rem方案 */
+    static immediatelyAdaption(){
+        let docEle = document.documentElement;
+        let resizeEvt = "orientationchange" in window ? 'orientationchange' : 'resize';
+        let recalculate = ()=>{
+            let clientWid = docEle.clientWidth;
+            if(!clientWid) return;
+            clientWid = clientWid > 750 ? 750 : clientWid;
+            docEle.style.fontSize = 100*clientWid/750 + "px";
+        }
+        if(!document.addEventListener) return;
+        window.addEventListener(resizeEvt,recalculate,false);
+        document.addEventListener("DOMContentLoaded",recalculate,false);
+    }
+
 }

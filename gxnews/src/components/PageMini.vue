@@ -160,7 +160,7 @@ export default {
         gotoNews(idx){
             let routeUrl = this.$router.resolve({
                 path: "/content",
-                query: {id:idx,qid:"ludashi"}            
+                query: {id:idx,qid:1}            
             });
             window.open(routeUrl.href, '_blank');
             return false;
@@ -457,5 +457,19 @@ export default {
     .mini_right_list_image img:hover {
         transform: scale(1.2);
     }
+
+    /* .mini_middle::-webkit-scrollbar {
+        width : 10px;
+    }
+    .mini_middle::-webkit-scrollbar-thumb {
+        border-radius: 6px;
+        box-shadow: inset 0 0 5px rgba(0, 0, 255, 0.7);
+        background: #7373e6;
+    }
+    .mini_middle::-webkit-scrollbar-track {
+        box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.7);
+        border-radius: 6px;
+        background: #9e8f8f;
+    } */
     
 </style>
