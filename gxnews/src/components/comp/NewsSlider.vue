@@ -9,10 +9,8 @@
                     </div>
                 </li>
             </ul>
-            <div v-show="newsList && newsList.length > 1" class="ns_slide_arrow">
-                <div @click="lookAt(-1)" class="ns_slide_arrow_left"><span>〈</span></div>
-                <div @click="lookAt(1)" class="ns_slide_arrow_right"><span>〉</span></div>
-            </div>
+            <div v-show="newsList && newsList.length > 1" @click="lookAt(-1)" class="ns_slide_arrow_left"><span>〈</span></div>
+            <div v-show="newsList && newsList.length > 1" @click="lookAt(1)" class="ns_slide_arrow_right"><span>〉</span></div>
         </div>
     </div>
 </template>
@@ -138,29 +136,33 @@ export default {
         transform: scale(1.2);
     }
     .ns_slide_title {
-        height: 36px;
+        height: 45px;
         position: relative;
-        top: -36px;
+        top: -44px;
         color: #fff;
         overflow: hidden;
-        padding: 1px 1px 0px 2px;
+        padding: 4px 2px 0px 4px;
         text-align: left;
-        background: #555;
+        background: rgba(0, 0, 0, 0.7);
+        overflow: hidden;
     }
     .ns_slide_title a {
         color: #fff;
+        font-size: 14px;
+        padding: 4px 0px;
+        line-height: 19px;
+        box-sizing: border-box;
+        overflow: hidden;
     }
     .ns_slide_title a:hover {
-        color: #f24e4e;
-    }
-    .ns_slide_arrow {
-        position: absolute;
-        height: 42px;
-        top:40px;
+        color: #fff;
     }
     .ns_slide_arrow_left {
         width: 20px;
         height: 24px;
+        position: relative;
+        left: 0px;
+        top: 38%;
         padding:8px 0px 10px 0px;
         color: #fff;
         border-radius: 0px 5px 5px 0px;
@@ -172,10 +174,10 @@ export default {
     .ns_slide_arrow_right {
         width: 20px;
         height: 24px;
-        position: relative;
-        left: 224px;
-        top: -42px;
+        position: absolute;
         float: right;
+        top: 38%;
+        right: 0px;
         padding:8px 0px 10px 0px;
         color: #fff;
         border-radius: 5px 0px 0px 5px;

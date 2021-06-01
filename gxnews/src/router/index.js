@@ -1,9 +1,10 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import PageTest from '@/components/PageTest'
+// import PageTest from '@/components/PageTest'
 import PageIndex from '@/components/PageIndex'
 import PageContent from '@/components/PageContent'
-import PageMini from '@/components/PageMini'
+// import PageMini from '@/components/PageMini'
+import PageMiniA from '@/components/PageMiniA'
 
 Vue.use(Router)
 
@@ -36,8 +37,8 @@ export default new Router({
     },
     {
       path:'/mini',
-      name:'PageMini',
-      component:PageMini
-    },
+      name:'PageMiniA',
+      component:PageMiniA
+    }
   ]
 })

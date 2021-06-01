@@ -148,6 +148,27 @@ export default class Utils {
         if(ishave) return;
         funs.push({d:delay,c:curTime,fs:[fo]});
     }
+    
+    static removeDelay(delay,func,context = null){
+        let funs = Utils.delayFuns;
+        if(!funs || funs.length == 0) return;
+        for(let i = 0;i < funs.length;i++){
+            let vos = funs[i];
+            if(vos.d == delay){
+                let fs = vos.fs;
+                for(let j = fs.length - 1;j >= 0;j--){
+                    let f = fs[j];
+                    if(f.fc == func){
+                        if(!context || context == f.tc){
+                            fs.splice(j,1);
+                        }
+                        break;
+                    }
+                }
+                break;
+            }
+        }
+    }
 
     static updateDelay(){
         let ds = Utils.delayFuns;
