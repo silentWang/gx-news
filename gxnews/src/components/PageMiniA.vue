@@ -69,7 +69,7 @@ export default {
             todayWeather:"",
             selectIndex:0,
             currentPage:1,
-            moreFlag:true,
+            moreFlag:false,
             titleList:[],
             newsList:[],
             rightList:[]
@@ -103,7 +103,8 @@ export default {
             this.$nextTick(()=>{
                 dataCenter.addAdsByClassName("adver_common_class_u8xef3e23d");
             });
-            return this.newsList.slice(0,this.currentPage*10);
+            return this.newsList;
+            // return this.newsList.slice(0,this.currentPage*10);
         }
     },
     methods:{
@@ -153,8 +154,8 @@ export default {
                 cele.scrollTop = 0;
                 _this.$nextTick(()=>{
                     dataCenter.addAdsByClassName("adver_common_class_u8xef3e23d");
-                    _this.checkIsMore();
                 });
+                Utils.addDelay(_this.checkIsMore,this,10000,1);
             })
         },
         delayGoto(cid,isdelay){

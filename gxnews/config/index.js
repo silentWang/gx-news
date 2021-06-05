@@ -35,7 +35,7 @@ module.exports = {
     assetsRoot: path.resolve(__dirname, '../dist'),
     assetsSubDirectory: 'static',
     // assetsPublicPath: '/',
-    assetsPublicPath: 'https://news-dtxww.oss-cn-hangzhou.aliyuncs.com/',
+    assetsPublicPath: 'https://news-dtxww.oss-accelerate.aliyuncs.com/',
     /**
      * Source Maps
      */

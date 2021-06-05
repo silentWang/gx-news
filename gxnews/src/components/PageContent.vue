@@ -101,6 +101,7 @@
                 </div>
                 <br/>
                 <div class="cls_newscontent" v-html="detailHtml"></div>
+                <div class="adver_common_class_u9803ide66"></div>
                 <div class="bn_content_pages">
                     <a class="bn_content_pages_a_normal" v-show="currentPageIndex > 0" @click="gotoPage(currentPageIndex - 1)">上一页</a>
                     <a v-for="(item,index) in allPages" :key="index"
@@ -108,7 +109,6 @@
                          @click="gotoPage(index)">{{index + 1}}</a>
                     <a class="bn_content_pages_a_normal" @click="gotoPage(currentPageIndex + 1)">下一页</a>
                 </div>
-                <div class="adver_common_class_u9803ide66"></div>
                 <div class="bn_bottom_recommond_line">
                     <div>热门推荐</div>
                 </div>

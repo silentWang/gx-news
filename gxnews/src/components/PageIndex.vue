@@ -150,9 +150,10 @@ export default {
         })
         dataCenter.getTimeNewsList().then(res=>{
             if(res.code != 200) return;
-            _this.timeNewList = res.data;
-            if(res.data && res.data.length > 1){
-                _this.currenNewIndex = 0;
+            let arr = res.data;
+            if(arr && arr.length > 0){
+                _this.timeNewList = arr.concat(arr[0]);
+                _this.currenNewIndex = 1;
                 _this.playTimeNews();
             }
         });
@@ -273,30 +274,28 @@ export default {
             }
             let ncontext = _this;
             if(isplay){
-                ele.style.transition = "all 1s"
-                ele.style.marginTop = "0px";
+                ncontext.currenNewIndex = 0;
+                ele.style.transition = "all 0s";
+                ele.style.marginTop = "-25px";
                 ncontext.currenNewIndex++;
-                ncontext.playTimeNews(ele)
+                Utils.addDelay(()=>{
+                    ncontext.playTimeNews(ele);
+                },ncontext,100);
             }
             else{
-                ele.style.transition = "all 1s"
-                setTimeout(() => {
+                ele.style.transition = "all 1s";
+                Utils.addDelay(()=>{
                     let len = ncontext.timeNewList.length;
                     let mtop = -ncontext.currenNewIndex * 25;
                     ele.style.marginTop = mtop + "px"
-                    if(ncontext.currenNewIndex < len){
+                    if(ncontext.currenNewIndex <= len){
                         ncontext.playTimeNews(ele);
                         ncontext.currenNewIndex++;
                     }
                     else{
-                        ncontext.currenNewIndex = 0;
-                        ele.style.transition = "width 1s"
-                        ele.style.marginTop = "25px";
-                        setTimeout(() => {
-                            ncontext.playTimeNews(ele,true);
-                        }, 100);
+                        ncontext.playTimeNews(ele,true);
                     }
-                }, 3000);
+                },this,3000);
             }
         }
     }
@@ -362,7 +361,7 @@ export default {
         height: 20px;
         overflow: hidden;
         margin: 0 auto;
-        width: 366px;
+        width: 440px;
     }
     .an_title_scrollnews_div div {
         float: left;
@@ -374,8 +373,9 @@ export default {
         text-align: left;
         position: relative;
         padding: 0px;
-        margin: 0px;
-        top: 0px;
+        margin-top: -25px;
+        top: 4px;
+        left: 72px;
     }
     .an_title_scrollnews_ul li {
         padding-bottom: 5px;
