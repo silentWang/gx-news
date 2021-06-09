@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import axios from 'axios'
+import NetHttp from './NetHttp'
 
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded'
 axios.defaults.headers['X-APP-KEY'] = 'A000001'
@@ -17,6 +18,8 @@ axios.defaults.headers["userId"] = (()=>{
   localStorage.setItem("rdxw_15de_userId",ranid);
   return ranid;
 })();
+
+NetHttp.DFTT_ADVER_URL = process.env.DFTT_ADVER_URL
 
 // 服务器响应拦截器，这里拦截403错误
 axios.interceptors.response.use(

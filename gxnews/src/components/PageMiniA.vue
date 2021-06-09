@@ -58,6 +58,7 @@
 <script>
 import NewsSlider from './comp/NewsSlider'
 import dataCenter from '@/api/DataCenter'
+import AdvertiseUtils from '@/api/AdvertiseUtils'
 import Utils from "@/js/Utils"
 let _this;
 export default {
@@ -97,6 +98,7 @@ export default {
             });
         })
         document.title = "MiniPage";
+        // AdvertiseUtils.getDFTTAdver();
     },
     computed:{
         pageNewsList(){
