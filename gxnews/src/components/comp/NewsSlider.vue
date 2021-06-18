@@ -3,9 +3,9 @@
         <div :id="getNsId(1)" class="ns_main" v-show="newsList && newsList.length > 0">
             <ul :id="getNsId(2)" class="ns_main_ul">
                 <li @mouseover="slideStop" @mouseout="slideContinue" class="ns_main_li" v-for="(item,index) in newsList" :key="index">
-                    <img @click="gotoNews(item.id)" class="ns_slide_image" :src="item.pic">
+                    <img @click="gotoNews(item)" class="ns_slide_image" :src="item.pic">
                     <div class="ns_slide_title">
-                        <a @click="gotoNews(item.id)">{{item.title}}</a>
+                        <a @click="gotoNews(item)">{{item.title}}</a>
                     </div>
                 </li>
             </ul>
@@ -87,6 +87,7 @@ export default {
             if(this.currentIndex == index || index < 0) return;
             this.currentIndex = index;
             let eul = document.getElementById(this.getNsId(2));
+            if(!eul) return;
             eul.style.transition = "all 1s";
             eul.style.marginLeft = `-${index*this.nWidth}px`;
         },

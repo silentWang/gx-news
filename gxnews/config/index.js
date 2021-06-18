@@ -9,10 +9,17 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: {
       '/napi': {
-        target:'http://112.124.52.49:8080/api', // 你请求的第三方接口
+        target:'https://news.dtxww.cn/api', // 你请求的第三方接口
         changeOrigin:true,
         pathRewrite:{ 
           '^/napi': ''  
+        }
+      },
+      '/adver':{
+        target:'https://news.dtxww.cn/adver',
+        changeOrigin:true,
+        pathRewrite:{
+          '^/adver': ''  
         }
       }
     },

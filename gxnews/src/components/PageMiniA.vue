@@ -17,7 +17,7 @@
                         </a>
                         <a class="mini_right_list_title" :title="item.list.title" @click="gotoNews(item.list.id)">{{item.list.title}}</a> -->
                     </div>
-                    <div v-else @click="clkUxArt(item.id)" class="adver_common_class_u8x2583456" v-html="item.list">
+                    <div v-else @click="clkUxArt(item.id)" :id="item.id ? item.id : ''" class="adver_common_class_u8x2583456" v-html="item.list">
                     </div>
                 </li>
             </ul>
@@ -28,25 +28,25 @@
             </div> -->
             <div class="mini_content">
                 <div class="mini_content_item" v-for="(item,index) in pageNewsList" :key="index + '_' + item.id + '_' + item.type">
-                    <div v-if='item.type == 2' class="adver_common_class_u8xef3e23d" v-html="item.title">
+                    <div v-if='item.type == 2' :id="item.id ? item.id : ''" class="adver_common_class_u8xef3e23d" v-html="item.title">
                     </div>
                     <div v-else-if="item.pics.length >= 3">
-                        <a target="_blank" @click="gotoNews(item.id)">{{item.title}}</a>
-                        <div class="mini_content_image" @click="gotoNews(item.id)">
+                        <a target="_blank" @click="gotoNews(item)">{{item.title}}</a>
+                        <div class="mini_content_image" @click="gotoNews(item)">
                             <a target="_blank"><img :src='item.pics[0]'/></a>
                             <a target="_blank"><img :src='item.pics[1]'/></a>
                             <a target="_blank"><img :src='item.pics[2]'/></a>
                             <div class="mini_content_more" target="_blank"><span>查看更多>></span></div>
                         </div>
-                        <span class="mini_content_image_p">{{getCateName()}}&nbsp;&nbsp;&nbsp;&nbsp;{{item.from ? item.from : ''}}</span>
+                        <span class="mini_content_image_p">{{getCateName(item)}}{{item.from ? item.from : ''}}</span>
                     </div>
                     <div v-else>
-                        <div class="mini_content_one_image" @click="gotoNews(item.id)">
+                        <div class="mini_content_one_image" @click="gotoNews(item)">
                             <a target="_blank"><img :src='item.pics[0]'/></a>
                         </div>
                         <div class="mini_content_one_image_title">
-                            <a target="_blank" @click="gotoNews(item.id)">{{item.title}}</a>
-                            <span>{{getCateName()}}&nbsp;&nbsp;&nbsp;&nbsp;{{item.from ? item.from : ''}}</span>
+                            <a target="_blank" @click="gotoNews(item)">{{item.title}}</a>
+                            <span>{{getCateName(item)}}{{item.from ? item.from : ''}}</span>
                         </div>
                     </div>
                 </div>
@@ -98,7 +98,7 @@ export default {
             });
         })
         document.title = "MiniPage";
-        // AdvertiseUtils.getDFTTAdver();
+        // AdvertiseUtils.getCSSPAdever();
     },
     computed:{
         pageNewsList(){
@@ -126,7 +126,8 @@ export default {
                 Utils.addDelay(this.checkIsMore,this,10000)
             }
         },
-        getCateName(){
+        getCateName(item){
+            if(item && item.cateId == -100) return "";
             let list = this.titleList;
             let cname = "";
             for(let cate of list){
@@ -135,7 +136,7 @@ export default {
                     break;
                 }
             }
-            return cname;
+            return cname + "    ";
         },
         gotoCategry(idx){
             if(idx < 0){
@@ -151,13 +152,25 @@ export default {
                 if(res.code != 200) return
                 let news = res.data;
                 _this.newsList = news;
-                this.currentPage = 1;
-                let cele = document.getElementsByClassName("mini_middle")[0]
-                cele.scrollTop = 0;
-                _this.$nextTick(()=>{
-                    dataCenter.addAdsByClassName("adver_common_class_u8xef3e23d");
+                let func = ()=>{
+                    this.currentPage = 1;
+                    let cele = document.getElementsByClassName("mini_middle")[0]
+                    if(cele){
+                        cele.scrollTop = 0;
+                    }
+                    _this.$nextTick(()=>{
+                        dataCenter.addAdsByClassName("adver_common_class_u8xef3e23d");
+                    });
+                    Utils.addDelay(_this.checkIsMore,this,10000,1);
+                }
+                func();
+                dataCenter.getCSSPAdever().then(data=>{
+                    _this.newsList.unshift(data);
+                    dataCenter.uploadAct(data.displayurl);
+                    func();
+                }).catch(()=>{
+                    func();
                 });
-                Utils.addDelay(_this.checkIsMore,this,10000,1);
             })
         },
         delayGoto(cid,isdelay){
@@ -170,7 +183,17 @@ export default {
                 clearTimeout(this.delayGotoId);
             }
         },
-        gotoNews(idx){
+        gotoNews(item){
+            if(item.cateId == -100){
+                if(item.url){
+                    window.open(item.url, '_blank');
+                }
+                else{
+                    window.open("/", '_blank');
+                }
+                return;
+            }
+            let idx = item.id;
             let routeUrl = this.$router.resolve({
                 path: "/content",
                 query: {id:idx,qid:1}            

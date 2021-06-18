@@ -31,7 +31,7 @@ export default class NetHttp {
         });
     }
 
-    static post(url,params){
+    static post(url,params,contentType = "application/x-www-form-urlencoded",){
         return new Promise((resolve,reject)=>{
             let xhr = null;
             if(window.XMLHttpRequest){
@@ -40,11 +40,20 @@ export default class NetHttp {
             else{
                 xhr = new ActiveXObject("Microsoft.XMLHTTP");
             }
-            let json = JSON.stringify(params);
+            let pk = "";
+            if(params && typeof params == 'object'){
+                let pks = [];
+                for(let key in params){
+                    pks.push(key + "=" + params[key]);
+                    pks.push("&");
+                }
+                pks.pop();
+                pk = pks.join("");
+            }
             xhr.withCredentials = false;
-            xhr.open("post",this.DFTT_ADVER_URL + url);
-            xhr.setRequestHeader("Content-Type","application/json");
-            xhr.send(json);
+            xhr.open("POST",this.DFTT_ADVER_URL + url,true);
+            xhr.setRequestHeader("Content-Type",contentType);
+            xhr.send(pk);
             xhr.onreadystatechange = ()=>{
                 if(xhr.readyState == 4 && xhr.status == 200){
                     resolve(JSON.parse(xhr.responseText));
