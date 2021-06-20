@@ -31,21 +31,21 @@
                     <div v-if='item.type == 2' :id="item.id ? item.id : ''" class="adver_common_class_u8xef3e23d" v-html="item.title">
                     </div>
                     <div v-else-if="item.pics.length >= 3">
-                        <a target="_blank" @click="gotoNews(item)">{{item.title}}</a>
+                        <a target="_blank" :href="item.url ? item.url : ''" @click="gotoNews(item)">{{item.title}}</a>
                         <div class="mini_content_image" @click="gotoNews(item)">
-                            <a target="_blank"><img :src='item.pics[0]'/></a>
-                            <a target="_blank"><img :src='item.pics[1]'/></a>
-                            <a target="_blank"><img :src='item.pics[2]'/></a>
+                            <a target="_blank" :href="item.url ? item.url : ''"><img :src='item.pics[0]'/></a>
+                            <a target="_blank" :href="item.url ? item.url : ''"><img :src='item.pics[1]'/></a>
+                            <a target="_blank" :href="item.url ? item.url : ''"><img :src='item.pics[2]'/></a>
                             <div class="mini_content_more" target="_blank"><span>查看更多>></span></div>
                         </div>
                         <span class="mini_content_image_p">{{getCateName(item)}}{{item.from ? item.from : ''}}</span>
                     </div>
                     <div v-else>
                         <div class="mini_content_one_image" @click="gotoNews(item)">
-                            <a target="_blank"><img :src='item.pics[0]'/></a>
+                            <a target="_blank" :href="item.url ? item.url : ''"><img :src='item.pics[0]'/></a>
                         </div>
                         <div class="mini_content_one_image_title">
-                            <a target="_blank" @click="gotoNews(item)">{{item.title}}</a>
+                            <a target="_blank" :href="item.url ? item.url : ''" @click="gotoNews(item)">{{item.title}}</a>
                             <span>{{getCateName(item)}}{{item.from ? item.from : ''}}</span>
                         </div>
                     </div>
@@ -164,13 +164,13 @@ export default {
                     Utils.addDelay(_this.checkIsMore,this,10000,1);
                 }
                 func();
-                dataCenter.getCSSPAdever().then(data=>{
-                    _this.newsList.unshift(data);
-                    dataCenter.uploadAct(data.displayurl);
-                    func();
-                }).catch(()=>{
-                    func();
-                });
+                // dataCenter.getCSSPAdever().then(data=>{
+                //     _this.newsList.unshift(data);
+                //     dataCenter.uploadAct(data.displayurl);
+                //     func();
+                // }).catch(()=>{
+                //     func();
+                // });
             })
         },
         delayGoto(cid,isdelay){
@@ -186,7 +186,8 @@ export default {
         gotoNews(item){
             if(item.cateId == -100){
                 if(item.url){
-                    window.open(item.url, '_blank');
+                    dataCenter.uploadAct();
+                    // window.open(item.url, '_blank');
                 }
                 else{
                     window.open("/", '_blank');
