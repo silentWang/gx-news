@@ -6,5 +6,5 @@ module.exports = merge(prodEnv, {
   NODE_ENV: '"development"',
   API_ROOT:'"//localhost:8080"',
   PROXY_BASE:"'/napi'",
-  DFTT_ADVER_URL:'""'
+  TEST_MODE:'"1"'
 })

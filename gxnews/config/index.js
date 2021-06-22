@@ -3,13 +3,15 @@
 // see http://vuejs-templates.github.io/webpack for documentation.
 
 const path = require('path')
+//测试服
+global.isDTXWTest = false;
 module.exports = {
   dev: {
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
     proxyTable: {
       '/napi': {
-        target:'https://news.dtxww.cn/api', // 你请求的第三方接口
+        target:global.isDTXWTest ? 'http://112.124.52.49/api' : 'https://news.dtxww.cn/api', // 你请求的第三方接口
         changeOrigin:true,
         pathRewrite:{ 
           '^/napi': ''  
@@ -41,8 +43,7 @@ module.exports = {
     // Paths
     assetsRoot: path.resolve(__dirname, '../dist'),
     assetsSubDirectory: 'static',
-    // assetsPublicPath: '/',
-    assetsPublicPath: 'https://news-dtxww.oss-accelerate.aliyuncs.com/',
+    assetsPublicPath: global.isDTXWTest ? '/' : 'https://news-dtxww.oss-accelerate.aliyuncs.com/',
     /**
      * Source Maps
      */

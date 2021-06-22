@@ -28,27 +28,7 @@
             </div> -->
             <div class="mini_content">
                 <div class="mini_content_item" v-for="(item,index) in pageNewsList" :key="index + '_' + item.id + '_' + item.type">
-                    <div v-if='item.type == 2' :id="item.id ? item.id : ''" class="adver_common_class_u8xef3e23d" v-html="item.title">
-                    </div>
-                    <div v-else-if="item.pics.length >= 3">
-                        <a target="_blank" :href="item.url ? item.url : ''" @click="gotoNews(item)">{{item.title}}</a>
-                        <div class="mini_content_image" @click="gotoNews(item)">
-                            <a target="_blank" :href="item.url ? item.url : ''"><img :src='item.pics[0]'/></a>
-                            <a target="_blank" :href="item.url ? item.url : ''"><img :src='item.pics[1]'/></a>
-                            <a target="_blank" :href="item.url ? item.url : ''"><img :src='item.pics[2]'/></a>
-                            <div class="mini_content_more" target="_blank"><span>查看更多>></span></div>
-                        </div>
-                        <span class="mini_content_image_p">{{getCateName(item)}}{{item.from ? item.from : ''}}</span>
-                    </div>
-                    <div v-else>
-                        <div class="mini_content_one_image" @click="gotoNews(item)">
-                            <a target="_blank" :href="item.url ? item.url : ''"><img :src='item.pics[0]'/></a>
-                        </div>
-                        <div class="mini_content_one_image_title">
-                            <a target="_blank" :href="item.url ? item.url : ''" @click="gotoNews(item)">{{item.title}}</a>
-                            <span>{{getCateName(item)}}{{item.from ? item.from : ''}}</span>
-                        </div>
-                    </div>
+                    <MiniNewsItem v-on:gotoNews="gotoNews" :newsInfo="item" :cateName="getCateName()" />
                 </div>
             </div>
         </div>
@@ -57,13 +37,14 @@
 </template>
 <script>
 import NewsSlider from './comp/NewsSlider'
+import MiniNewsItem from './comp/MiniNewsItem'
 import dataCenter from '@/api/DataCenter'
-import AdvertiseUtils from '@/api/AdvertiseUtils'
 import Utils from "@/js/Utils"
 let _this;
 export default {
     components:{
-        NewsSlider
+        NewsSlider,
+        MiniNewsItem
     },
     data(){
         return {
@@ -98,12 +79,14 @@ export default {
             });
         })
         document.title = "MiniPage";
-        // AdvertiseUtils.getCSSPAdever();
+        window.addEventListener("click",()=>{
+            console.log("clk")
+        })
     },
     computed:{
         pageNewsList(){
             this.$nextTick(()=>{
-                dataCenter.addAdsByClassName("adver_common_class_u8xef3e23d");
+                // dataCenter.addAdsByClassName("adver_common_class_u8xef3e23d");
             });
             return this.newsList;
             // return this.newsList.slice(0,this.currentPage*10);
@@ -127,6 +110,7 @@ export default {
             }
         },
         getCateName(item){
+            
             if(item && item.cateId == -100) return "";
             let list = this.titleList;
             let cname = "";
@@ -143,9 +127,6 @@ export default {
                 window.open("/","blank")
                 return;
             }
-            if(idx - 1 != this.selectIndex){
-                this.newsList = [];
-            }
             this.selectIndex = idx - 1;
             let _this = this
             dataCenter.getMiniList(idx).then(res=>{
@@ -158,9 +139,6 @@ export default {
                     if(cele){
                         cele.scrollTop = 0;
                     }
-                    _this.$nextTick(()=>{
-                        dataCenter.addAdsByClassName("adver_common_class_u8xef3e23d");
-                    });
                     Utils.addDelay(_this.checkIsMore,this,10000,1);
                 }
                 func();
@@ -344,84 +322,6 @@ export default {
         text-align: left;
         font-size: 15px;
         font-weight: bold;
-    }
-    .mini_content_image {
-        display: block;
-        overflow: hidden;
-    }
-    .mini_content_image_p {
-        font-size: 12px;
-        color: #bbb;
-        margin-top: 4px;
-        text-align: left;
-    }
-    .mini_content_image a {
-        display: block;
-        width: 130px;
-        height: 95px;
-        background-color: #f1f1f1;
-        overflow: hidden;
-        margin: 5px 10px 5px 0px;
-        float: left;
-    }
-    .mini_content_image img {
-        width: 130px;
-        height: 95px;
-        transition: all 0.6s;
-    }
-    .mini_content_image img:hover {
-        transform: scale(1.2);
-    }
-    .mini_content_more {
-        width: 130px;
-        height: 60px;
-        background: #eeeeee;
-        cursor: pointer;
-        color: #333;
-        float: left;
-        text-align: center;
-        margin: 5px 10px 5px 0px;
-        padding-top: 35px;
-        font-weight: normal;
-    }
-    .mini_content_more span {
-        padding-top: 30px;
-    }
-    .mini_content_one_image {
-        width: 150px;
-        float: left;
-    }
-    .mini_content_one_image a {
-        display: block;
-        width: 150px;
-        height: 95px;
-        background-color: #f1f1f1;
-        overflow: hidden;
-        margin: 5px 5px 5px 0px;
-        float: left;
-    }
-    .mini_content_one_image img {
-        width: 150px;
-        height: 95px;
-        transition: all 0.6s;
-    }
-    .mini_content_one_image img:hover {
-        transform: scale(1.2);
-    }
-    .mini_content_one_image_title {
-        width: 400px;
-        padding: 8px 0px 4px 0px;
-        float: right;
-    }
-    .mini_content_one_image_title a {
-        height: 74px;
-        display: inline-block;
-    }
-    .mini_content_one_image_title span {
-        display: block;
-        font-size: 12px;
-        color: #bbb;
-        text-align: left;
     }
     .mini_bottom_more {
         width: 100%;

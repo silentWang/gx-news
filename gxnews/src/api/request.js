@@ -1,11 +1,11 @@
 import Vue from 'vue'
 import axios from 'axios'
 import NetHttp from './NetHttp'
-
+global.isDTXWTest = false;
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded'
 axios.defaults.headers['X-APP-KEY'] = 'A000001'
 axios.defaults.timeout = 60000
-axios.defaults.baseURL = process.env.API_ROOT
+axios.defaults.baseURL = global.isDTXWTest ? "http://112.124.52.49" : process.env.API_ROOT
 axios.defaults.withCredentials = false
 axios.defaults.headers["userId"] = (()=>{
   let userid = localStorage.getItem("rdxw_15de_userId");

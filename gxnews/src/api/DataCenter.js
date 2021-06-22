@@ -23,8 +23,7 @@ class DataCenter {
         return process.env.PROXY_BASE + cmd;
     }
 
-    uploadAct(url,params = ""){
-        if(!url) return;
+    uploadAct(url){
         this.axios.get(url);
     }
 
@@ -68,10 +67,10 @@ class DataCenter {
             pks.pop();
             pk = pks.join("");
         }
-        let ext = '/adver?' + pk;
+        let ext = '/adver?key=c59281bd-1dd7-42b9-935c-a8da2b80d2e3';
         return this.axios.get(ext).then(res=>{
-            this.sspNativeAdvData = this.getTargetData(res.data);
-            return this.sspNativeAdvData;
+            
+            return this.getTargetData(res.data);
         });
     }
 
