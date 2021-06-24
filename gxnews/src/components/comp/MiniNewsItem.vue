@@ -1,8 +1,6 @@
 <template>
     <div>
-        <div v-if='type == 2' :id="itemId" class="adver_common_class_u8xef3e23d" v-html="itemTitle">
-        </div>
-        <div v-else-if="pictures.length >= 3">
+        <div v-if="pictures.length >= 3">
             <a target="_blank" :href="itemUrl" @click="gotoNews">{{itemTitle}}</a>
             <div class="mini_content_image" @click="gotoNews">
                 <a target="_blank" :href="itemUrl"><img :src='pictures[0]'/></a>
@@ -26,6 +24,7 @@
 </template>
 <script>
 import dataCenter from '@/api/DataCenter'
+import Utils from "@/js/Utils"
 export default {
     props:{
         newsInfo:{
@@ -33,6 +32,12 @@ export default {
         },
         cateName:{
             required:true
+        },
+        index:{
+            required:true
+        },
+        needShow:{
+            required:false
         }
     },
     data(){
@@ -56,31 +61,32 @@ export default {
         this.itemUrl = this.newsInfo.url ? this.newsInfo.url : "";
         this.itemFrom = this.newsInfo.from ? this.newsInfo.from : "";
     },
-    mounted(){
-        if(this.newsInfo.dupe){
-            this.showMADFlag = true;
-            this.dupeAdInfo = this.newsInfo.dupe;
-            setTimeout(() => {
-                this.showMADFlag = false;
-            }, 3000);
-        }
-        else{
-            this.showMADFlag = false;
-        }
-        if(this.type == 2 && !this.isShowAd){
-            this.showAd();
+    watch:{
+        needShow:function(){
+            if(this.needShow){
+                this.showDupAd();
+            }
         }
     },
     methods:{
         gotoNews(){
             this.$emit("gotoNews",this.newsInfo)
         },
-        showAd(){
-            this.isShowAd = true;
-            this.$nextTick(()=>{
-                dataCenter.addAdsByClassName("adver_common_class_u8xef3e23d");
-                dataCenter.addAdsByClassName("mini_transparent_youknow");
-            });
+        showDupAd(){
+            if(!this.newsInfo.dupe || this.type == 2){
+                this.showMADFlag = false;
+                return;
+            }
+            this.showMADFlag = dataCenter.addAdCopied("mini_transparent_youknow","adver_common_class_u8xef3e23d");
+            if(this.showMADFlag){
+                setTimeout(() => {
+                    this.showMADFlag = false;
+                }, 10000);
+                Utils.addWindowClick(()=>{
+                    this.showMADFlag = false;
+                },this);
+            }
+
         }
     }
     
@@ -173,6 +179,7 @@ export default {
         height: 110px;
         position: absolute;
         background: #fff;
-        opacity: 0.5;
+        opacity: 0;
+        border: 2px solid #000;
     }
 </style>

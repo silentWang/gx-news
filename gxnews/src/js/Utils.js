@@ -1,3 +1,4 @@
+import CompatibleUtils from '@/js/CompatibleUtils'
 export default class Utils {
     constructor(){
 
@@ -10,6 +11,22 @@ export default class Utils {
         POSITION_FOOTER:"footer",
         POSITION_MIDDLE:"middle",
         POSITION_BOTTOM:"bottom"
+    }
+
+    static addWindowClick(func,context){
+        if(!this.windowClkFunc){
+            this.windowClkFunc = [{func,context}];
+            CompatibleUtils.addEvent(window,"click",()=>{
+                for(let f of this.windowClkFunc){
+                    if(f.func){
+                        f.func.call(f.context);
+                    }
+                }
+            },this);
+        }
+        else{
+            this.windowClkFunc.push({func,context});
+        }
     }
 
     static escapeHtml(str){

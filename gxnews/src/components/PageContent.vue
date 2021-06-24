@@ -187,11 +187,6 @@ export default {
             return;
         }
         let _this = this;
-        //only test
-        // setTimeout(() => {
-            
-        // }, 5000);
-
         dataCenter.getNewsList().then(res=>{
             if(res.code != 200) return;
             let list = res.data;

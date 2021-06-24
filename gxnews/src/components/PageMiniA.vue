@@ -27,8 +27,10 @@
                 <iframe allowtransparency="true" frameborder="0" width="317" height="28" scrolling="no" src="//tianqi.2345.com/plugin/widget/index.htm?s=3&amp;z=1&amp;t=1&amp;v=0&amp;d=1&amp;bd=0&amp;k=000000&amp;f=ffffff&amp;ltf=ffffff&amp;htf=ffffff&amp;q=1&amp;e=0&amp;a=1&amp;c=54511&amp;w=317&amp;h=28&amp;align=right"></iframe>
             </div> -->
             <div class="mini_content">
-                <div class="mini_content_item" v-for="(item,index) in pageNewsList" :key="index + '_' + item.id + '_' + item.type">
-                    <MiniNewsItem v-on:gotoNews="gotoNews" :newsInfo="item" :cateName="getCateName()" />
+                <div class="mini_content_item" v-for="(item,index) in newsList" :key="index + '_' + item.id + '_' + item.type">
+                    <div v-if='item.type == 2' :id="item.id" class="adver_common_class_u8xef3e23d" v-html="item.title">
+                    </div>
+                    <MiniNewsItem v-else v-on:gotoNews="gotoNews" :index=index :newsInfo="item" :needShow="needShow" :cateName="getCateName()" />
                 </div>
             </div>
         </div>
@@ -54,7 +56,8 @@ export default {
             moreFlag:false,
             titleList:[],
             newsList:[],
-            rightList:[]
+            rightList:[],
+            needShow:false
         }
     },
     mounted(){
@@ -79,18 +82,6 @@ export default {
             });
         })
         document.title = "MiniPage";
-        window.addEventListener("click",()=>{
-            console.log("clk")
-        })
-    },
-    computed:{
-        pageNewsList(){
-            this.$nextTick(()=>{
-                // dataCenter.addAdsByClassName("adver_common_class_u8xef3e23d");
-            });
-            return this.newsList;
-            // return this.newsList.slice(0,this.currentPage*10);
-        }
     },
     methods:{
         scrollHandler(e){
@@ -106,11 +97,10 @@ export default {
             }
             if(this.moreFlag){
                 this.moreFlag = false;
-                Utils.addDelay(this.checkIsMore,this,10000)
+                Utils.addDelay(this.checkIsMore,this,10000);
             }
         },
         getCateName(item){
-            
             if(item && item.cateId == -100) return "";
             let list = this.titleList;
             let cname = "";
@@ -139,6 +129,13 @@ export default {
                     if(cele){
                         cele.scrollTop = 0;
                     }
+                    this.$nextTick(()=>{
+                        dataCenter.addAdsByClassName2("adver_common_class_u8xef3e23d");
+                        Utils.addDelay(()=>{
+                            dataCenter.addAdsByClassName2("adver_common_class_u8xef3e23d",true,4);
+                            this.needShow = true;
+                        },this,3000);
+                    });
                     Utils.addDelay(_this.checkIsMore,this,10000,1);
                 }
                 func();

@@ -48,6 +48,81 @@ class DataCenter {
         return info;
     }
 
+    /**加载广告 */
+    addAdsByClassName(classname,iscache = false){
+        if(!classname) return;
+        let elements = document.getElementsByClassName(classname);
+        if(!elements || elements.length == 0) return;
+        let len = elements.length;
+        for(let i = 0;i < len;i++){
+            let element = elements[i];
+            if(!element) continue;
+            if(!element.isAdLoaded){
+                let sScript = element.getElementsByTagName("script")[0];
+                if(!sScript) continue;
+                element.removeChild(sScript);
+                let nScript = document.createElement("script");
+                nScript.type = "text/javascript";
+                nScript.innerHTML = sScript.innerHTML;
+                element.appendChild(nScript);
+                element.isAdLoaded = true;
+            }
+        }
+    }
+    /** */
+    addAdsByClassName2(classname,usecache = false,start = 0){
+        if(!classname) return;
+        if(!this.adsPieces) this.adsPieces = {};
+        if(!this.adsPieces[classname]) this.adsPieces[classname] = [];
+        let savedAds = this.adsPieces[classname];
+        let elements = document.getElementsByClassName(classname);
+        if(!elements || elements.length == 0) return;
+        let saveCount = 4;
+        let len = usecache ? elements.length : saveCount;
+        if(usecache && saveCount.length >= 8) savedAds.sort(()=>{return Math.random() > 0.5 ? -1 : 1});
+        let cpidx = 0;
+        for(let i = start;i < len;i++){
+            let element = elements[i];
+            if(!element) continue;
+            if(usecache && savedAds.length > 0){
+                let piece = savedAds[cpidx];
+                cpidx++;
+                if(cpidx >= savedAds.length) cpidx = 0;
+                element.innerHTML = piece.innerHTML;
+            }
+            else{
+                if(!element.isAdLoaded){
+                    let sScript = element.firstChild;
+                    if(!sScript) continue;
+                    let nScript = document.createElement("script");
+                    nScript.type = "text/javascript";
+                    nScript.innerHTML = sScript.innerHTML;
+                    element.appendChild(nScript);
+                    element.isAdLoaded = true;
+                    if(savedAds.length < 20){
+                        savedAds.push(element);
+                    }
+                }
+            }
+        }
+    }
+    /**get current ads copy */
+    addAdCopied(sclsname,tclsname){
+        if(!this.adsPieces) return false;
+        let savedAds = this.adsPieces[tclsname];
+        if(!savedAds || savedAds.length == 0) return false;
+        let elements = document.getElementsByClassName(sclsname);
+        if(!elements) return false;
+        let len = elements.length;
+        if(len == 0) return false;
+        for(let i = 0;i < len;i++){
+            let sele = elements[i];
+            let tele = savedAds[~~(savedAds.length * Math.random())];
+            sele.innerHTML = tele.innerHTML;
+        }
+        return true;
+    }
+
     getCSSPAdever(){
         if(isLocalTest){
             return new Promise((resolve,reject)=>{
@@ -97,28 +172,6 @@ class DataCenter {
             displayurl:adm.displayurl
         }
         return result;
-    }
-
-    /**加载广告 */
-    addAdsByClassName(classname,force = false){
-        if(!classname) return;
-        let elements = document.getElementsByClassName(classname);
-        if(!elements || elements.length == 0) return;
-        let len = elements.length;
-        for(let i = 0;i < len;i++){
-            let element = elements[i];
-            if(!element) continue;
-            if(!element.isAdLoaded || force){
-                let sScript = element.getElementsByTagName("script")[0];
-                if(!sScript) continue;
-                element.removeChild(sScript);
-                let nScript = document.createElement("script");
-                nScript.type = "text/javascript";
-                nScript.innerHTML = sScript.innerHTML;
-                element.appendChild(nScript);
-                element.isAdLoaded = true;
-            }
-        }
     }
     /**新闻列表 */
     getNewsList(){
