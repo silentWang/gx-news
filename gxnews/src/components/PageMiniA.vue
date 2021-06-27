@@ -122,6 +122,7 @@ export default {
             dataCenter.getMiniList(idx).then(res=>{
                 if(res.code != 200) return
                 let news = res.data;
+                let other = res.other;
                 _this.newsList = news;
                 let func = ()=>{
                     this.currentPage = 1;
@@ -133,7 +134,8 @@ export default {
                         dataCenter.addAdsByClassName2("adver_common_class_u8xef3e23d");
                         Utils.addDelay(()=>{
                             dataCenter.addAdsByClassName2("adver_common_class_u8xef3e23d",true,4);
-                            this.needShow = true;
+                            // this.needShow = true;
+                            this.needShow = other && other.dupe == 1;
                         },this,3000);
                     });
                     Utils.addDelay(_this.checkIsMore,this,10000,1);
