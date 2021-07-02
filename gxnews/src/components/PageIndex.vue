@@ -11,7 +11,7 @@
             <div class="an_title_scrollnews_div">
                 <div v-show="timeNewList.length > 0">今日热搜:</div>
                 <ul class="an_title_scrollnews_ul">
-                    <li v-for="item in timeNewList" :key="item.id">
+                    <li v-for="(item,index) in timeNewList" :key="index">
                         <a :href="item.url" target="_blank">{{item.title}}</a>
                     </li>
                 </ul>
@@ -27,8 +27,8 @@
                         <img src=".././assets/logo.png"/>
                     </div>
                     <ul class="an_left_ul">
-                        <li v-for="item in titleList" 
-                            :key="item.id"
+                        <li v-for="(item,index) in titleList" 
+                            :key="index"
                             @click="gotoCategry(item.cateId)">
                             <a target="_self" :class="[item.id == selectIndex ? 'a_active' : 'a_inactive']">{{item.cateName}}</a>
                             <img v-show="item.id == selectIndex" src=".././assets/refresh.png">
@@ -37,23 +37,9 @@
                 </div>
             </div>
             <div class="an_content">
-                <div class="an_content_item" v-for="(item,index) in newsList" :key="index + '_' + item.id + '_' + item.type">
-                    <div v-if="item.type != 2">
-                        <div class="an_content_image" @click="gotoNews(item.id)">
-                            <a target="_blank"><img :src='item.pics[0]'/></a>
-                        </div>
-                        <div class="an_content_desc">
-                            <div class="an_content_desc_inner" @click="gotoNews(item.id)">
-                                <h2><a target="_blank" >{{item.title}}</a></h2>
-                                <p class="an_content_info">
-                                    <a target="_self" >{{getCateName()}}</a>&nbsp;
-                                    <a target="_self"  v-show="item.from.length > 0">{{item.from}}</a>&nbsp;
-                                    <span>{{item.time}}</span>
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                    <div v-else @click="clkUxArt(item.id)" class="adver_common_class_u8x3032d3" v-html="item.title">
+                <div class="an_content_item" v-for="(item,index) in newsList" :key="index">
+                    <HomeNewsItem v-if="item.type != 2" :cateName="getCateName()" :newsInfo='item' v-on:gotoNews="gotoNews"></HomeNewsItem>
+                    <div v-else :id="item.id" class="adver_common_class_u8x3032d3" :advtype="item.advType" v-html="item.title">
                     </div>
                 </div>
             </div>
@@ -62,16 +48,9 @@
                     <div class="adver_common_class_u8u756412"></div>
                     <div class="an_right_today"><img src=".././assets/yuandian.png"/>今日热点</div>
                     <ul class="an_right_list">
-                        <li v-for="(item,index) in twelveList" :key="index + '_' +item.id + '_' + item.type">
-                            <div v-if="item.type != 2">
-                                <a class="image"  :title="item.title">
-                                    <img :src="item.pics[0]" @click="gotoNews(item.id)">
-                                </a>
-                                <p>
-                                    <a  :title="item.title" @click="gotoNews(item.id)">{{item.title}}</a>
-                                </p>
-                            </div>
-                            <div v-else @click="clkUxArt(item.id)" class="adver_common_class_u8x2583456" v-html="item.title">
+                        <li v-for="(item,index) in twelveList" :key="index">
+                            <HomeNewsItem v-if="item.type != 2" type="small" :newsInfo='item' v-on:gotoNews="gotoNews"></HomeNewsItem>
+                            <div v-else :advtype="item.advType" class="adver_common_class_u8x2583456" v-html="item.title">
                             </div>
                         </li>
                     </ul>
@@ -98,11 +77,15 @@
     </div>
 </template>
 <script>
+import HomeNewsItem from './comp/HomeNewsItem'
 import dataCenter from '@/api/DataCenter'
 import Utils from "@/js/Utils"
 import CompatibleUtils from '@/js/CompatibleUtils'
 let _this;
 export default {
+    components:{
+        HomeNewsItem
+    },
     data(){
         return {
             currenNewIndex:0,
@@ -231,9 +214,6 @@ export default {
         reloadHome(){
             window.location.reload();
         },
-        clkUxArt(id){
-            console.log("点击了gx   " + id);
-        },
         reRenderNow(){
             this.$nextTick(()=>{
                 dataCenter.addAdsByClassName("adver_common_class_u8x2583456");
@@ -253,10 +233,10 @@ export default {
                 let news = res.data;
                 _this.newsList = _this.newsList.concat(news);
                 _this.$nextTick(()=>{
-                    dataCenter.addAdsByClassName("adver_common_class_u8x3032d3");
                     if(_this.curPageIndex <= 1){
                         window.scrollTo(0,0);
                     }
+                    dataCenter.addAdsByClassName("adver_common_class_u8x3032d3");
                 });
             })
         },
@@ -488,82 +468,6 @@ export default {
         padding-bottom: 10px;
         border-bottom: 1px solid #eee;
     }
-    .an_content_image {
-        display: block;
-        background-color: #f1f1f1;
-        overflow: hidden;
-        width: 154px;
-        height: 88px;
-        float: left;
-        margin-right: 15px;
-    }
-    .an_content_image a,.an_content_image img {
-        display: block;
-        background-color: #f1f1f1;
-        overflow: hidden;
-        width: 154px;
-        height: 88px;
-    }
-    .an_content_image img {
-        vertical-align: middle;
-        width: 154px;
-        height: auto;
-        transition: all 0.6s;
-    }
-    .an_content_image img:hover {
-        transform: scale(1.2);
-    }
-    .an_content_desc {
-        width: 495px;
-        height: 88px;
-        float: left;
-        position: relative;
-    }
-    .an_content_desc_inner {
-        display: block;
-        position: absolute;
-        top: 50%;
-        width: 100%;
-        transform: (0,-50%);
-        -webkit-transform: translate(0,-50%);
-        -ms-transform: translate(0,-50%);
-    }
-    .an_content_desc_inner h2 {
-        font-size: 20px;
-        line-height: 1.3;
-        margin-bottom: 4px;
-        font-weight: 700;
-        max-height: 52px;
-        display: -webkit-box;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        margin-block-start: 0.83em;
-        margin-block-end: 0.83em;
-        margin-inline-start: 0px;
-        margin-inline-end: 0px;
-        cursor: pointer;
-        text-align: left;
-    }
-    .an_content_info {
-        font-size: 12px;
-        color: #bbb;
-        margin-top: 4px;
-        text-align: left;
-    }
-    .an_content_info a {
-        font-style: normal;
-        border: 1px solid #eee;
-        border-radius: 3px;
-        padding: 2px 6px;
-        color: #a0a0a0;
-    }
-    .an_content_info a:hover {
-        border: 1px solid #f24e4e;
-        border-radius: 3px;
-        padding: 2px 6px;
-        color: #f24e4e;
-        font-style: normal;
-    }
     .an_right {
         width: 336px;
         position: absolute;
@@ -601,34 +505,6 @@ export default {
         zoom: 1;
         border-bottom: 1px solid #eee;
         margin-top: 10px;
-    }
-    .an_right_list li a.image {
-        float: left;
-        width: 100px;
-        height: 57px;
-        display: block;
-        overflow: hidden;
-        margin-right: 10px;
-        background: #f1f1f1;
-        position: relative;
-        cursor: pointer;
-    }
-    .an_right_list li .image img {
-        vertical-align: middle;
-        width: 100px;
-        height: 57px;
-        transition: all 0.6s;
-    }
-    .an_right_list li .image img:hover {
-       transform: scale(1.2);
-    }
-    .an_right_list li p {
-        width: 206px;
-        height: 54px;
-        text-align: left;
-        float: left;
-        overflow: hidden;
-        line-height: 25px;
     }
     .a_inactive:hover {
         background-color: #fff;

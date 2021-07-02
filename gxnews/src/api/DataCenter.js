@@ -1,5 +1,6 @@
 import axios from './request'
 import AdvertiseUtils from './AdvertiseUtils'
+import Utils from '.././js/Utils'
 //本地化
 let isLocalTest = false;
 class DataCenter {
@@ -13,6 +14,7 @@ class DataCenter {
     
     constructor(){
         this.axios = axios;
+        this.maxTSZNum = 8;
     }
 
     setQid(qid){
@@ -49,62 +51,92 @@ class DataCenter {
     }
 
     /**加载广告 */
-    addAdsByClassName(classname,iscache = false){
-        if(!classname) return;
+    addAdsByClassName(classname){
+        let promise = new Promise((resolve,reject)=>{resolve()});
+        if(!classname) return promise;
         let elements = document.getElementsByClassName(classname);
-        if(!elements || elements.length == 0) return;
+        if(!elements || elements.length == 0) return promise;
+        if(!this.adsPieces) this.adsPieces = {};
+        if(!this.adsPieces[classname]) this.adsPieces[classname] = [];
+        let arr = this.adsPieces[classname];
         let len = elements.length;
+        let prebool = false;
         for(let i = 0;i < len;i++){
             let element = elements[i];
             if(!element) continue;
-            if(!element.isAdLoaded){
-                let sScript = element.getElementsByTagName("script")[0];
-                if(!sScript) continue;
-                element.removeChild(sScript);
-                let nScript = document.createElement("script");
-                nScript.type = "text/javascript";
-                nScript.innerHTML = sScript.innerHTML;
-                element.appendChild(nScript);
-                element.isAdLoaded = true;
+            let advtype = element.getAttribute("advtype");
+            if(advtype == "advbd"){
+                this.changeAndExecuteJS(element);
             }
-        }
-    }
-    /** */
-    addAdsByClassName2(classname,usecache = false,start = 0){
-        if(!classname) return;
-        if(!this.adsPieces) this.adsPieces = {};
-        if(!this.adsPieces[classname]) this.adsPieces[classname] = [];
-        let savedAds = this.adsPieces[classname];
-        let elements = document.getElementsByClassName(classname);
-        if(!elements || elements.length == 0) return;
-        let saveCount = 4;
-        let len = usecache ? elements.length : saveCount;
-        if(usecache && saveCount.length >= 8) savedAds.sort(()=>{return Math.random() > 0.5 ? -1 : 1});
-        let cpidx = 0;
-        for(let i = start;i < len;i++){
-            let element = elements[i];
-            if(!element) continue;
-            if(usecache && savedAds.length > 0){
-                let piece = savedAds[cpidx];
-                cpidx++;
-                if(cpidx >= savedAds.length) cpidx = 0;
-                element.innerHTML = piece.innerHTML;
+            else if(advtype == "adv360"){
+                if(arr.length < this.maxTSZNum){
+                    this.changeAndExecuteJS(element,false);
+                    arr.push(element);
+                }
+                prebool = true;
             }
             else{
-                if(!element.isAdLoaded){
-                    let sScript = element.firstChild;
-                    if(!sScript) continue;
-                    let nScript = document.createElement("script");
-                    nScript.type = "text/javascript";
-                    nScript.innerHTML = sScript.innerHTML;
-                    element.appendChild(nScript);
-                    element.isAdLoaded = true;
-                    if(savedAds.length < 20){
-                        savedAds.push(element);
-                    }
-                }
+                this.changeAndExecuteJS(element);
             }
         }
+        if(!prebool) return promise;
+        return this.addTSZAdver(classname);
+    }
+    /**360 */
+    async addTSZAdver(classname){
+        let peles = this.adsPieces[classname];
+        await this.preloadTSZAdver(peles);
+        let elements = document.getElementsByClassName(classname);
+        if(!elements || elements.length == 0) return;
+        let plen = peles.length;
+        let slen = elements.length;
+        if(plen > slen) return;
+        let cpidx = 0;
+        for(let i = plen;i < slen;i++){
+            let piece = peles[cpidx];
+            cpidx++;
+            if(cpidx >= plen) cpidx = 0;
+            let element = elements[i];
+            element.innerHTML = piece.innerHTML;
+        }
+    }
+    /**preload */
+    preloadTSZAdver(peles){
+        return new Promise((resolve,reject)=>{
+            let func = ()=>{
+                let len = peles.length;
+                let isAllFinish = true;
+                for(let i = 0;i < len;i++){
+                    let ele = peles[i];
+                    if(ele.isAdLoaded) continue;
+                    let fele = ele.firstChild;
+                    if(!fele) continue;
+                    if(fele.nodeName == 'NEWSFEED'){
+                        ele.isAdLoaded = true;
+                        continue;
+                    }
+                    isAllFinish = false;
+                }
+                if(isAllFinish){
+                    Utils.removeDelay(40,func);
+                    console.log("load complete")
+                    resolve();
+                }
+            };
+            Utils.addDelay(func,this,40,0);
+        })
+    }
+    /**change function */
+    changeAndExecuteJS(element,loaded = true){
+        if(element.isAdLoaded) return false;
+        let sScript = element.getElementsByTagName("script")[0];
+        if(!sScript) return;
+        element.removeChild(sScript);
+        let nScript = document.createElement("script");
+        nScript.type = "text/javascript";
+        nScript.innerHTML = sScript.innerHTML;
+        element.appendChild(nScript);
+        element.isAdLoaded = loaded;
     }
     /**get current ads copy */
     addAdCopied(sclsname,tclsname){

@@ -9,9 +9,10 @@
         </div>
         <div class="mini_right">
             <ul class="mini_right_list">
-                <li v-for="(item,index) in rightList" :key="index + '_' +item.id + '_' + item.type">
+                <li v-for="(item,index) in rightList" :key="index">
                     <div v-if="item.type != 2">
                         <NewsSlider v-on:gotoNews="gotoNews" :nsId="index" nWidth="200" nHeight="185" v-bind:newsList="getSlideNewsList(item.list)"></NewsSlider>
+                        <div v-show="needShow" class="mini_transparent_youknow_chuchuang"></div>
                         <!-- <a class="mini_right_list_image"  :title="item.list.title">
                             <img :src="item.list.pics[0]" @click="gotoNews(item.list.id)">
                         </a>
@@ -28,7 +29,7 @@
             </div> -->
             <div class="mini_content">
                 <div class="mini_content_item" v-for="(item,index) in newsList" :key="index + '_' + item.id + '_' + item.type">
-                    <div v-if='item.type == 2' :id="item.id" class="adver_common_class_u8xef3e23d" v-html="item.title">
+                    <div v-if='item.type == 2' :id="item.id" :advtype="item.advType" class="adver_common_class_u8xef3e23d" v-html="item.title">
                     </div>
                     <MiniNewsItem v-else v-on:gotoNews="gotoNews" :index=index :newsInfo="item" :needShow="needShow" :cateName="getCateName()" />
                 </div>
@@ -131,12 +132,15 @@ export default {
                         cele.scrollTop = 0;
                     }
                     this.$nextTick(()=>{
-                        dataCenter.addAdsByClassName2("adver_common_class_u8xef3e23d");
-                        Utils.addDelay(()=>{
-                            dataCenter.addAdsByClassName2("adver_common_class_u8xef3e23d",true,4);
-                            // this.needShow = true;
+                        dataCenter.addAdsByClassName("adver_common_class_u8xef3e23d").then(()=>{
                             this.needShow = other && other.dupe == 1;
-                        },this,3000);
+                            if(this.needShow){
+                                dataCenter.addAdCopied("mini_transparent_youknow_chuchuang","adver_common_class_u8xef3e23d");
+                                Utils.addWindowClick(()=>{
+                                    this.needShow = false;
+                                },this);
+                            }
+                        });
                     });
                     Utils.addDelay(_this.checkIsMore,this,10000,1);
                 }
@@ -394,7 +398,13 @@ export default {
     .mini_right_list_image img:hover {
         transform: scale(1.2);
     }
-
+    .mini_transparent_youknow_chuchuang {
+        width: 200px;
+        height: 185px;
+        background: #ff0000;
+        position: absolute;
+        opacity: 0;
+    }
     .mini_middle::-webkit-scrollbar {
         width : 8px;
     }

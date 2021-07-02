@@ -4,7 +4,7 @@
 
 const path = require('path')
 //测试服
-global.isDTXWTest = false;
+global.isDTXWTest = true;
 module.exports = {
   dev: {
     assetsSubDirectory: 'static',
@@ -43,7 +43,7 @@ module.exports = {
     // Paths
     assetsRoot: path.resolve(__dirname, '../dist'),
     assetsSubDirectory: 'static',
-    assetsPublicPath: global.isDTXWTest ? '/' : 'https://news-dtxww.oss-accelerate.aliyuncs.com/',
+    assetsPublicPath: global.isDTXWTest ? '/' : 'https://news-dtxww.oss-cn-hangzhou.aliyuncs.com/',
     /**
      * Source Maps
      */

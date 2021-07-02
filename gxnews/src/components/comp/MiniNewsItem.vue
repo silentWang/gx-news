@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div v-if="pictures.length >= 3">
+        <div v-if="pictures.length >= 3" class="mini_three_div">
             <a target="_blank" :href="itemUrl" @click="gotoNews">{{itemTitle}}</a>
             <div class="mini_content_image" @click="gotoNews">
                 <a target="_blank" :href="itemUrl"><img :src='pictures[0]'/></a>
@@ -19,7 +19,7 @@
                 <span>{{this.cateName}}{{itemFrom}}</span>
             </div>
         </div>
-        <div v-show="showMADFlag" class="mini_transparent_youknow" v-html="dupeAdInfo"></div>
+        <div v-show="showMADFlag" class="mini_transparent_youknow"></div>
     </div>
 </template>
 <script>
@@ -49,8 +49,7 @@ export default {
             itemUrl:"",
             itemFrom:"",
             isShowAd:false,
-            showMADFlag:false,
-            dupeAdInfo:""
+            showMADFlag:false
         }
     },
     beforeMount(){
@@ -73,15 +72,15 @@ export default {
             this.$emit("gotoNews",this.newsInfo)
         },
         showDupAd(){
-            if(!this.newsInfo.dupe || this.type == 2){
+            if(this.type == 2){
                 this.showMADFlag = false;
                 return;
             }
             this.showMADFlag = dataCenter.addAdCopied("mini_transparent_youknow","adver_common_class_u8xef3e23d");
             if(this.showMADFlag){
-                setTimeout(() => {
-                    this.showMADFlag = false;
-                }, 10000);
+                // Utils.addDelay(()=>{
+                //     this.showMADFlag = false;
+                // },this,10000,1);
                 Utils.addWindowClick(()=>{
                     this.showMADFlag = false;
                 },this);
@@ -95,6 +94,13 @@ export default {
 <style>
     .adver_common_class_u8xef3e23d {
         min-height: 105px;    
+    }
+    .mini_three_div {
+        float: left;
+    }
+    .mini_three_div a {
+        font-size: 17px;
+        font-weight: bold;
     }
     .mini_content_image {
         display: block;
@@ -167,6 +173,8 @@ export default {
     .mini_content_one_image_title a {
         height: 74px;
         display: inline-block;
+        font-size: 17px;
+        font-weight: bold;
     }
     .mini_content_one_image_title span {
         display: block;
@@ -176,7 +184,7 @@ export default {
     }
     .mini_transparent_youknow {
         width: 560px;
-        height: 110px;
+        height: 142px;
         position: absolute;
         background: #fff;
         opacity: 0;

@@ -8,26 +8,8 @@
                 </div>
                 <ul class="an_dialog_list">
                     <li v-for="(item,index) in viewList" :key="index + '_' + item.id + '_' + item.type">
-                        <div v-if="item.type != 2">
-                            <div id="next_pic">
-                                <a  target="_blank">
-                                    <img :src="item.pics[0]" @click="gotoNews(item.id)"/>
-                                </a>
-                            </div>
-                            <div class="an_dialog_list_news_title_content">
-                                <div>
-                                    <a class="bn_left_link"  @click="gotoNews(item.id)">{{item.title}}</a>
-                                </div>
-                                <div class="an_dialog_list_news_tag" @click="gotoNews(item.id)">
-                                    <span class="tags_wrapper">
-                                        <a href="#">娱乐</a>&nbsp;
-                                        <a href="#">新闻</a>&nbsp;
-                                    </span>
-                                    <span>{{item.time}}</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div v-else @click="clkUxArt(item.id)" class="adver_common_class_ue52361" v-html="item.title"></div>
+                        <content-news-item v-if="item.type != 2" type="next" v-on:gotoNews="gotoNews" :newsInfo="item"></content-news-item>
+                        <div v-else @click="clkUxArt(item.id)" class="adver_common_class_ue256652" v-html="item.title"></div>
                     </li>
                 </ul>
             </div>
@@ -49,46 +31,25 @@
                 <div class="adver_common_class_u9oe3r8d73"></div>
                 <ul class="n_up_list">
                     <h3>今日热点</h3>
-                    <li v-for="(item,index) in todayHots" :key="index + '_' + item.id + '_' + item.type">
-                        <div v-if="item.type != 2">
-                            <a class="n_up_image_a"  :title="item.title">
-                                <img :src="item.pics[0]" @click="gotoNews(item.cateId)">
-                            </a>
-                            <p>
-                                <a  :title="item.title" @click="gotoNews(item.id)">{{item.title}}</a>
-                            </p>
-                        </div>
-                        <div v-else @click="clkUxArt(item.id)" class="adver_common_class_ude4536" v-html="item.title"></div>
+                    <li v-for="(item,index) in todayHots" :key="index">
+                        <content-news-item v-if="item.type != 2" type="nup" :newsInfo="item" v-on:gotoNews="gotoNews"></content-news-item>
+                        <div v-else :advtype="item.advType" :id="item.id" class="adver_common_class_ude4536" v-html="item.title"></div>
                     </li>
                 </ul>
                 <div class="adver_common_class_u9oe3r8d73"></div>
                 <ul class="n_up_list">
                     <h3>小编精选</h3>
-                    <li v-for="(item,index) in choseHots" :key="index + '_' + item.id + '_' + item.type">
-                        <div v-if="item.type != 2">
-                            <a class="n_up_image_a"  :title="item.title">
-                                <img :src="item.pics[0]" @click="gotoNews(item.cateId)">
-                            </a>
-                            <p>
-                                <a  :title="item.title" @click="gotoNews(item.id)">{{item.title}}</a>
-                            </p>
-                        </div>
-                        <div v-else @click="clkUxArt(item.id)" class="adver_common_class_ude4536" v-html="item.title"></div>
+                    <li v-for="(item,index) in choseHots" :key="index">
+                        <content-news-item v-if="item.type != 2" type="nup" :newsInfo="item" v-on:gotoNews="gotoNews"></content-news-item>
+                        <div v-else :advtype="item.advType" :id="item.id" class="adver_common_class_ude4536" v-html="item.title"></div>
                     </li>
                 </ul>
                 <div class="adver_common_class_u9oe3r8d73"></div>
                 <ul class="n_up_list">
                     <h3>视角</h3>
-                    <li v-for="(item,index) in viewHots" :key="index + '_' + item.id + '_' + item.type">
-                        <div v-if="item.type != 2">
-                            <a class="n_up_image_a"  :title="item.title">
-                                <img :src="item.pics[0]" @click="gotoNews(item.cateId)">
-                            </a>
-                            <p>
-                                <a  :title="item.title" @click="gotoNews(item.id)">{{item.title}}</a>
-                            </p>
-                        </div>
-                        <div v-else @click="clkUxArt(item.id)" class="adver_common_class_ude4536" v-html="item.title"></div>
+                    <li v-for="(item,index) in viewHots" :key="index">
+                        <content-news-item v-if="item.type != 2" type="nup" :newsInfo="item" v-on:gotoNews="gotoNews"></content-news-item>
+                        <div v-else :advtype="item.advType" :id="item.id" class="adver_common_class_ude4536" v-html="item.title"></div>
                     </li>
                 </ul>
             </div>
@@ -113,27 +74,9 @@
                     <div>热门推荐</div>
                 </div>
                 <ul class="n_next_list">
-                    <li v-for="(item,index) in nextHots" :key="index + '_' + item.id + '_' + item.type">
-                        <div v-if="item.type != 2">
-                            <div id="next_pic">
-                                <a  target="_blank">
-                                    <img :src="item.pics[0]" @click="gotoNews(item.id)"/>
-                                </a>
-                            </div>
-                            <div class="n_next_list_news_title_content">
-                                <div>
-                                    <a class="bn_left_link"  @click="gotoNews(item.id)">{{item.title}}</a>
-                                </div>
-                                <div class="n_next_list_news_tag" @click="gotoNews(item.id)">
-                                    <span class="tags_wrapper">
-                                        <a href="#">娱乐</a>&nbsp;
-                                        <a href="#">新闻</a>&nbsp;
-                                    </span>
-                                    <span>{{item.time}}</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div v-else @click="clkUxArt(item.id)" class="adver_common_class_ue256652" v-html="item.title"></div>
+                    <li v-for="(item,index) in nextHots" :key="index">
+                        <content-news-item v-if="item.type != 2" type="next" v-on:gotoNews="gotoNews" :newsInfo="item"></content-news-item>
+                        <div v-else @click="clkUxArt(item.id)" :id="item.id" class="adver_common_class_ue256652" v-html="item.title"></div>
                     </li>
                 </ul>
             </div>
@@ -154,15 +97,18 @@
                 </ul>
             </div>
         </div>
-        <!-- <div style="position:fixed;width:100%;height:100%;background:#ff0000;opacity:0.1;z-index:100;" class="adver_common_class_u9803ide66"></div> -->
     </div>
 </template>
 <script>
+import ContentNewsItem from './comp/ContentNewsItem.vue'
 import dataCenter from '@/api/DataCenter'
 import Utils from "@/js/Utils"
 import CompatibleUtils from '@/js/CompatibleUtils'
 import ScreenHandler from "@/js/ScreenHandler"
 export default {
+    components:{
+        ContentNewsItem
+    },
     data(){
         return {
             showDialogFlag:false,
@@ -231,12 +177,20 @@ export default {
                 this.reRenderNow();
             });
         })
+        let dbool = false;
+        let nbool = false;
+        let func = ()=>{
+            if(dbool && nbool){
+                _this.$nextTick(()=>{
+                    dataCenter.addAdsByClassName("adver_common_class_ue256652");
+                });
+            }
+        }
         dataCenter.getDetailDownNews().then(res=>{
             if(res.code != 200) return
             this.nextHots = res.data
-            _this.$nextTick(()=>{
-                dataCenter.addAdsByClassName("adver_common_class_ue256652");
-            });
+            dbool = true;
+            func();
         })
         dataCenter.getNewsListById(1).then(res=>{
             if(res.code != 200) return
@@ -244,9 +198,8 @@ export default {
             if(!data || data.length == 0) return;
             _this.viewList = data.slice(2,22);
             _this.checkStayState();
-            _this.$nextTick(()=>{
-                dataCenter.addAdsByClassName("adver_common_class_ue52361");
-            });
+            nbool = true;
+            func();
         });
         this.addInfoAdver();
         window.onscroll = this.listScroll.bind(this);
@@ -306,7 +259,7 @@ export default {
                 if(!res || !res.data) return;
                 let ele = document.getElementsByClassName("adver_common_class_u9803ide66")[0];
                 ele.innerHTML = res.data.ad_script;
-                Utils.changeAndExecuteJS(ele);
+                dataCenter.addAdsByClassName("adver_common_class_u9803ide66");
             });
         },
         reRenderNow(){
@@ -326,12 +279,13 @@ export default {
             had = had || mid || fad;
             mid = mid || had || fad;
             fad = fad || had || mid;
+            ele1.id = had.id;
+            ele2.id = mid.id;
+            ele3.id = fad.id;
             ele1.innerHTML = had.ad_script;
             ele2.innerHTML = mid.ad_script;
             ele3.innerHTML = fad.ad_script;
-            Utils.changeAndExecuteJS(ele1);
-            Utils.changeAndExecuteJS(ele2);
-            Utils.changeAndExecuteJS(ele3);
+            dataCenter.addAdsByClassName("adver_common_class_u9oe3r8d73");
         },
         gotoCategry(idx){
             let routeUrl = this.$router.resolve({
@@ -361,9 +315,6 @@ export default {
                 this.detailHtml = Utils.escapeHtml(this.allPages[index]);
                 window.scrollTo(0,0);
             }
-        },
-        clkUxArt(id){
-            console.log("clickId:" + id);
         },
         checkStayState(bool = true){
             let _this = this;
@@ -401,12 +352,6 @@ export default {
     }
     a:hover{ 
         color:#f24e4e;
-    }
-    .bn_left_link {
-        color: #222222;
-        font-size: 20px;
-        font-weight: bold;
-        text-align: left;
     }
     .cls_main {
         background: #f5f5f5;
@@ -480,26 +425,6 @@ export default {
         border-bottom: 1px solid #eee;
         margin-bottom: 10px;
         padding-bottom: 10px;
-    }
-    .an_dialog_list_news_title_content {
-        text-align: left;
-        float: left;
-        width: 500px;
-        height: 95px;
-        position: relative;
-    }
-    .an_dialog_list_news_title_content div {
-        background: #fff;
-        text-align: left;
-    }
-    .an_dialog_list_news_tag {
-        position: absolute;
-        bottom: 0px;
-        left: 0px;
-        zoom: 1;
-        width: 100%;
-        font-size: 12px;
-        color: #bbb;
     }
     .bn_title {
         width: 100%;
@@ -616,34 +541,6 @@ export default {
         padding-bottom: 10px;
         border-bottom: 1px solid #eee;
     }
-    .n_up_image_a {
-        float: left;
-        width: 100px;
-        height: 57px;
-        display: block;
-        overflow: hidden;
-        margin-right: 10px;
-        background: #f1f1f1;
-        position: relative;
-        cursor: pointer;
-    }
-    .n_up_image_a img {
-        width: 100px;
-        height: 57px;
-        vertical-align: middle;
-        transition: all 0.6s;
-    }
-    .n_up_image_a img:hover {
-        transform: scale(1.2);
-    }
-    .n_up_list li p {
-        width: 206px;
-        height: 54px;
-        text-align: left;
-        float: left;
-        overflow: hidden;
-        line-height: 25px;
-    }
     .bn_left_list_news_title {
         width:220px;
         height: 68px;
@@ -744,29 +641,6 @@ export default {
         height: 88px;
         position: relative;
     }
-    #next_pic {
-        width: 177px;
-        height: 100px;
-        float: left;
-        margin-right: 15px;
-        background-color: #f1f1f1;
-    }
-    #next_pic a {
-        width: 177px;
-        height: 100px;
-        display: block;
-        overflow: hidden;
-    }
-    #next_pic img {
-        width: 177px;
-        height: 100px;
-        overflow: hidden;
-        padding: 0px;
-        transition: all 0.6s;
-    }
-    #next_pic img:hover {
-        transform: scale(1.2);
-    }
     .n_next_list_news_tag {
         position: absolute;
         bottom: 0;
@@ -775,25 +649,6 @@ export default {
         width: 100%;
         font-size: 12px;
         color: #bbb;
-    }
-    .tags_wrapper a {
-        border: 1px solid #eee;
-        border-radius: 3px;
-        padding: 2px 6px;
-        color: #a0a0a0;
-        font-style: normal;
-    }
-    .tags_wrapper a:hover {
-        border: 1px solid #f24e4e;
-        border-radius: 3px;
-        padding: 2px 6px;
-        color: #f24e4e;
-        font-style: normal;
-    }
-    .tags_from { 
-        padding-left: 20px;
-        color: #999;
-        font-size: 12px;
     }
     .bn_sidenav {
         position: fixed;
