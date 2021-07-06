@@ -9,7 +9,7 @@
                 <ul class="an_dialog_list">
                     <li v-for="(item,index) in viewList" :key="index + '_' + item.id + '_' + item.type">
                         <content-news-item v-if="item.type != 2" type="next" v-on:gotoNews="gotoNews" :newsInfo="item"></content-news-item>
-                        <div v-else @click="clkUxArt(item.id)" class="adver_common_class_ue256652" v-html="item.title"></div>
+                        <div v-else @click="clkUxArt(item.id)" :id="item.id" class="adver_common_class_ue256652" v-html="item.title"></div>
                     </li>
                 </ul>
             </div>
