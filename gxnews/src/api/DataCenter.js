@@ -14,7 +14,7 @@ class DataCenter {
     
     constructor(){
         this.axios = axios;
-        this.maxTSZNum = 8;
+        this.maxTSZNum = 4;
     }
 
     setQid(qid){
@@ -112,8 +112,17 @@ class DataCenter {
                     let fele = ele.firstChild;
                     if(!fele) continue;
                     if(fele.nodeName == 'NEWSFEED'){
-                        ele.isAdLoaded = true;
-                        continue;
+                        let neles = fele.getElementsByTagName("newsfeed-main");
+                        if(neles && neles.length > 0){
+                            let xele = neles[0];
+                            if(xele.childElementCount > 0){
+                                let iele = xele.getElementsByTagName("info-div")[0]
+                                if(iele && iele.childElementCount > 1){
+                                    ele.isAdLoaded = true;
+                                    continue;
+                                }
+                            }
+                        }
                     }
                     isAllFinish = false;
                 }
