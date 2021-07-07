@@ -4,7 +4,7 @@
 
 const path = require('path')
 //测试服
-global.isDTXWTest = true;
+global.isDTXWTest = false;
 module.exports = {
   dev: {
     assetsSubDirectory: 'static',

@@ -50,7 +50,7 @@
                     <ul class="an_right_list">
                         <li v-for="(item,index) in twelveList" :key="index">
                             <HomeNewsItem v-if="item.type != 2" type="small" :newsInfo='item' v-on:gotoNews="gotoNews"></HomeNewsItem>
-                            <div v-else :advtype="item.advType" class="adver_common_class_u8x2583456" v-html="item.title">
+                            <div v-else :advtype="item.advType" :id="item.id" class="adver_common_class_u8x2583456" v-html="item.title">
                             </div>
                         </li>
                     </ul>
