@@ -115,15 +115,15 @@ export default {
     .mini_content_image a {
         display: block;
         width: 130px;
-        height: 95px;
+        height: 85px;
         background-color: #f1f1f1;
         overflow: hidden;
-        margin: 5px 10px 5px 0px;
+        margin: 0px 10px 5px 0px;
         float: left;
     }
     .mini_content_image img {
         width: 130px;
-        height: 95px;
+        height: 85px;
         transition: all 0.6s;
     }
     .mini_content_image img:hover {
@@ -131,13 +131,13 @@ export default {
     }
     .mini_content_more {
         width: 130px;
-        height: 60px;
+        height: 50px;
         background: #eeeeee;
         cursor: pointer;
         color: #333;
         float: left;
         text-align: center;
-        margin: 5px 10px 5px 0px;
+        margin: 0px 10px 5px 0px;
         padding-top: 35px;
         font-weight: normal;
     }
@@ -151,15 +151,15 @@ export default {
     .mini_content_one_image a {
         display: block;
         width: 150px;
-        height: 95px;
+        height: 85px;
         background-color: #f1f1f1;
         overflow: hidden;
-        margin: 5px 5px 5px 0px;
+        margin: 0px 5px 5px 0px;
         float: left;
     }
     .mini_content_one_image img {
         width: 150px;
-        height: 95px;
+        height: 85px;
         transition: all 0.6s;
     }
     .mini_content_one_image img:hover {
@@ -167,11 +167,11 @@ export default {
     }
     .mini_content_one_image_title {
         width: 400px;
-        padding: 8px 0px 4px 0px;
+        padding: 3px 0px 4px 0px;
         float: right;
     }
     .mini_content_one_image_title a {
-        height: 74px;
+        height: 64px;
         display: inline-block;
         font-size: 17px;
         font-weight: bold;
