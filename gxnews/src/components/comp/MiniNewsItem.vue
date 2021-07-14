@@ -19,7 +19,7 @@
                 <span>{{this.cateName}}{{itemFrom}}</span>
             </div>
         </div>
-        <div v-show="showMADFlag" class="mini_transparent_youknow"></div>
+        <slot></slot>
     </div>
 </template>
 <script>
@@ -35,9 +35,6 @@ export default {
         },
         index:{
             required:true
-        },
-        needShow:{
-            required:false
         }
     },
     data(){
@@ -48,8 +45,7 @@ export default {
             pictures:[],
             itemUrl:"",
             itemFrom:"",
-            isShowAd:false,
-            showMADFlag:false
+            isShowAd:false
         }
     },
     beforeMount(){
@@ -60,32 +56,9 @@ export default {
         this.itemUrl = this.newsInfo.url ? this.newsInfo.url : "";
         this.itemFrom = this.newsInfo.from ? this.newsInfo.from : "";
     },
-    watch:{
-        needShow:function(){
-            if(this.needShow){
-                this.showDupAd();
-            }
-        }
-    },
     methods:{
         gotoNews(){
             this.$emit("gotoNews",this.newsInfo)
-        },
-        showDupAd(){
-            if(this.type == 2){
-                this.showMADFlag = false;
-                return;
-            }
-            this.showMADFlag = dataCenter.addAdCopied("mini_transparent_youknow","adver_common_class_u8xef3e23d");
-            if(this.showMADFlag){
-                // Utils.addDelay(()=>{
-                //     this.showMADFlag = false;
-                // },this,10000,1);
-                Utils.addWindowClick(()=>{
-                    this.showMADFlag = false;
-                },this);
-            }
-
         }
     }
     
@@ -181,13 +154,5 @@ export default {
         font-size: 12px;
         color: #bbb;
         text-align: left;
-    }
-    .mini_transparent_youknow {
-        width: 560px;
-        height: 142px;
-        position: absolute;
-        background: #fff;
-        opacity: 0;
-        border: 2px solid #000;
     }
 </style>

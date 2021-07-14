@@ -147,6 +147,8 @@ export default {
     },
     methods:{
         listScroll(evt){
+            dataCenter.checkAdverLoad("adver_common_class_u8x3032d3");
+            dataCenter.checkAdverLoad("adver_common_class_u8x2583456");
             let mEle = document.getElementsByClassName("an_middle")[0];
             let rEle = document.getElementsByClassName("an_right")[0];
             if(!mEle || !rEle) return;
@@ -216,13 +218,12 @@ export default {
         },
         reRenderNow(){
             this.$nextTick(()=>{
-                dataCenter.addAdsByClassName("adver_common_class_u8x2583456");
+                dataCenter.checkAdverLoad("adver_common_class_u8x2583456");
                 this.addKitchAdver();
             });
         },
         gotoCategry(idx){
             if(idx - 1 != this.selectIndex){
-                this.newsList = [];
                 this.curPageIndex = 1;
             }
             this.selectIndex = idx - 1;
@@ -236,7 +237,7 @@ export default {
                     if(_this.curPageIndex <= 1){
                         window.scrollTo(0,0);
                     }
-                    dataCenter.addAdsByClassName("adver_common_class_u8x3032d3");
+                    dataCenter.checkAdverLoad("adver_common_class_u8x3032d3");
                 });
             })
         },

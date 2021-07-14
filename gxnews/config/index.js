@@ -42,8 +42,12 @@ module.exports = {
     index: path.resolve(__dirname, '../dist/index.html'),
     // Paths
     assetsRoot: path.resolve(__dirname, '../dist'),
+    //正式
     assetsSubDirectory: 'static',
-    assetsPublicPath: global.isDTXWTest ? '/' : 'https://news-dtxww.oss-cn-hangzhou.aliyuncs.com/',
+    assetsPublicPath:'https://news-dtxww.oss-cn-hangzhou.aliyuncs.com/',
+    //测试
+    // assetsSubDirectory: 'static',
+    // assetsPublicPath: './',
     /**
      * Source Maps
      */

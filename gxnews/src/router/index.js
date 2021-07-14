@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-// import PageTest from '@/components/PageTest'
+import PageTest from '@/components/PageTest'
 import PageIndex from '@/components/PageIndex'
 import PageContent from '@/components/PageContent'
 // import PageMini from '@/components/PageMini'

@@ -31,7 +31,9 @@
                 <div class="mini_content_item" v-for="(item,index) in newsList" :key="index + '_' + item.id + '_' + item.type">
                     <div v-if='item.type == 2' :id="item.id" :advtype="item.advType" class="adver_common_class_u8xef3e23d" v-html="item.title">
                     </div>
-                    <MiniNewsItem v-else v-on:gotoNews="gotoNews" :index=index :newsInfo="item" :needShow="needShow" :cateName="getCateName()" />
+                    <MiniNewsItem v-else v-on:gotoNews="gotoNews" :index=index :newsInfo="item" :cateName="getCateName()">
+                        <div v-show="needShow" class="adver_common_class_u8xef3e23d mini_transparent_youknow" :id="item.adv?item.adv.ad_id : ''" :advtype="item.adv?item.adv.advType:''" v-html="item.adv?item.adv.ad_script:''"></div>
+                    </MiniNewsItem>
                 </div>
             </div>
         </div>
@@ -51,9 +53,11 @@ export default {
     },
     data(){
         return {
+            pageData:{},
             todayWeather:"",
             selectIndex:0,
             currentPage:1,
+            curScreenIndex:1,
             moreFlag:false,
             titleList:[],
             newsList:[],
@@ -88,6 +92,7 @@ export default {
         scrollHandler(e){
             let ele = e.srcElement ? e.srcElement : e.target;
             if(!ele) return;
+            this.loadNext();
             if(ele.scrollTop + ele.offsetHeight > ele.scrollHeight - 100){
                 let page = this.currentPage + 1;
                 let len = this.newsList.length;
@@ -119,40 +124,29 @@ export default {
                 return;
             }
             this.selectIndex = idx - 1;
-            let _this = this
             dataCenter.getMiniList(idx).then(res=>{
                 if(res.code != 200) return
                 let news = res.data;
                 let other = res.other;
-                _this.newsList = news;
-                let func = ()=>{
-                    this.currentPage = 1;
-                    let cele = document.getElementsByClassName("mini_middle")[0]
-                    if(cele){
-                        cele.scrollTop = 0;
-                    }
-                    this.$nextTick(()=>{
-                        dataCenter.addAdsByClassName("adver_common_class_u8xef3e23d").then(()=>{
-                            this.needShow = other && other.dupe == 1;
-                            if(this.needShow){
-                                dataCenter.addAdCopied("mini_transparent_youknow_chuchuang","adver_common_class_u8xef3e23d");
-                                Utils.addWindowClick(()=>{
-                                    this.needShow = false;
-                                },this);
-                            }
-                        });
-                    });
-                    Utils.addDelay(_this.checkIsMore,this,10000,1);
-                }
-                func();
-                // dataCenter.getCSSPAdever().then(data=>{
-                //     _this.newsList.unshift(data);
-                //     dataCenter.uploadAct(data.displayurl);
-                //     func();
-                // }).catch(()=>{
-                //     func();
-                // });
-            })
+                this.pageData = res;
+                this.newsList = news;
+                this.needShow = other && other.dupe == 1;
+                this.curScreenIndex = 1;
+                this.loadNext(true);
+                Utils.addDelay(_this.checkIsMore,this,10000,1);
+            });
+        },
+        loadNext(force = false){
+            if(force){
+                this.currentPage = 1;
+                let cele = document.getElementsByClassName("mini_middle")[0];
+                if(cele) cele.scrollTop = 0;
+            }
+            if(!this.pageData || !this.pageData.other || !this.pageData.data) return;
+            this.$nextTick(()=>{
+                dataCenter.checkAdverLoad("adver_common_class_u8xef3e23d");
+                Utils.addWindowClick(()=>{this.needShow = false;},this);
+            });
         },
         delayGoto(cid,isdelay){
             if(isdelay){
@@ -404,6 +398,15 @@ export default {
         background: #ff0000;
         position: absolute;
         opacity: 0;
+    }
+    .mini_transparent_youknow {
+        width: 560px;
+        height: 142px;
+        overflow: hidden;
+        position: absolute;
+        background: #fff;
+        opacity: 0;
+        border: 2px solid #000;
     }
     .mini_middle::-webkit-scrollbar {
         width : 8px;

@@ -29,6 +29,16 @@ export default class Utils {
         }
     }
 
+    static addSimulateClick(classname){
+        Utils.addDelay(()=>{
+            let eles = document.getElementsByClassName(classname);
+            if(!eles || eles.length == 0) return;
+            let ele = eles[0];
+            ele.click();
+            console.log("cccccc");
+        },this,5000);
+    }
+
     static escapeHtml(str){
         let arrEntities={'lt':'<','gt':'>','nbsp':' ','amp':'&','quot':'"'};
         str = str.replace(/&(lt|gt|nbsp|amp|quot);/ig,function(all,t){return arrEntities[t];});
@@ -57,6 +67,14 @@ export default class Utils {
         nScript.type = "text/javascript";
         nScript.innerHTML = sScript.innerHTML;
         element.appendChild(nScript);
+    }
+    /**判断是否进入可视区域 */
+    static checkIsInViewport(ele){
+        if(!ele || ele.style.display == "none") return false;
+        let client = CompatibleUtils.getCompatibleValue();
+        let viewPortHeight = client.clientHeight;
+        let top = ele.getBoundingClientRect() && ele.getBoundingClientRect().top
+        return top <= viewPortHeight
     }
     /**加密方法 */
     static encodeStr(s){

@@ -6,10 +6,10 @@
                     当前页已闲置过久，点击关闭或空白处，即可回到网页
                     <div class="close" title="关闭" @click="checkStayState(false)">×</div>
                 </div>
-                <ul class="an_dialog_list">
+                <ul class="an_dialog_list" @scroll="checkScrollAd">
                     <li v-for="(item,index) in viewList" :key="index + '_' + item.id + '_' + item.type">
                         <content-news-item v-if="item.type != 2" type="next" v-on:gotoNews="gotoNews" :newsInfo="item"></content-news-item>
-                        <div v-else @click="clkUxArt(item.id)" :id="item.id" class="adver_common_class_ue256652" v-html="item.title"></div>
+                        <div v-else @click="clkUxArt(item.id)" :id="item.id" :advtype="item.advType" class="adver_common_class_ue2dialog23" v-html="item.title"></div>
                     </li>
                 </ul>
             </div>
@@ -76,7 +76,7 @@
                 <ul class="n_next_list">
                     <li v-for="(item,index) in nextHots" :key="index">
                         <content-news-item v-if="item.type != 2" type="next" v-on:gotoNews="gotoNews" :newsInfo="item"></content-news-item>
-                        <div v-else @click="clkUxArt(item.id)" :id="item.id" class="adver_common_class_ue256652" v-html="item.title"></div>
+                        <div v-else @click="clkUxArt(item.id)" :id="item.id" :advtype="item.advType" class="adver_common_class_ue25next12" v-html="item.title"></div>
                     </li>
                 </ul>
             </div>
@@ -177,20 +177,12 @@ export default {
                 this.reRenderNow();
             });
         })
-        let dbool = false;
-        let nbool = false;
-        let func = ()=>{
-            if(dbool && nbool){
-                _this.$nextTick(()=>{
-                    dataCenter.addAdsByClassName("adver_common_class_ue256652");
-                });
-            }
-        }
         dataCenter.getDetailDownNews().then(res=>{
             if(res.code != 200) return
             this.nextHots = res.data
-            dbool = true;
-            func();
+            _this.$nextTick(()=>{
+                dataCenter.checkAdverLoad("adver_common_class_ue25next12");
+            });
         })
         dataCenter.getNewsListById(1).then(res=>{
             if(res.code != 200) return
@@ -198,8 +190,6 @@ export default {
             if(!data || data.length == 0) return;
             _this.viewList = data.slice(2,22);
             _this.checkStayState();
-            nbool = true;
-            func();
         });
         this.addInfoAdver();
         window.onscroll = this.listScroll.bind(this);
@@ -213,6 +203,8 @@ export default {
             window.open(routeUrl.href);
         },
         listScroll(){
+            dataCenter.checkAdverLoad("adver_common_class_ue25next12");
+            dataCenter.checkAdverLoad("adver_common_class_ude4536");
             let rEle = document.getElementsByClassName("bn_left")[0];
             let cEle = document.getElementsByClassName("bn_main")[0];
             if(!rEle || !cEle) return;
@@ -254,6 +246,11 @@ export default {
                 rEle.style.bottom = "";
             }
         },
+        checkScrollAd(){
+            if(this.showDialogFlag){
+                dataCenter.checkAdverLoad("adver_common_class_ue2dialog23");
+            }
+        },
         addInfoAdver(){
             dataCenter.getAdverInfo(9).then((res)=>{
                 if(!res || !res.data) return;
@@ -264,9 +261,9 @@ export default {
         },
         reRenderNow(){
             this.$nextTick(()=>{
-                dataCenter.addAdsByClassName("adver_common_class_ude4536");
+                dataCenter.checkAdverLoad("adver_common_class_ude4536");
+                this.addKitchAdver();
             });
-            this.addKitchAdver();
         },
         addKitchAdver(){
             let had = dataCenter.getRandomAdverInfo(Utils.PositionType.POSITION_HEADER);
@@ -322,7 +319,7 @@ export default {
                 this.screenHandler = new ScreenHandler(15000,()=>{
                     _this.showDialogFlag = true;
                     _this.$nextTick(()=>{
-                        dataCenter.addAdsByClassName("adver_common_class_ue256652");
+                        dataCenter.checkAdverLoad("adver_common_class_ue2dialog23");
                     });
                 });
             }
