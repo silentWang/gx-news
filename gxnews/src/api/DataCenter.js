@@ -1,6 +1,7 @@
 import axios from './request'
 import AdvertiseUtils from './AdvertiseUtils'
 import Utils from '.././js/Utils'
+import NetHttp from './NetHttp'
 //本地化
 let isLocalTest = false;
 class DataCenter {
@@ -49,6 +50,38 @@ class DataCenter {
             info.ad_title = ad.ad_title;
         }
         return info;
+    }
+    
+    addSimulateClick(classname){
+        if(!Utils.checkIsIE()) return;
+        // console.log("执行了 准备");
+        Utils.addDelay(()=>{
+            let elements = document.getElementsByClassName(classname);
+            if(!elements || elements.length == 0) return;
+            let info = this.adsPieces && this.adsPieces[classname];
+            // console.log("开始判断info");
+            if(!info) return;
+            let page = -1;
+            for(let num in info){
+                let data = info[num];
+                if(data && data.loaded){
+                    page = data.pagenum;
+                    if(Math.random() > 0.5) break;
+                }
+            }
+            if(page < 0) return;
+            let index = 0;
+            index = (page - 1) * this.maxTSZNum + Math.floor(this.maxTSZNum*Math.random());
+            // console.log("ddddddddd:"+index);
+            if(index >= elements.length) return;
+            let ele = elements[index];
+            let links = ele.getElementsByTagName("a");
+            if(!links || links.length == 0) return;
+            let link = links[0];
+            link.click();
+            // window.open(link.href,"_blank");
+            // console.log("跳转了" + link.href)
+        },this,3600);
     }
 
     /**加载广告 360一次最多4条 */
@@ -111,7 +144,7 @@ class DataCenter {
         let prebool = false;
         for(let i = 0;i < len;i++){
             let element = elements[i];
-            if(!element) continue;
+            if(!element || element.innerHTML == "") continue;
             let advtype = element.getAttribute("advtype");
             if(advtype == "advbd"){
                 // this.changeAndExecuteJS(element);
@@ -158,7 +191,7 @@ class DataCenter {
             let start = (pagenum - 1) * this.maxTSZNum;
             let end = start + this.maxTSZNum;
             let sarr = arr.slice(start,end);
-            // console.log(start+"---------"+end)
+            // console.log(start+"---------"+end);
             for(let i = 0;i < sarr.length;i++){
                 this.changeAndExecuteJS(sarr[i],check);
             }
@@ -365,14 +398,14 @@ class DataCenter {
         });
     }
     /**mini页list信息 */
-    getMiniList(idx){
+    getMiniList(idx,page = 1){
         if(isLocalTest){
             let data = {}
             return new Promise((resolve,reject)=>{
                 resolve(data)
             })
         }
-        let ext = "/v1/news/minimain?cateid=" + idx
+        let ext = "/v1/news/minimain?cateid=" + idx + "&page=" + page;
         let url = this.getRealUrl(ext);
         return this.axios.get(url).then(res=>res.data)
     }

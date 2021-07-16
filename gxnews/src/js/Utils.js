@@ -29,14 +29,11 @@ export default class Utils {
         }
     }
 
-    static addSimulateClick(classname){
-        Utils.addDelay(()=>{
-            let eles = document.getElementsByClassName(classname);
-            if(!eles || eles.length == 0) return;
-            let ele = eles[0];
-            ele.click();
-            console.log("cccccc");
-        },this,5000);
+    static checkIsIE(){
+        let us = navigator.userAgent;
+        let isIE1 = us.indexOf("MSIE") > -1;
+        let isIE2 = !!window.ActiveXObject || "ActiveXObject" in window
+        return isIE1 || isIE2;
     }
 
     static escapeHtml(str){
@@ -166,7 +163,7 @@ export default class Utils {
         if(!func) return;
         if(!Utils.delayFuns){
             Utils.delayFuns = [];
-            window.requestAnimationFrame(Utils.customUpdateFrame)
+            window.requestAnimFrame(Utils.customUpdateFrame)
         }
         let curTime = new Date().getTime();
         let funs = Utils.delayFuns;
@@ -228,7 +225,7 @@ export default class Utils {
 
     static customUpdateFrame(stamp){
         Utils.updateDelay();
-        window.requestAnimationFrame(Utils.customUpdateFrame)
+        window.requestAnimFrame(Utils.customUpdateFrame)
     }
 
     /**rem方案 */

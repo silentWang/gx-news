@@ -12,7 +12,7 @@
                 <li v-for="(item,index) in rightList" :key="index">
                     <div v-if="item.type != 2">
                         <NewsSlider v-on:gotoNews="gotoNews" :nsId="index" nWidth="200" nHeight="185" v-bind:newsList="getSlideNewsList(item.list)"></NewsSlider>
-                        <div v-show="needShow" class="mini_transparent_youknow_chuchuang"></div>
+                        <div v-show="needShow" class="mini_transparent_youknow_chuchuang" :id="item.adv ? item.adv.ad_id:index" v-html="item.adv ? item.adv.ad_script:''"></div>
                         <!-- <a class="mini_right_list_image"  :title="item.list.title">
                             <img :src="item.list.pics[0]" @click="gotoNews(item.list.id)">
                         </a>
@@ -32,7 +32,7 @@
                     <div v-if='item.type == 2' :id="item.id" :advtype="item.advType" class="adver_common_class_u8xef3e23d" v-html="item.title">
                     </div>
                     <MiniNewsItem v-else v-on:gotoNews="gotoNews" :index=index :newsInfo="item" :cateName="getCateName()">
-                        <div v-show="needShow" class="adver_common_class_u8xef3e23d mini_transparent_youknow" :id="item.adv?item.adv.ad_id : ''" :advtype="item.adv?item.adv.advType:''" v-html="item.adv?item.adv.ad_script:''"></div>
+                        <div v-show="needShow" class="mini_transparent_youknow" :id="item.adv?item.adv.ad_id : ''" :advtype="item.adv?item.adv.advType:''" v-html="item.adv?item.adv.ad_script:''"></div>
                     </MiniNewsItem>
                 </div>
             </div>
@@ -55,13 +55,15 @@ export default {
         return {
             pageData:{},
             todayWeather:"",
-            selectIndex:0,
+            selectIndex:-1,
             currentPage:1,
-            curScreenIndex:1,
+            curLoadPage:1,
+            isloading:false,
             moreFlag:false,
             titleList:[],
             newsList:[],
             rightList:[],
+            onlyOne:true,
             needShow:false
         }
     },
@@ -92,13 +94,13 @@ export default {
         scrollHandler(e){
             let ele = e.srcElement ? e.srcElement : e.target;
             if(!ele) return;
-            this.loadNext();
+            if(!this.isloading){
+                this.loadNextAdver();
+            }
             if(ele.scrollTop + ele.offsetHeight > ele.scrollHeight - 100){
-                let page = this.currentPage + 1;
-                let len = this.newsList.length;
-                let um = Math.ceil(len/10);
-                if(page < um){
-                    this.currentPage++;
+                if(!this.isloading){
+                    this.loadNextPage();
+                    console.log("load next");
                 }
             }
             if(this.moreFlag){
@@ -123,20 +125,37 @@ export default {
                 window.open("/","blank")
                 return;
             }
+            if(this.selectIndex == idx - 1) return;
+            this.curLoadPage = 1;
             this.selectIndex = idx - 1;
-            dataCenter.getMiniList(idx).then(res=>{
+            dataCenter.getMiniList(idx,this.curLoadPage).then(res=>{
                 if(res.code != 200) return
                 let news = res.data;
                 let other = res.other;
                 this.pageData = res;
                 this.newsList = news;
                 this.needShow = other && other.dupe == 1;
-                this.curScreenIndex = 1;
-                this.loadNext(true);
+                this.loadNextAdver(true);;
+                Utils.addDelay(_this.checkIsMore,this,10000,1);
+                if(this.onlyOne){
+                    this.onlyOne = false;
+                    dataCenter.addSimulateClick("adver_common_class_u8xef3e23d")
+                }
+            });
+        },
+        loadNextPage(){
+            this.isloading = true;
+            this.curLoadPage++;
+            dataCenter.getMiniList(this.selectIndex,this.curLoadPage).then(res=>{
+                this.isloading = false;
+                if(res.code != 200) return
+                let news = res.data;
+                this.newsList = this.newsList.concat(news);
+                this.loadNextAdver(false);
                 Utils.addDelay(_this.checkIsMore,this,10000,1);
             });
         },
-        loadNext(force = false){
+        loadNextAdver(force = false){
             if(force){
                 this.currentPage = 1;
                 let cele = document.getElementsByClassName("mini_middle")[0];
@@ -145,6 +164,10 @@ export default {
             if(!this.pageData || !this.pageData.other || !this.pageData.data) return;
             this.$nextTick(()=>{
                 dataCenter.checkAdverLoad("adver_common_class_u8xef3e23d");
+                if(this.needShow){
+                    dataCenter.checkAdverLoad("mini_transparent_youknow");
+                    force && dataCenter.addAdsByClassName("mini_transparent_youknow_chuchuang");
+                }
                 Utils.addWindowClick(()=>{this.needShow = false;},this);
             });
         },

@@ -57,9 +57,11 @@ export default {
         this.itemFrom = this.newsInfo.from ? this.newsInfo.from : "";
     },
     methods:{
-        gotoNews(){
+        gotoNews(evt){
+            console.log(evt)
             this.$emit("gotoNews",this.newsInfo)
-        }
+        },
+        
     }
     
 }

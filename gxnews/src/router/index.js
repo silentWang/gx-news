@@ -8,7 +8,7 @@ import PageMiniA from '@/components/PageMiniA'
 
 Vue.use(Router)
 
-window.requestAnimFrame = (function () {
+window["requestAnimFrame"] = (function () {
     return window.requestAnimationFrame ||
            window.webkitRequestAnimationFrame ||
            window.mozRequestAnimationFrame ||

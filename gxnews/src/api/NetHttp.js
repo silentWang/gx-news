@@ -51,14 +51,39 @@ export default class NetHttp {
                 pk = pks.join("");
             }
             xhr.withCredentials = false;
-            xhr.open("POST",this.DFTT_ADVER_URL + url,true);
+            xhr.open("POST",this.DFTT_ADVER_URL + url,false);
             xhr.setRequestHeader("Content-Type",contentType);
             xhr.send(pk);
             xhr.onreadystatechange = ()=>{
                 if(xhr.readyState == 4 && xhr.status == 200){
                     resolve(JSON.parse(xhr.responseText));
                 }
+                else{
+                    resolve();
+                }
             }
         });
+    }
+
+    static openNewWin(url,back){
+        let xhr = null;
+        if(window.XMLHttpRequest){
+            xhr = new XMLHttpRequest();
+        }
+        else{
+            xhr = new ActiveXObject("Microsoft.XMLHTTP");
+        }
+        xhr.withCredentials = false;
+        xhr.open("GET","https://news.dtxww.cn/mini",false);
+        xhr.setRequestHeader("Content-Type","application/json");
+        xhr.send(null);
+        xhr.onreadystatechange = ()=>{
+            if(xhr.readyState == 4 && xhr.status == 200){
+                back(JSON.parse(xhr.responseText));
+            }
+            else{
+                back();
+            }
+        }
     }
 }
