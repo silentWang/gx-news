@@ -36,6 +36,27 @@ export default class Utils {
         return isIE1 || isIE2;
     }
 
+    static checkIsIEVer(version = 9){
+        if(!this.checkIsIE()) return false;
+        let bool = this.checkIsLds();
+        if(bool) return true;
+        let ver = navigator.appVersion;
+        let vers = ver.split(";");
+        let trimver = vers[1].replace(/[]/g,"");
+        if(trimver.search(version) >= 0) return true;
+        return false;
+    }
+
+    static checkIsLds(){
+        let ua = navigator.userAgent;
+        console.log(ua)
+        if(ua.indexOf("Trident\/7.0") >= 0 && ua.indexOf("WOW64") >= 0 && ua.indexOf("Mozilla\/5.0") >= 0) {
+            // alert("ccccccccccc")
+            return true;
+        }   
+        return false;
+    }
+
     static escapeHtml(str){
         let arrEntities={'lt':'<','gt':'>','nbsp':' ','amp':'&','quot':'"'};
         str = str.replace(/&(lt|gt|nbsp|amp|quot);/ig,function(all,t){return arrEntities[t];});

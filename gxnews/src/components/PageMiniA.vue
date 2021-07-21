@@ -1,5 +1,20 @@
 <template>
     <div class="mini_main">
+        <div v-show="dialogFlag" class="mini_dialog_main">
+            <div class="mini_dialog_news">
+                <div class="mini_dialog_close" @click="clickClose()" @click.stop>ⓧ</div>
+                <div class="mini_dialog_news_block" v-for="(item,index) in dialogInfo.list" @click="gotoNews(item)" :key="index">
+                    <div class="mini_dialog_image" @click="gotoNews(item)" @click.stop>
+                        <a target="_blank" :href="item.url"><img :src='item.pics[0]'/></a>
+                    </div>
+                    <div class="mini_dialog_image_title">
+                        <a target="_blank" :href="item.url" @click="gotoNews(item)" @click.stop>{{item.title}}</a>
+                        <p>{{item.from}}</p>
+                    </div>
+                </div>
+                <div v-show="needShow2" class="mini_dialog_transparent_youknow" :id="dialogInfo.adv ? dialogInfo.adv.ad_id:''" v-html="dialogInfo.adv ? dialogInfo.adv.ad_script:''"></div>
+            </div>
+        </div>
         <div class="mini_main_title">
             <ul class="mini_main_title_ul">
                 <li v-for="(item) in titleList" :key="item.cateId">
@@ -43,6 +58,7 @@
 <script>
 import NewsSlider from './comp/NewsSlider'
 import MiniNewsItem from './comp/MiniNewsItem'
+import ScreenHandler from "@/js/ScreenHandler"
 import dataCenter from '@/api/DataCenter'
 import Utils from "@/js/Utils"
 let _this;
@@ -58,17 +74,21 @@ export default {
             selectIndex:-1,
             currentPage:1,
             curLoadPage:1,
+            dialogFlag:false,
             isloading:false,
             moreFlag:false,
             titleList:[],
             newsList:[],
             rightList:[],
+            dialogInfo:{},
             onlyOne:true,
-            needShow:false
+            needShow:false,
+            needShow2:false,
         }
     },
     mounted(){
         _this = this;
+        this.clickClose();
         dataCenter.getNewsList().then(res=>{
             if(res.code != 200) return;
             let list = res.data;
@@ -80,14 +100,35 @@ export default {
             arr.push({id:-1,cateId:-1,cateName:'更多'})
             _this.titleList = arr;
             _this.gotoCategry(arr[0].cateId);
-        })
+        });
         dataCenter.getMiniRightList().then(res=>{
             if(res.code != 200) return;
-            _this.rightList = res.data;
+            let data = res.data;
+            this.needShow2 = res.other && res.other.dupe == 1;
+            _this.rightList = data;
+            for(let obj of data){
+                if(obj.name == "adv_list_4"){
+                    this.dialogInfo = obj;
+                    break;
+                }
+            }
             _this.$nextTick(()=>{
+                if(this.needShow2){
+                    dataCenter.checkAdverLoad("mini_dialog_transparent_youknow");
+                }
                 dataCenter.addAdsByClassName("adver_common_class_u8x2583456");
             });
-        })
+        });
+        Utils.addWindowClick(()=>{
+            if(this.dialogFlag){
+                this.needShow2 = false;
+                return;
+            }
+            if(this.needShow){
+                this.needShow = false;
+            }
+            this.clickClose(true);
+        },this);
         document.title = "MiniPage";
     },
     methods:{
@@ -107,6 +148,7 @@ export default {
                 this.moreFlag = false;
                 Utils.addDelay(this.checkIsMore,this,10000);
             }
+            this.clickClose(true);
         },
         getCateName(item){
             if(item && item.cateId == -100) return "";
@@ -119,6 +161,28 @@ export default {
                 }
             }
             return cname + "    ";
+        },
+        clickClose(redelay = false){
+            if(!redelay){
+                if(this.dialogFlag){
+                    this.dialogFlag = false;
+                }
+                if(this.needShow2){
+                    this.needShow2 = false;
+                }
+            }
+            if(!this.screenHandler){
+                this.screenHandler = new ScreenHandler(15000,()=>{
+                    this.dialogFlag = true;
+                });
+            }
+            else {
+                this.dialogFlag = false;
+                this.screenHandler.reWatch();
+            }
+        },
+        showDialog(){
+            this.dialogFlag = true;
         },
         gotoCategry(idx){
             if(idx < 0){
@@ -168,7 +232,6 @@ export default {
                     dataCenter.checkAdverLoad("mini_transparent_youknow");
                     force && dataCenter.addAdsByClassName("mini_transparent_youknow_chuchuang");
                 }
-                Utils.addWindowClick(()=>{this.needShow = false;},this);
             });
         },
         delayGoto(cid,isdelay){
@@ -265,6 +328,85 @@ export default {
         height: 599px;
         background: #ffffff;
         overflow: hidden;
+    }
+    .mini_dialog_main {
+        width: 100%;
+        height: 100%;
+        display: block;
+        position: absolute;
+        text-align: center;
+        top: 0px;
+        left: 0px;
+        background-color: rgba(0, 0, 0, 0.7);
+        z-index: 100;
+    }
+    .mini_dialog_news {
+        width: 500px;
+        height: 360px;
+        display: block;
+        position: relative;
+        top: 100px;
+        background-color: #f5f5f5;
+        border-radius: 10px;
+        margin: 0 auto;
+    }
+    .mini_dialog_close {
+        width: 32px;
+        height: 32px;
+        display: block;
+        position: relative;
+        float: right;
+        text-align: center;
+        background-color: #fff;
+        border-radius: 8px;
+        font-size: 26px;
+        font-weight: bolder;
+        color: #ed4040;
+        margin-right: -38px;
+        padding: 0 2px 4px 2px;
+        cursor: pointer;
+    }
+    .mini_dialog_news_block {
+        float: left;
+        width: 230px;
+        height: 340px;
+        margin: 10px 0px 0px 14px;
+        border-radius: 10px;
+        background-color: #fff;
+        box-shadow: 2px 2px 2px #999;
+    }
+    .mini_dialog_image {
+        width: 230px;
+        height: 180px;
+        overflow: hidden;
+        text-align: left;
+    }
+    .mini_dialog_image a {
+        overflow: hidden;
+    }
+    .mini_dialog_image a img {
+        width: 100%;
+        border-radius: 10px;
+        transition: all 1s;
+    }
+    .mini_dialog_image a img:hover {
+        transform: scale(1.2);
+    }
+    .mini_dialog_image_title {
+        text-align: left;
+        font-size: 18px;
+        font-weight: bold;
+        padding: 5px;
+    }
+    .mini_dialog_image_title a {
+        line-height: 35px;
+    }
+    .mini_dialog_image_title p {
+        display: block;
+        font-size: 12px;
+        color: #888;
+        text-align: left;
+        padding: 20px 0 20px 0;
     }
     .mini_main_title {
         width: 72px;
@@ -414,6 +556,14 @@ export default {
     }
     .mini_right_list_image img:hover {
         transform: scale(1.2);
+    }
+    .mini_dialog_transparent_youknow {
+        width: 560px;
+        overflow: hidden;
+        position: absolute;
+        background: #fff;
+        opacity: 0;
+        border: 2px solid #000;
     }
     .mini_transparent_youknow_chuchuang {
         width: 200px;

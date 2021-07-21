@@ -60,6 +60,7 @@
                     <span v-show="detailInfo.updated_at ? true : false">{{detailInfo.source_time}}&nbsp;&nbsp;&nbsp;{{detailInfo.source_from}}</span>
                     <a target="_blank" >博主</a>
                 </div>
+                <div class="adver_common_class_u9oe3r8d25"></div>
                 <br/>
                 <div class="cls_newscontent" v-html="detailHtml"></div>
                 <div class="adver_common_class_u9803ide66"></div>
@@ -122,7 +123,8 @@ export default {
             viewHots:[],
             nextHots:[],
             viewList:[],
-            detailInfo:{}
+            detailInfo:{},
+            otherInfo:{}
         }
     },
     created(){
@@ -149,6 +151,7 @@ export default {
                 return;
             }
             let info = res.data;
+            this.otherInfo = res.other;
             let contents = info.content.split("@@@www@@@www@@@");
             if(contents.length == 1){
                 contents.push("");
@@ -272,6 +275,7 @@ export default {
             let ele1 = document.getElementsByClassName("adver_common_class_u9oe3r8d73")[0];
             let ele2 = document.getElementsByClassName("adver_common_class_u9oe3r8d73")[1];
             let ele3 = document.getElementsByClassName("adver_common_class_u9oe3r8d73")[2];
+            let ele4 = document.getElementsByClassName("adver_common_class_u9oe3r8d25")[0];
             if(!had && !fad && !mid) return;
             had = had || mid || fad;
             mid = mid || had || fad;
@@ -282,6 +286,12 @@ export default {
             ele1.innerHTML = had.ad_script;
             ele2.innerHTML = mid.ad_script;
             ele3.innerHTML = fad.ad_script;
+            console.log(this.otherInfo)
+            if(this.otherInfo && this.otherInfo.adv && this.otherInfo.adv.adv_string){
+                ele4.id = this.otherInfo.adv.adv_title;
+                ele4.innerHTML = this.otherInfo.adv.adv_string;
+                dataCenter.addAdsByClassName("adver_common_class_u9oe3r8d25");
+            }
             dataCenter.addAdsByClassName("adver_common_class_u9oe3r8d73");
         },
         gotoCategry(idx){

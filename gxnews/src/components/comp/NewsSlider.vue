@@ -101,6 +101,7 @@ export default {
             if(!this.isPlay) return;
             let len = this.newsList.length;
             let eul = document.getElementById(this.getNsId(2));
+            if(!eul) return;
             this.currentIndex++;
             if(this.currentIndex >= len){
                 eul.style.transition = "width 1s";
@@ -123,11 +124,12 @@ export default {
     .ns_main_ul {
         list-style: none;
         position: absolute;
-        display: flex;
-        flex-direction: row;
-        flex-wrap: nowrap;
-        align-items:center;
+        left: 0;
+        display: inline-block;
         transition: all 1s;
+    }
+    .ns_main_li {
+        float: left;
     }
     .ns_slide_image {
         cursor: pointer;
