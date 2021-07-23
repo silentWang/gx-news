@@ -52,6 +52,7 @@ export default {
             emain.style.width = swidth;
             emain.style.height = sheight;
             let emul = document.getElementById(this.getNsId(2));
+            emul.style.width = (this.newsList.length * this.nWidth) + "px";
             let list = emul.children;
             for(let i = 0;i < list.length;i++){
                 let eml = list[i];
@@ -106,11 +107,13 @@ export default {
             if(this.currentIndex >= len){
                 eul.style.transition = "width 1s";
                 eul.style.marginLeft = `0px`;
+                // eul.style.left = `0px`;
                 this.currentIndex = 0;
             }
             else{
                 eul.style.transition = "all 1s";
                 eul.style.marginLeft = `-${this.currentIndex*this.nWidth}px`;
+                // eul.style.left = `-${this.currentIndex*this.nWidth}px`;
             }
         }
     }
@@ -125,8 +128,12 @@ export default {
         list-style: none;
         position: absolute;
         left: 0;
-        display: inline-block;
         transition: all 1s;
+        display: flex;
+        display: -webkit-flex;
+        flex-wrap: nowrap;
+        flex-direction: row;
+        justify-content: left;
     }
     .ns_main_li {
         float: left;
@@ -147,7 +154,6 @@ export default {
         padding: 4px 2px 0px 4px;
         text-align: left;
         background: rgba(0, 0, 0, 0.7);
-        overflow: hidden;
     }
     .ns_slide_title a {
         color: #fff;

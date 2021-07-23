@@ -59,8 +59,8 @@
                 <div class="bn_content_second_title">
                     <span v-show="detailInfo.updated_at ? true : false">{{detailInfo.source_time}}&nbsp;&nbsp;&nbsp;{{detailInfo.source_from}}</span>
                     <a target="_blank" >博主</a>
+                    <div class="adver_common_class_u9oe3r8d25"></div>
                 </div>
-                <div class="adver_common_class_u9oe3r8d25"></div>
                 <br/>
                 <div class="cls_newscontent" v-html="detailHtml"></div>
                 <div class="adver_common_class_u9803ide66"></div>

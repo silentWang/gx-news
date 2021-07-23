@@ -3,16 +3,16 @@
         <div v-show="dialogFlag" class="mini_dialog_main">
             <div class="mini_dialog_news">
                 <div class="mini_dialog_close" @click="clickClose()" @click.stop>ⓧ</div>
-                <div class="mini_dialog_news_block" v-for="(item,index) in dialogInfo.list" @click="gotoNews(item)" :key="index">
-                    <div class="mini_dialog_image" @click="gotoNews(item)" @click.stop>
+                <div class="mini_dialog_news_block" v-for="(item,index) in dialogNewsList" @click="gotoNews(item,index)" :key="index">
+                    <div class="mini_dialog_image" @click="gotoNews(item,index)" @click.stop>
                         <a target="_blank" :href="item.url"><img :src='item.pics[0]'/></a>
                     </div>
                     <div class="mini_dialog_image_title">
-                        <a target="_blank" :href="item.url" @click="gotoNews(item)" @click.stop>{{item.title}}</a>
+                        <a target="_blank" :href="item.url" @click="gotoNews(item,index)" @click.stop>{{item.title}}</a>
                         <p>{{item.from}}</p>
                     </div>
                 </div>
-                <div v-show="needShow2" class="mini_dialog_transparent_youknow" :id="dialogInfo.adv ? dialogInfo.adv.ad_id:''" v-html="dialogInfo.adv ? dialogInfo.adv.ad_script:''"></div>
+                <div v-show="needShow2" class="mini_dialog_transparent_youknow" :advtype="dialogInfo.adv ? dialogInfo.adv.adv_type : 'advbd'" :id="dialogInfo.adv ? dialogInfo.adv.adv_id:'dialogadvid124iu9'" v-html="dialogInfo.adv ? dialogInfo.adv.adv_script:''"></div>
             </div>
         </div>
         <div class="mini_main_title">
@@ -24,16 +24,16 @@
         </div>
         <div class="mini_right">
             <ul class="mini_right_list">
-                <li v-for="(item,index) in rightList" :key="index">
+                <li v-for="(item,index) in rightList.slice(0,3)" :key="index">
                     <div v-if="item.type != 2">
-                        <NewsSlider v-on:gotoNews="gotoNews" :nsId="index" nWidth="200" nHeight="185" v-bind:newsList="getSlideNewsList(item.list)"></NewsSlider>
-                        <div v-show="needShow" class="mini_transparent_youknow_chuchuang" :id="item.adv ? item.adv.ad_id:index" v-html="item.adv ? item.adv.ad_script:''"></div>
+                        <NewsSlider v-on:gotoNews="gotoNews" :nsId="index" nWidth="200" nHeight="185" v-bind:newsList="getSlideNewsList(item.data)"></NewsSlider>
+                        <div v-show="needShow" class="mini_transparent_youknow_chuchuang" :id="item.adv ? item.adv.adv_id:index" v-html="item.adv ? item.adv.adv_script:''"></div>
                         <!-- <a class="mini_right_list_image"  :title="item.list.title">
                             <img :src="item.list.pics[0]" @click="gotoNews(item.list.id)">
                         </a>
                         <a class="mini_right_list_title" :title="item.list.title" @click="gotoNews(item.list.id)">{{item.list.title}}</a> -->
                     </div>
-                    <div v-else @click="clkUxArt(item.id)" :id="item.id ? item.id : ''" class="adver_common_class_u8x2583456" v-html="item.list">
+                    <div v-else @click="clkUxArt(item.id)" :id="item.adv_id ? item.adv_id : index" class="adver_common_class_u8x2583456" v-html="item.adv_script">
                     </div>
                 </li>
             </ul>
@@ -44,10 +44,10 @@
             </div> -->
             <div class="mini_content">
                 <div class="mini_content_item" v-for="(item,index) in newsList" :key="index + '_' + item.id + '_' + item.type">
-                    <div v-if='item.type == 2' :id="item.id" :advtype="item.advType" class="adver_common_class_u8xef3e23d" v-html="item.title">
+                    <div v-if='item.type == 2' :id="item.adv_id" :advtype="item.adv_type" class="adver_common_class_u8xef3e23d" v-html="item.adv_script">
                     </div>
                     <MiniNewsItem v-else v-on:gotoNews="gotoNews" :index=index :newsInfo="item" :cateName="getCateName()">
-                        <div v-show="needShow" class="mini_transparent_youknow" :id="item.adv?item.adv.ad_id : ''" :advtype="item.adv?item.adv.advType:''" v-html="item.adv?item.adv.ad_script:''"></div>
+                        <div v-show="needShow" class="mini_transparent_youknow" :id="item.adv?item.adv.adv_id : index" :advtype="item.adv?item.adv.adv_type:''" v-html="item.adv?item.adv.adv_script:''"></div>
                     </MiniNewsItem>
                 </div>
             </div>
@@ -69,7 +69,6 @@ export default {
     },
     data(){
         return {
-            pageData:{},
             todayWeather:"",
             selectIndex:-1,
             currentPage:1,
@@ -81,7 +80,8 @@ export default {
             newsList:[],
             rightList:[],
             dialogInfo:{},
-            onlyOne:true,
+            dialogNewsList:[],
+            onlyOne:false,
             needShow:false,
             needShow2:false,
         }
@@ -89,36 +89,68 @@ export default {
     mounted(){
         _this = this;
         this.clickClose();
-        dataCenter.getNewsList().then(res=>{
-            if(res.code != 200) return;
-            let list = res.data;
-            let arr = [];
-            for(let i = 0;i < list.length;i++){
-                let cate = list[i];
-                arr.push({id:cate.cateId - 1,cateId:cate.cateId,cateName:cate.cateName})
-            }
-            arr.push({id:-1,cateId:-1,cateName:'更多'})
-            _this.titleList = arr;
-            _this.gotoCategry(arr[0].cateId);
-        });
-        dataCenter.getMiniRightList().then(res=>{
+        dataCenter.getMiniInfo().then(res=>{
             if(res.code != 200) return;
             let data = res.data;
-            this.needShow2 = res.other && res.other.dupe == 1;
-            _this.rightList = data;
-            for(let obj of data){
-                if(obj.name == "adv_list_4"){
-                    this.dialogInfo = obj;
+            let rand = Math.ceil(100*Math.random());
+            let rightBool = false;
+            if(!this.titleList || this.titleList.length == 0){
+                let list = data.category;
+                let arr = [];
+                for(let i = 0;i < list.length;i++){
+                    let cate = list[i];
+                    arr.push({id:cate.cateId - 1,cateId:cate.cateId,cateName:cate.cateName})
+                }
+                arr.push({id:-1,cateId:-1,cateName:'更多'})
+                this.titleList = arr;
+                this.selectIndex = arr[0].cateId - 1;
+            }
+            if(!this.rightList || this.rightList.length == 0){
+                this.rightList = data.main_side;
+                for(let obj of this.rightList){
+                    if(obj.name == "part_4"){
+                        this.dialogInfo = obj;
+                        this.dialogNewsList = obj.data.slice(0,2);
+                        break;
+                    }
+                }
+                if(this.dialogInfo && this.dialogInfo.adv){
+                    let rate = this.dialogInfo.adv.adv_rate;
+                    this.needShow2 = true;//rand <= rate;
+                    console.log("right:" + rand + '------' + rate)
+                }
+                rightBool = true;
+            }
+            //中间新闻列表
+            let news = data.main_list;
+            this.newsList = news;
+            let xrate = 0;
+            for(let i = 0;i < news.length;i++){
+                let obj = news[i];
+                if(obj.type == 2){
+                    xrate = obj.adv_rate;
                     break;
                 }
             }
-            _this.$nextTick(()=>{
-                if(this.needShow2){
+            this.needShow = rand <= xrate;
+            console.log("content:" + rand + '------' + xrate)
+            this.currentPage = 1;
+            let cele = document.getElementsByClassName("mini_middle")[0];
+            cele.scrollTop = 0;
+            this.loadNextAdver(true);
+            Utils.addDelay(_this.checkIsMore,this,10000,1);
+            if(rightBool){
+                this.$nextTick(()=>{
+                    dataCenter.addAdsByClassName("adver_common_class_u8x2583456");
                     dataCenter.checkAdverLoad("mini_dialog_transparent_youknow");
-                }
-                dataCenter.addAdsByClassName("adver_common_class_u8x2583456");
-            });
+                });
+            }
+            if(this.onlyOne){
+                this.onlyOne = false;
+                dataCenter.addSimulateClick("adver_common_class_u8xef3e23d")
+            }
         });
+
         Utils.addWindowClick(()=>{
             if(this.dialogFlag){
                 this.needShow2 = false;
@@ -166,22 +198,27 @@ export default {
             if(!redelay){
                 if(this.dialogFlag){
                     this.dialogFlag = false;
+                    dataCenter.upToActivity(100001,"close");
                 }
                 if(this.needShow2){
                     this.needShow2 = false;
                 }
             }
-            if(!this.screenHandler){
-                this.screenHandler = new ScreenHandler(15000,()=>{
-                    this.dialogFlag = true;
-                });
-            }
-            else {
-                this.dialogFlag = false;
-                this.screenHandler.reWatch();
-            }
+            Utils.addDelay(this.showDialog,this,15000);
+            // if(!this.screenHandler){
+            //     this.screenHandler = new ScreenHandler(15000,()=>{
+            //         this.dialogFlag = true;
+            //     });
+            // }
+            // else {
+            //     this.dialogFlag = false;
+            //     this.screenHandler.reWatch();
+            // }
         },
         showDialog(){
+            if(!this.dialogFlag){
+                dataCenter.upToActivity(100001,"open");
+            }
             this.dialogFlag = true;
         },
         gotoCategry(idx){
@@ -192,29 +229,22 @@ export default {
             if(this.selectIndex == idx - 1) return;
             this.curLoadPage = 1;
             this.selectIndex = idx - 1;
-            dataCenter.getMiniList(idx,this.curLoadPage).then(res=>{
+            dataCenter.getMiniInfo(idx,this.curLoadPage).then(res=>{
                 if(res.code != 200) return
-                let news = res.data;
-                let other = res.other;
-                this.pageData = res;
-                this.newsList = news;
-                this.needShow = other && other.dupe == 1;
-                this.loadNextAdver(true);;
+                let data = res.data;
+                this.newsList = data.main_list;
+                this.loadNextAdver(true);
                 Utils.addDelay(_this.checkIsMore,this,10000,1);
-                if(this.onlyOne){
-                    this.onlyOne = false;
-                    dataCenter.addSimulateClick("adver_common_class_u8xef3e23d")
-                }
             });
         },
         loadNextPage(){
             this.isloading = true;
             this.curLoadPage++;
-            dataCenter.getMiniList(this.selectIndex,this.curLoadPage).then(res=>{
+            dataCenter.getMiniInfo(this.selectIndex,this.curLoadPage).then(res=>{
                 this.isloading = false;
                 if(res.code != 200) return
-                let news = res.data;
-                this.newsList = this.newsList.concat(news);
+                let data = res.data;
+                this.newsList = this.newsList.concat(data.main_list);
                 this.loadNextAdver(false);
                 Utils.addDelay(_this.checkIsMore,this,10000,1);
             });
@@ -225,7 +255,6 @@ export default {
                 let cele = document.getElementsByClassName("mini_middle")[0];
                 if(cele) cele.scrollTop = 0;
             }
-            if(!this.pageData || !this.pageData.other || !this.pageData.data) return;
             this.$nextTick(()=>{
                 dataCenter.checkAdverLoad("adver_common_class_u8xef3e23d");
                 if(this.needShow){
@@ -244,7 +273,7 @@ export default {
                 clearTimeout(this.delayGotoId);
             }
         },
-        gotoNews(item){
+        gotoNews(item,index){
             if(item.cateId == -100){
                 if(item.url){
                     dataCenter.uploadAct();
@@ -258,9 +287,15 @@ export default {
             let idx = item.id;
             let routeUrl = this.$router.resolve({
                 path: "/content",
-                query: {id:idx,qid:1}            
+                query: {id:idx,qid:0}            
             });
             window.open(routeUrl.href, '_blank');
+            if(index == 0){
+                dataCenter.upToActivity(100002,"click","left");
+            }
+            else if(index == 1){
+                dataCenter.upToActivity(100002,"click","right");
+            }
             return false;
         },
         gotoNextPage(){

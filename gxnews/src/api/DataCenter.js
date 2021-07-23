@@ -304,6 +304,23 @@ class DataCenter {
         }
         return result;
     }
+    /**上报  type : click open close  action:left,right*/
+    upToActivity(actid,type,action){
+        let url = this.getRealUrl("/v1/demo/index");
+        let userid = this.axios.defaults.headers["userId"];
+        let params = "?userid=" + userid + "&" + "actid=" + actid;
+        if(type){
+            params += "&type=" + type;
+        }
+        if(action){
+            params += "&action=" + action;
+        }
+        let rurl = url + params;
+        // console.log(actid + "----" + type + "----" + action)
+        this.axios.get(rurl).then((res)=>{
+            // console.log(res);
+        });
+    }
     /**新闻列表 */
     getNewsList(){
         if(isLocalTest){
@@ -419,6 +436,12 @@ class DataCenter {
         }
         let url = this.getRealUrl("/v1/news/mini");
         return this.axios.get(url).then(res=>res.data)
+    }
+    /**get mini info */
+    getMiniInfo(cateid = "",page = 1){
+        let ext = "/v1/mini/index?cateid=" + cateid + "&page=" + page;
+        let url = this.getRealUrl(ext);
+        return this.axios.get(url).then(res=>res.data);
     }
 }
 

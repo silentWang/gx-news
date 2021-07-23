@@ -77,25 +77,58 @@ export default {
     },
     mounted(){
         _this = this;
-        dataCenter.getNewsList().then(res=>{
+        // dataCenter.getNewsList().then(res=>{
+        //     if(res.code != 200) return;
+        //     let list = res.data;
+        //     let arr = [];
+        //     for(let i = 0;i < list.length;i++){
+        //         let cate = list[i];
+        //         arr.push({id:cate.cateId - 1,cateId:cate.cateId,cateName:cate.cateName})
+        //     }
+        //     arr.push({id:-1,cateId:-1,cateName:'更多 >>'})
+        //     _this.titleList = arr;
+        //     _this.gotoCategry(arr[0].cateId);
+        // })
+        // dataCenter.getMiniRightList().then(res=>{
+        //     if(res.code != 200) return;
+        //     _this.rightList = res.data;
+        //     _this.$nextTick(()=>{
+        //         dataCenter.addAdsByClassName("adver_common_class_u8x2583456");
+        //     });
+        // })
+
+        dataCenter.getMiniInfo().then(res=>{
             if(res.code != 200) return;
-            let list = res.data;
-            let arr = [];
-            for(let i = 0;i < list.length;i++){
-                let cate = list[i];
-                arr.push({id:cate.cateId - 1,cateId:cate.cateId,cateName:cate.cateName})
+            let data = res.data;
+            let rightBool = false;
+            if(!this.titleList || this.titleList.length == 0){
+                let list = data.catergory;
+                let arr1 = [];
+                for(let i = 0;i < list.length;i++){
+                    let cate = list[i];
+                    arr1.push({id:cate.cateId - 1,cateId:cate.cateId,cateName:cate.cateName})
+                }
+                arr1.push({id:-1,cateId:-1,cateName:'更多 >>'})
+                this.titleList = arr1;
             }
-            arr.push({id:-1,cateId:-1,cateName:'更多 >>'})
-            _this.titleList = arr;
-            _this.gotoCategry(arr[0].cateId);
-        })
-        dataCenter.getMiniRightList().then(res=>{
-            if(res.code != 200) return;
-            _this.rightList = res.data;
-            _this.$nextTick(()=>{
-                dataCenter.addAdsByClassName("adver_common_class_u8x2583456");
+            if(!this.rightList || this.rightList.length == 0){
+                this.rightList = data.main_side;
+                rightBool = true;
+            }
+            let news = data.main_list;
+            this.newsList = news;
+            this.currentPage = 1;
+            let cele = document.getElementsByClassName("mini_middle")[0]
+            cele.scrollTop = 0;
+
+            this.$nextTick(()=>{
+                this.checkIsMore();
+                dataCenter.addAdsByClassName("adver_common_class_u8xef3e23d");
+                if(rightBool){
+                    dataCenter.addAdsByClassName("adver_common_class_u8x2583456");
+                }
             });
-        })
+        });
         document.title = "MiniPage";
     },
     computed:{

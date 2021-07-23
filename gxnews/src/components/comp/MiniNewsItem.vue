@@ -80,6 +80,7 @@ export default {
     .mini_content_image {
         display: block;
         overflow: hidden;
+        padding-top: 8px;
     }
     .mini_content_image_p {
         font-size: 12px;
