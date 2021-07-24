@@ -18,12 +18,13 @@ window["requestAnimFrame"] = (function () {
 })();
 
 export default new Router({
-  // mode: 'history',
+  mode: 'history',
   routes: [
     {
       path: '/',
       name: 'PageIndex',
       component: PageIndex
+      
     },
     // {
     //   path:"/test",

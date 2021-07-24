@@ -33,7 +33,7 @@
                         </a>
                         <a class="mini_right_list_title" :title="item.list.title" @click="gotoNews(item.list.id)">{{item.list.title}}</a> -->
                     </div>
-                    <div v-else @click="clkUxArt(item.id)" :id="item.adv_id ? item.adv_id : index" class="adver_common_class_u8x2583456" v-html="item.adv_script">
+                    <div v-else @click="clkUxArt(item.id)" :id="item.adv ? item.adv.adv_id : index" class="adver_common_class_u8x2583456" v-html="item.adv.adv_script">
                     </div>
                 </li>
             </ul>
@@ -117,7 +117,7 @@ export default {
                 if(this.dialogInfo && this.dialogInfo.adv){
                     let rate = this.dialogInfo.adv.adv_rate;
                     this.needShow2 = true;//rand <= rate;
-                    console.log("right:" + rand + '------' + rate)
+                    // console.log("right:" + rand + '------' + rate)
                 }
                 rightBool = true;
             }
@@ -133,7 +133,7 @@ export default {
                 }
             }
             this.needShow = rand <= xrate;
-            console.log("content:" + rand + '------' + xrate)
+            // console.log("content:" + rand + '------' + xrate)
             this.currentPage = 1;
             let cele = document.getElementsByClassName("mini_middle")[0];
             cele.scrollTop = 0;

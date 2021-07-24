@@ -43,11 +43,11 @@ module.exports = {
     // Paths
     assetsRoot: path.resolve(__dirname, '../dist'),
     //正式
-    // assetsSubDirectory: 'static',
-    // assetsPublicPath:'https://news-dtxww.oss-cn-hangzhou.aliyuncs.com/',
-    //测试
     assetsSubDirectory: 'static',
-    assetsPublicPath: './',
+    assetsPublicPath:'https://news-dtxww.oss-cn-hangzhou.aliyuncs.com/',
+    //测试
+    // assetsSubDirectory: 'static',
+    // assetsPublicPath: './',
     /**
      * Source Maps
      */
