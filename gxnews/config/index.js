@@ -17,11 +17,11 @@ module.exports = {
           '^/napi': ''  
         }
       },
-      '/adver':{
-        target:'https://news.dtxww.cn/adver',
+      '/data':{
+        target:'https://news.dtxww.cn/data',
         changeOrigin:true,
         pathRewrite:{
-          '^/adver': ''  
+          '^/data': ''  
         }
       }
     },

@@ -438,7 +438,18 @@ class DataCenter {
         return this.axios.get(url).then(res=>res.data)
     }
     /**get mini info */
-    getMiniInfo(cateid = "",page = 1){
+    getMiniInfo(cateid = -1,page = 1){
+        if(cateid < 0){
+            let ext = "/data/mini_data.json";
+            return this.axios.get(ext,{
+                headers:{
+                    'Content-Type':'application/json'
+                }
+            }).then(res=>{
+                let data = res.data;
+                return {code:200,data};
+            });
+        }
         let ext = "/v1/mini/index?cateid=" + cateid + "&page=" + page;
         let url = this.getRealUrl(ext);
         return this.axios.get(url).then(res=>res.data);
