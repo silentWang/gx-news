@@ -1,0 +1,2 @@
+直接打开utils目录下面的mininews.exe文件，加载迷你页
+通过utils目录下面的json文件可以改变打开的url

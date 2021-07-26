@@ -164,6 +164,7 @@ class DataCenter {
             this.isCanLoadNext = true;
             return promise;
         }
+        // console.log(classname);
         if(arr1.length > 0){
             await this.handleTSZNext(pagenum,arr1,true);
         }
@@ -437,10 +438,19 @@ class DataCenter {
         let url = this.getRealUrl("/v1/news/mini");
         return this.axios.get(url).then(res=>res.data)
     }
+    /****************************优化版接口******************************************** */
+    /**详情页单接口 */
+    getDetailInfo(){
+        let ext = "/data/mini_detail.json";
+        return this.axios.get(ext,{headers:{'Content-Type':'application/json'}}).then(res=>{
+            let data = res.data;
+            return {code:200,data};
+        });
+    }
     /**get mini info */
-    getMiniInfo(cateid = -1,page = 1){
-        if(cateid < 0){
-            let ext = "/data/mini_data.json";
+    getMiniInfo(cateid = 1,page = 1){
+        if(page == 1){
+            let ext = `/data/mini_data_${cateid}.json`;
             return this.axios.get(ext,{
                 headers:{
                     'Content-Type':'application/json'

@@ -9,7 +9,7 @@
                 <ul class="an_dialog_list" @scroll="checkScrollAd">
                     <li v-for="(item,index) in viewList" :key="index + '_' + item.id + '_' + item.type">
                         <content-news-item v-if="item.type != 2" type="next" v-on:gotoNews="gotoNews" :newsInfo="item"></content-news-item>
-                        <div v-else @click="clkUxArt(item.id)" :id="item.id" :advtype="item.advType" class="adver_common_class_ue2dialog23" v-html="item.title"></div>
+                        <div v-else :id="item.adv_id" :advtype="item.adv_type" class="adver_common_class_ue2dialog23" v-html="item.adv_script"></div>
                     </li>
                 </ul>
             </div>
@@ -27,29 +27,11 @@
             </div>
         </div>
         <div class="bn_main">
-            <div class="bn_left">
-                <div class="adver_common_class_u9oe3r8d73"></div>
+            <div class="bn_left" @scroll="scrollCheckLeft()">
                 <ul class="n_up_list">
-                    <h3>今日热点</h3>
                     <li v-for="(item,index) in todayHots" :key="index">
                         <content-news-item v-if="item.type != 2" type="nup" :newsInfo="item" v-on:gotoNews="gotoNews"></content-news-item>
-                        <div v-else :advtype="item.advType" :id="item.id" class="adver_common_class_ude4536" v-html="item.title"></div>
-                    </li>
-                </ul>
-                <div class="adver_common_class_u9oe3r8d73"></div>
-                <ul class="n_up_list">
-                    <h3>小编精选</h3>
-                    <li v-for="(item,index) in choseHots" :key="index">
-                        <content-news-item v-if="item.type != 2" type="nup" :newsInfo="item" v-on:gotoNews="gotoNews"></content-news-item>
-                        <div v-else :advtype="item.advType" :id="item.id" class="adver_common_class_ude4536" v-html="item.title"></div>
-                    </li>
-                </ul>
-                <div class="adver_common_class_u9oe3r8d73"></div>
-                <ul class="n_up_list">
-                    <h3>视角</h3>
-                    <li v-for="(item,index) in viewHots" :key="index">
-                        <content-news-item v-if="item.type != 2" type="nup" :newsInfo="item" v-on:gotoNews="gotoNews"></content-news-item>
-                        <div v-else :advtype="item.advType" :id="item.id" class="adver_common_class_ude4536" v-html="item.title"></div>
+                        <div v-else :advtype="item.adv_type" :id="item.adv_id" class="adver_common_class_ude4536" v-html="item.adv_script"></div>
                     </li>
                 </ul>
             </div>
@@ -59,11 +41,11 @@
                 <div class="bn_content_second_title">
                     <span v-show="detailInfo.updated_at ? true : false">{{detailInfo.source_time}}&nbsp;&nbsp;&nbsp;{{detailInfo.source_from}}</span>
                     <a target="_blank" >博主</a>
-                    <div class="adver_common_class_u9oe3r8d25"></div>
+                    <div class="adver_common_class_u9oe3r8d25" :id="headAdvInfo ? headAdvInfo.adv_id : ''" :advtype='headAdvInfo ? headAdvInfo.adv_type:""' v-html="headAdvInfo ? headAdvInfo.adv_script : ''"></div>
                 </div>
                 <br/>
                 <div class="cls_newscontent" v-html="detailHtml"></div>
-                <div class="adver_common_class_u9803ide66"></div>
+                <div class="adver_common_class_u9803ide66" :id="footAdvInfo ? footAdvInfo.adv_id : ''" :advtype='footAdvInfo ? footAdvInfo.adv_type:""' v-html="footAdvInfo ? footAdvInfo.adv_script : ''"></div>
                 <div class="bn_content_pages">
                     <a class="bn_content_pages_a_normal" v-show="currentPageIndex > 0" @click="gotoPage(currentPageIndex - 1)">上一页</a>
                     <a v-for="(item,index) in allPages" :key="index"
@@ -77,7 +59,7 @@
                 <ul class="n_next_list">
                     <li v-for="(item,index) in nextHots" :key="index">
                         <content-news-item v-if="item.type != 2" type="next" v-on:gotoNews="gotoNews" :newsInfo="item"></content-news-item>
-                        <div v-else @click="clkUxArt(item.id)" :id="item.id" :advtype="item.advType" class="adver_common_class_ue25next12" v-html="item.title"></div>
+                        <div v-else :id="item.adv_id" :advtype="item.adv_type" class="adver_common_class_ue25next12" v-html="item.adv_script"></div>
                     </li>
                 </ul>
             </div>
@@ -124,7 +106,9 @@ export default {
             nextHots:[],
             viewList:[],
             detailInfo:{},
-            otherInfo:{}
+            otherInfo:{},
+            headAdvInfo:null,
+            footAdvInfo:null
         }
     },
     created(){
@@ -134,17 +118,6 @@ export default {
             this.$router.push({path:'/'});
             return;
         }
-        let _this = this;
-        dataCenter.getNewsList().then(res=>{
-            if(res.code != 200) return;
-            let list = res.data;
-            let arr = [];
-            for(let i = 0;i < list.length;i++){
-                let cate = list[i];
-                arr.push({id:cate.cateId,cateId:cate.cateId,cateName:cate.cateName})
-            }
-            _this.titleList = arr;
-        })
         dataCenter.getNewsDetailById(query.id).then(res=>{
             if(res.code != 200) {
                 this.$router.push({path:'/'});
@@ -158,45 +131,55 @@ export default {
             }
             this.allPages = contents;
             // info.content = Utils.escapeHtml(info.content);
-            _this.detailInfo = info;
+            this.detailInfo = info;
             document.title = info.title;
             this.gotoPage(0);
         })
-        dataCenter.getDetailLeftNews().then(res=>{
-            if(res.code != 200) return
-            let data = res.data
-            for(let info of data){
-                if(info.name == "今日热点"){
-                    this.todayHots = info.list
+
+        dataCenter.getDetailInfo().then(res=>{
+            let data = res.data;
+            console.log(data);
+            let list = data.category;
+            let arr = [];
+            for(let i = 0;i < list.length;i++){
+                let cate = list[i];
+                arr.push({id:cate.cateId,cateId:cate.cateId,cateName:cate.cateName})
+            }
+            this.titleList = arr;
+            let details = data.detail_side;
+            for(let i = 0;i < details.length;i++){
+                let detail = details[i];
+                if(detail.name == "part_1"){
+                    this.todayHots = detail.data;
                 }
-                if(info.name == "小编精选"){
-                    this.choseHots = info.list
+                else if(detail.name == "part_2"){
+                    this.nextHots = detail.data;
                 }
-                if(info.name == "视角"){
-                    this.viewHots = info.list
+                else if(detail.name == "part_3"){
+                    this.footAdvInfo = detail.adv;
+                }
+                else if(detail.name == "part_4"){
+                    this.headAdvInfo = detail.adv;
+                }
+                else if(detail.name == "part_5"){
+                    this.viewList = detail.data.slice(2,22);
+                    this.checkStayState();
                 }
             }
-            dataCenter.getAdverInfo(4).then(()=>{
-                this.reRenderNow();
-            });
-        })
-        dataCenter.getDetailDownNews().then(res=>{
-            if(res.code != 200) return
-            this.nextHots = res.data
-            _this.$nextTick(()=>{
+            this.$nextTick(()=>{
+                dataCenter.checkAdverLoad("adver_common_class_ude4536");
                 dataCenter.checkAdverLoad("adver_common_class_ue25next12");
+                dataCenter.addAdsByClassName("adver_common_class_u9oe3r8d25");
+                dataCenter.addAdsByClassName("adver_common_class_u9803ide66");
             });
-        })
-        dataCenter.getNewsListById(1).then(res=>{
-            if(res.code != 200) return
-            let data = res.data;
-            if(!data || data.length == 0) return;
-            _this.viewList = data.slice(2,22);
-            _this.checkStayState();
         });
-        this.addInfoAdver();
+
+        window.onresize = this.resizeHandle.bind(this);
         window.onscroll = this.listScroll.bind(this);
-        this.listScroll();
+        this.$nextTick(()=>{
+            this.listScroll();
+            this.resizeHandle();
+        });
     },
     methods:{
         reloadHome(evt){
@@ -205,94 +188,27 @@ export default {
             });
             window.open(routeUrl.href);
         },
+        resizeHandle(){
+            let eles = document.getElementsByClassName("bn_left");
+            if(!eles || eles.length == 0) return;
+            let ele = eles[0];
+            let comps = CompatibleUtils.getViewPort();
+            ele.style.height = comps.clientHeight + "px";
+        },
+        scrollCheckLeft(){
+            dataCenter.checkAdverLoad("adver_common_class_ude4536");
+        },
         listScroll(){
             dataCenter.checkAdverLoad("adver_common_class_ue25next12");
-            dataCenter.checkAdverLoad("adver_common_class_ude4536");
-            let rEle = document.getElementsByClassName("bn_left")[0];
-            let cEle = document.getElementsByClassName("bn_main")[0];
-            if(!rEle || !cEle) return;
             let attrVal = CompatibleUtils.getCompatibleValue();
             let scrollTop = attrVal.scrollTop;
             let clientHgt = attrVal.clientHeight;
-            let scrollHgt = attrVal.scrollHeight;
-            let rsHgt = rEle.offsetHeight;
-            let xpos = cEle.offsetLeft || 0;
             this.showGoTopFlag = scrollTop >= clientHgt;
-            if(scrollTop <= 60){
-                rEle.style.position = "absolute";
-                rEle.style.top = "";
-                rEle.style.left = "";
-                rEle.style.bottom = "";
-            }
-            else if(rsHgt < clientHgt){
-                rEle.style.position = "fixed";
-                rEle.style.top = "0px";
-                rEle.style.bottom = "";
-                rEle.style.left = (xpos) + "px";
-            }
-            else if(rsHgt + 95 >= scrollHgt){
-                rEle.style.position = "absolute";
-                rEle.style.top = "";
-                rEle.style.left = "";
-                rEle.style.bottom = "";
-            }
-            else if(rsHgt - clientHgt < scrollTop){
-                rEle.style.position = "fixed";
-                rEle.style.top = "";
-                rEle.style.bottom = "10px";
-                rEle.style.left = (xpos) + "px";
-            }
-            else{
-                rEle.style.position = "absolute";
-                rEle.style.top = "";
-                rEle.style.left = "";
-                rEle.style.bottom = "";
-            }
         },
         checkScrollAd(){
             if(this.showDialogFlag){
                 dataCenter.checkAdverLoad("adver_common_class_ue2dialog23");
             }
-        },
-        addInfoAdver(){
-            dataCenter.getAdverInfo(9).then((res)=>{
-                if(!res || !res.data) return;
-                let ele = document.getElementsByClassName("adver_common_class_u9803ide66")[0];
-                ele.innerHTML = res.data.ad_script;
-                dataCenter.addAdsByClassName("adver_common_class_u9803ide66");
-            });
-        },
-        reRenderNow(){
-            this.$nextTick(()=>{
-                dataCenter.checkAdverLoad("adver_common_class_ude4536");
-                this.addKitchAdver();
-            });
-        },
-        addKitchAdver(){
-            let had = dataCenter.getRandomAdverInfo(Utils.PositionType.POSITION_HEADER);
-            let mid = dataCenter.getRandomAdverInfo(Utils.PositionType.POSITION_MIDDLE);
-            let fad = dataCenter.getRandomAdverInfo(Utils.PositionType.POSITION_FOOTER);
-            let ele1 = document.getElementsByClassName("adver_common_class_u9oe3r8d73")[0];
-            let ele2 = document.getElementsByClassName("adver_common_class_u9oe3r8d73")[1];
-            let ele3 = document.getElementsByClassName("adver_common_class_u9oe3r8d73")[2];
-            let ele4 = document.getElementsByClassName("adver_common_class_u9oe3r8d25")[0];
-            if(!had && !fad && !mid) return;
-            had = had || mid || fad;
-            mid = mid || had || fad;
-            fad = fad || had || mid;
-            ele1.id = had.id;
-            ele2.id = mid.id;
-            ele3.id = fad.id;
-            ele1.innerHTML = had.ad_script;
-            ele2.innerHTML = mid.ad_script;
-            ele3.innerHTML = fad.ad_script;
-            console.log(this.otherInfo)
-            if(this.otherInfo && this.otherInfo.adv && this.otherInfo.adv.adv_string){
-                ele4.id = this.otherInfo.adv.adv_title;
-                ele4.innerHTML = this.otherInfo.adv.adv_string;
-                dataCenter.addAdsByClassName("adver_common_class_u9oe3r8d25");
-            }
-            dataCenter.addAdsByClassName("adver_common_class_u9oe3r8d73");
         },
         gotoCategry(idx){
             let routeUrl = this.$router.resolve({
@@ -361,6 +277,7 @@ export default {
         color:#f24e4e;
     }
     .cls_main {
+        height: 100%;
         background: #f5f5f5;
     }
     .an_dialog_container {
@@ -441,15 +358,15 @@ export default {
         z-index: 90;
     }
     .bn_title_div {
-        width: 1190px;
+        width: 1300px;
         padding-top: 5px;
         margin: 0 auto;
     }
     .bn_title_ul {
         display: block;
-        margin-left: 180px;
         white-space:nowrap;
         text-align: left;
+        margin-left: 480px;
     }
     .bn_title_logo {
         position: relative;
@@ -476,21 +393,21 @@ export default {
         text-decoration: none;
     }
     .bn_main {
-        width: 1190px;
+        width: 1300px;
+        height: 100%;
         position: relative;
         top: 40px;
         padding-top: 10px;
         margin: 0 auto;
     }
     .bn_left {
-        display: flex;
-        flex-direction: column;
+        position: fixed;
         background-color: #fff;
-        width: 336px;
+        width: 450px;
         margin-top:10px;
         margin-bottom: 25px; 
         padding: 10px;
-        position: absolute;
+        overflow-y: scroll;
     }
     .bn_content {
         width: 780px;
@@ -498,8 +415,7 @@ export default {
         background: #fff;
         padding: 10px;
         margin-top: 10px;
-        float: left;
-        margin-left: 370px;
+        margin-left: 480px;
     }
     .bn_content_second_title {
         text-align: left;
@@ -545,7 +461,7 @@ export default {
         overflow: hidden;
         zoom: 1;
         margin-bottom: 8px;
-        padding-bottom: 10px;
+        padding-bottom: 15px;
         border-bottom: 1px solid #eee;
     }
     .bn_left_list_news_title {
@@ -659,7 +575,7 @@ export default {
     }
     .bn_sidenav {
         position: fixed;
-        margin-left: 1190px;
+        margin-left: 1300px;
         margin-top: 30px;
         top: 30px;
     }

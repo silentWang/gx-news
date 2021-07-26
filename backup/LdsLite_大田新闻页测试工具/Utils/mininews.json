@@ -1,0 +1,23 @@
+{
+    "mininews": {
+        "tab": [
+            {
+                "tabname": "大田新闻页",
+                "tabicon": "http://sha.gimini.cn/mini6/index.html?sid=sha",
+                "url": "https://news.dtxww.cn/mini",
+                "same_core":  "1",
+                "ids": "dtxww"
+            },
+            {
+                "tabname": "测试页面2",
+                "tabicon": "http://p0.qhimg.com/t01d071c9743ad585f7.png",
+                "url": "https://www.360kuai.com/pc/html/ludashi/news_cust.html?show_id=bsRsxN&mid={mid}&pid={pid}&from={from}&appver={appver}&modver={modver}",
+                "same_core":  "0",
+                "ids": "dianjing_02"
+            }
+        ],
+		"options": {
+			"screen_type":"3"
+		}
+    }
+}

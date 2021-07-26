@@ -20,12 +20,30 @@
             </div>
         </div>
         <div v-else-if="type == 'nup'">
-            <a class="n_up_image_a"  :title="title">
-                <img :src="images[0]" @click="gotoNews">
-            </a>
-            <p class="n_up_pp">
+            <div class="nup_three_div" v-if="images.length >= 3">
                 <a :title="title" @click="gotoNews">{{title}}</a>
-            </p>
+                <div class="nup_three_img_div">
+                    <a href="" @click="gotoNews">
+                        <img :src="images[0]">
+                    </a>
+                    <a href="" @click="gotoNews">
+                        <img :src="images[1]">
+                    </a>
+                    <a href="" @click="gotoNews">
+                        <img :src="images[2]">
+                    </a>
+                </div>
+                <span class="nup_three_from_time" @click="gotoNews">{{from}}&nbsp;&nbsp;&nbsp;{{time}}</span>
+            </div>
+            <div class="nup_one_div" v-else>
+                <a class="n_up_image_a"  :title="title">
+                    <img :src="images[0]" @click="gotoNews">
+                </a>
+                <div class="n_up_pp">
+                    <a :title="title" @click="gotoNews">{{title}}</a>
+                </div>
+                <span class="n_up_pp_span" @click="gotoNews">{{from}}&nbsp;&nbsp;&nbsp;&nbsp;{{time}}</span>
+            </div>
         </div>
     </div>
 </template>
@@ -45,12 +63,14 @@ export default {
         return {
             images:[],
             title:"",
+            from:"",
             time:""
         }
     },
     mounted(){
         this.images = this.newsInfo.pics;
         this.title = this.newsInfo.title;
+        this.from = this.newsInfo.from;
         this.time = this.newsInfo.time;
     },
     methods:{
@@ -124,10 +144,55 @@ export default {
         color: #f24e4e;
         font-style: normal;
     }
+    .nup_three_div {
+        text-align: left;
+    }
+    .nup_three_div a {
+        color: #333;
+        font-size: 14px;
+        letter-spacing: .5px;
+        font-weight: bold;
+    }
+    .nup_three_div a:hover {
+        color: #f24e4e;
+    }
+    .nup_three_img_div {
+        position: relative;
+        margin-left: -5px;
+        top: 5px;
+    }
+    .nup_three_img_div a {
+        width: 140px;
+        height: 90px;
+        display: block;
+        overflow: hidden;
+        float: left;
+        margin-left: 5px;
+    }
+    .nup_three_img_div img {
+        width: 140px;
+        height: 90px;
+        transition: all .5s;
+    }
+    .nup_three_img_div img:hover {
+        transform: scale(1.2);
+    }
+    .nup_three_from_time {
+        color: #A6A6A6;
+        text-decoration: none;
+        font-size: 12px;
+        position: relative;
+        top: 10px;
+    }
+    .nup_one_div {
+        width: 100%;
+        height: 90px;
+        position: relative;
+    }
     .n_up_image_a {
         float: left;
-        width: 100px;
-        height: 57px;
+        width: 140px;
+        height: 90px;
         display: block;
         overflow: hidden;
         margin-right: 10px;
@@ -136,8 +201,8 @@ export default {
         cursor: pointer;
     }
     .n_up_image_a img {
-        width: 100px;
-        height: 57px;
+        width: 140px;
+        min-height: 90px;
         vertical-align: middle;
         transition: all 0.6s;
     }
@@ -145,11 +210,21 @@ export default {
         transform: scale(1.2);
     }
     .n_up_pp {
-        width: 206px;
-        height: 54px;
+        width: 280px;
+        position: relative;
         text-align: left;
-        float: left;
         overflow: hidden;
-        line-height: 25px;
+    }
+    .n_up_pp a {
+        font-weight: bold;
+        font-size: 14px;
+    }
+    .n_up_pp_span {
+        display: block;
+        position: absolute;
+        color: #A6A6A6;
+        font-size: 12px;
+        left: 150px;
+        bottom: 0px;
     }
 </style>

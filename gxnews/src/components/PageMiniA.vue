@@ -18,7 +18,7 @@
         <div class="mini_main_title">
             <ul class="mini_main_title_ul">
                 <li v-for="(item) in titleList" :key="item.cateId">
-                    <a @click="gotoCategry(item.cateId)" @mouseover="delayGoto(item.cateId,true)" @mouseout="delayGoto(item.cateId,false)" :class="[selectIndex == item.id ? 'mini_navLink_selected':'mini_navLink']">{{item.cateName}}</a>
+                    <a @click="gotoCategry(item.cateId)" @mouseover="delayGoto(item.cateId,true)" @mouseout="delayGoto(item.cateId,false)" :class="[selectCateId == item.cateId ? 'mini_navLink_selected':'mini_navLink']">{{item.cateName}}</a>
                 </li>
             </ul>
         </div>
@@ -70,7 +70,7 @@ export default {
     data(){
         return {
             todayWeather:"",
-            selectIndex:-1,
+            selectCateId:-1,
             currentPage:1,
             curLoadPage:1,
             dialogFlag:false,
@@ -103,7 +103,7 @@ export default {
                 }
                 arr.push({id:-1,cateId:-1,cateName:'更多'})
                 this.titleList = arr;
-                this.selectIndex = arr[0].cateId - 1;
+                this.selectCateId = arr[0].cateId;
             }
             if(!this.rightList || this.rightList.length == 0){
                 this.rightList = data.main_side;
@@ -116,7 +116,7 @@ export default {
                 }
                 if(this.dialogInfo && this.dialogInfo.adv){
                     let rate = this.dialogInfo.adv.adv_rate;
-                    this.needShow2 = true;//rand <= rate;
+                    this.needShow2 = rand <= rate;
                     // console.log("right:" + rand + '------' + rate)
                 }
                 rightBool = true;
@@ -187,7 +187,7 @@ export default {
             let list = this.titleList;
             let cname = "";
             for(let cate of list){
-                if(cate.cateId == this.selectIndex + 1){
+                if(cate.cateId == this.selectCateId){
                     cname = cate.cateName;
                     break;
                 }
@@ -226,9 +226,9 @@ export default {
                 window.open("/","blank")
                 return;
             }
-            if(this.selectIndex == idx - 1) return;
+            if(this.selectCateId == idx) return;
             this.curLoadPage = 1;
-            this.selectIndex = idx - 1;
+            this.selectCateId = idx;
             dataCenter.getMiniInfo(idx,this.curLoadPage).then(res=>{
                 if(res.code != 200) return
                 let data = res.data;
@@ -240,7 +240,7 @@ export default {
         loadNextPage(){
             this.isloading = true;
             this.curLoadPage++;
-            dataCenter.getMiniInfo(this.selectIndex,this.curLoadPage).then(res=>{
+            dataCenter.getMiniInfo(this.selectCateId,this.curLoadPage).then(res=>{
                 this.isloading = false;
                 if(res.code != 200) return
                 let data = res.data;
