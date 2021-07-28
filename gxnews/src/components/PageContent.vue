@@ -138,7 +138,7 @@ export default {
 
         dataCenter.getDetailInfo().then(res=>{
             let data = res.data;
-            console.log(data);
+            // console.log(data);
             let list = data.category;
             let arr = [];
             for(let i = 0;i < list.length;i++){
@@ -616,6 +616,7 @@ export default {
     }
     .bn_sidenav a:hover{
         opacity: 1;
+        color: #fff;
         background-color: #ff0000;
     }
 

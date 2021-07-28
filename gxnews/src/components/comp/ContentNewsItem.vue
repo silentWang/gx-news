@@ -33,7 +33,7 @@
                         <img :src="images[2]">
                     </a>
                 </div>
-                <span class="nup_three_from_time" @click="gotoNews">{{from}}&nbsp;&nbsp;&nbsp;{{time}}</span>
+                <span class="nup_three_from_time" @click="gotoNews">{{from}}&nbsp;&nbsp;&nbsp;</span>
             </div>
             <div class="nup_one_div" v-else>
                 <a class="n_up_image_a"  :title="title">
@@ -42,7 +42,7 @@
                 <div class="n_up_pp">
                     <a :title="title" @click="gotoNews">{{title}}</a>
                 </div>
-                <span class="n_up_pp_span" @click="gotoNews">{{from}}&nbsp;&nbsp;&nbsp;&nbsp;{{time}}</span>
+                <p><span class="n_up_pp_span" @click="gotoNews">{{from}}&nbsp;&nbsp;&nbsp;&nbsp;</span></p>
             </div>
         </div>
     </div>
@@ -149,9 +149,10 @@ export default {
     }
     .nup_three_div a {
         color: #333;
-        font-size: 14px;
-        letter-spacing: .5px;
+        font-size: 17px;
         font-weight: bold;
+        font-family: "Microsoft YaHei";
+        letter-spacing: .5px;
     }
     .nup_three_div a:hover {
         color: #f24e4e;
@@ -216,8 +217,9 @@ export default {
         overflow: hidden;
     }
     .n_up_pp a {
+        font-size: 17px;
         font-weight: bold;
-        font-size: 14px;
+        font-family: "Microsoft YaHei";
     }
     .n_up_pp_span {
         display: block;
