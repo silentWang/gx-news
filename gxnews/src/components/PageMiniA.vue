@@ -204,16 +204,16 @@ export default {
                     this.needShow2 = false;
                 }
             }
-            // Utils.addDelay(this.showDialog,this,15000);
-            if(!this.screenHandler){
-                this.screenHandler = new ScreenHandler(15000,()=>{
-                    this.dialogFlag = true;
-                });
-            }
-            else {
-                this.dialogFlag = false;
-                this.screenHandler.reWatch();
-            }
+            Utils.addDelay(this.showDialog,this,15000);
+            // if(!this.screenHandler){
+            //     this.screenHandler = new ScreenHandler(15000,()=>{
+            //         this.showDialog();
+            //     });
+            // }
+            // else {
+            //     this.dialogFlag = false;
+            //     this.screenHandler.reWatch();
+            // }
         },
         showDialog(){
             if(!this.dialogFlag){
@@ -283,6 +283,29 @@ export default {
                     window.open("/", '_blank');
                 }
                 return;
+            }
+            //前10条点击即移动到第10条
+            let sindex = this.newsList.indexOf(item);
+            if(sindex <= 19 && item.type != 2){
+                let arr = this.newsList.slice(0,20);
+                let arr1 = [];
+                let arr2 = [];
+                for(let i = 0;i < arr.length;i++){
+                    if(arr[i].type == 2){
+                        arr2.push(arr[i]);
+                    }
+                    else if(sindex != i){
+                        arr1.push(arr[i]);
+                    }
+                }
+                arr1.push(arr[sindex]);
+                let tarr = [];
+                for(let i = 0;i < arr2.length;i++){
+                    tarr.push(arr2[i]);
+                    tarr.push(arr1[i]);
+                }
+                let xarr = tarr.concat(this.newsList.slice(20));
+                this.newsList = xarr;
             }
             let idx = item.id;
             let routeUrl = this.$router.resolve({
