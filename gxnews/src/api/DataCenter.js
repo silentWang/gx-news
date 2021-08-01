@@ -254,56 +254,25 @@ class DataCenter {
         }
         return true;
     }
-
-    getCSSPAdever(){
-        if(isLocalTest){
-            return new Promise((resolve,reject)=>{
-                let data = {};
-                let ads = this.getTargetData(data);
-                resolve(ads);
-            });
-        }
-        let params = AdvertiseUtils.getCSSPParams();
-        let pk = "";
-        if(params && typeof params == 'object'){
-            let pks = [];
-            for(let key in params){
-                pks.push(key + "=" + params[key]);
-                pks.push("&");
-            }
-            pks.pop();
-            pk = pks.join("");
-        }
-        let ext = '/adver?key=c59281bd-1dd7-42b9-935c-a8da2b80d2e3';
-        return this.axios.get(ext).then(res=>{
-            
-            return this.getTargetData(res.data);
-        });
-    }
-
-    getTargetData(data){
-        if(!data || !data.ad || data.ad.length == 0) return null;
-        let ads = data.ad[0];
-        let adm = JSON.parse(ads.admnative);
-        let pics = [];
-        for(let i = 1;i <= 10;i++){
-            let pd = adm["image" + (i == 1 ? '' : i)]
-            if(pd && pd.url){
-                pics.push(pd.url);
+    /**广告iframe上报 */
+    upToAdverByIframe(advers = []){
+        if(!advers || advers.length == 0) return;
+        let len = advers.length;
+        let element = document.getElementById("common_other_container");
+        element.innerHTML = "";
+        let div = document.createElement("div");
+        for(let i = 0;i < len;i++){
+            let adv = advers[i];
+            if(adv.type == 3 && adv.impression && adv.impression.length > 0){
+                for(let url of adv.impression){
+                    let iframe = document.createElement("iframe");
+                    iframe.src = url;
+                    div.append(iframe);
+                }
             }
         }
-        let result = {
-            pics,
-            cateId:-100,
-            from:"广告",
-            id:Math.random().toString().slice(3,8),
-            time:"",
-            title:adm.title,
-            type:1,
-            url:adm.click ? adm.click.url : '',
-            displayurl:adm.displayurl
-        }
-        return result;
+        // console.log(div);
+        element.appendChild(div);
     }
     /**上报  type : click open close  action:left,right*/
     upToActivity(actid,type,action){
@@ -339,7 +308,13 @@ class DataCenter {
         }
         let ext = "/v1/news/list?cateid="+idx + "&page=" + page;
         let url = this.getRealUrl(ext);
-        return this.axios.get(url).then(res=>res.data)
+        return this.axios.get(url).then(res=>{
+            let data = res.data;
+            if(data.code == 200){
+                this.upToAdverByIframe(data.data);
+            }
+            return data;
+        });
     }
     /**新闻详情 */
     getNewsDetailById(idx){
