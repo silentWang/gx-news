@@ -204,16 +204,16 @@ export default {
                     this.needShow2 = false;
                 }
             }
-            // Utils.addDelay(this.showDialog,this,15000);
-            if(!this.screenHandler){
-                this.screenHandler = new ScreenHandler(15000,()=>{
-                    this.dialogFlag = true;
-                });
-            }
-            else {
-                this.dialogFlag = false;
-                this.screenHandler.reWatch();
-            }
+            Utils.addDelay(this.showDialog,this,15000);
+            // if(!this.screenHandler){
+            //     this.screenHandler = new ScreenHandler(15000,()=>{
+            //         this.showDialog();
+            //     });
+            // }
+            // else {
+            //     this.dialogFlag = false;
+            //     this.screenHandler.reWatch();
+            // }
         },
         showDialog(){
             if(!this.dialogFlag){
