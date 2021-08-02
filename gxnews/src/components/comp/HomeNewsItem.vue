@@ -6,10 +6,10 @@
             </div>
             <div class="an_content_desc">
                 <div class="an_content_desc_inner" @click="gotoNews">
-                    <h2><a target="_blank" >{{title}}</a></h2>
+                    <h2><a target="_blank">{{title}}</a></h2>
                     <p class="an_content_info">
                         <a target="_self" >{{cateName}}</a>&nbsp;
-                        <a target="_self"  v-show="from.length > 0">{{from}}</a>&nbsp;
+                        <a target="_self" v-show="from.length > 0">{{from}}</a>&nbsp;
                         <span>{{time}}</span>
                     </p>
                 </div>
@@ -55,8 +55,12 @@ export default {
     },
     methods:{
         gotoNews(){
+            if(this.newsInfo.type == 3){
+                window.open(this.newsInfo.url,"_blank");
+                return;
+            }
             this.$emit("gotoNews",this.newsInfo.id)
-        },
+        }
     }
 }
 </script>
