@@ -58,7 +58,10 @@ export default {
     },
     methods:{
         gotoNews(evt){
-            console.log(evt)
+            if(this.newsInfo.type == 3){
+                window.open(this.newsInfo.url,"_blank");
+                return;
+            }
             this.$emit("gotoNews",this.newsInfo)
         },
         

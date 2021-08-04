@@ -117,7 +117,6 @@ export default {
                 if(this.dialogInfo && this.dialogInfo.adv){
                     let rate = this.dialogInfo.adv.adv_rate;
                     this.needShow2 = rand <= rate;
-                    // console.log("right:" + rand + '------' + rate)
                 }
                 rightBool = true;
             }
@@ -471,6 +470,7 @@ export default {
         position: absolute;
         margin-left: 10px;
         top: 10px;
+        right: 30px;
         z-index: 99;
         background: #fff;
     }
@@ -484,6 +484,7 @@ export default {
         width: 72px;
         height: 32px;
         margin:0px 0px 10px 0px;
+        background-color: #f0f8ff;
         display: block;
         list-style-type: none;
     }
@@ -521,11 +522,15 @@ export default {
         height: 40px;
     }
     .mini_middle {
-        width: 802px;
+        width: 680px;
         height: 595px;
         position: absolute;
-        left: 95px;
+        left: 220px;
         top: 5px;
+        z-index: 20;
+        overflow-y: hidden;
+    }
+    .mini_middle:hover {
         overflow-y: auto;
     }
     .mini_content {
@@ -569,7 +574,7 @@ export default {
         width: 200px;
         position: absolute;
         top:10px;
-        right: 30px;
+        left: 5px;
         z-index: 10;
     }
     .mini_right_list {

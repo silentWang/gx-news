@@ -63,6 +63,7 @@
                     </li>
                 </ul>
             </div>
+            <div class="bn_content_float_advs" :id="floatAdvInfo?floatAdvInfo.adv_id:''" :advtype="floatAdvInfo?floatAdvInfo.adv_type:''" v-html="floatAdvInfo?floatAdvInfo.adv_script:''"></div>
             <div class="bn_sidenav">
                 <ul>
                     <li class="home">
@@ -108,7 +109,8 @@ export default {
             detailInfo:{},
             otherInfo:{},
             headAdvInfo:null,
-            footAdvInfo:null
+            footAdvInfo:null,
+            floatAdvInfo:null
         }
     },
     created(){
@@ -165,12 +167,16 @@ export default {
                     this.viewList = detail.data.slice(2,22);
                     this.checkStayState();
                 }
+                else if(detail.name == "part_6"){
+                    this.floatAdvInfo = detail.adv;
+                }
             }
             this.$nextTick(()=>{
                 dataCenter.checkAdverLoad("adver_common_class_ude4536");
                 dataCenter.checkAdverLoad("adver_common_class_ue25next12");
                 dataCenter.addAdsByClassName("adver_common_class_u9oe3r8d25");
                 dataCenter.addAdsByClassName("adver_common_class_u9803ide66");
+                dataCenter.addAdsByClassName("bn_content_float_advs");
             });
         });
 
@@ -572,6 +578,12 @@ export default {
         width: 100%;
         font-size: 12px;
         color: #bbb;
+    }
+    .bn_content_float_advs {
+        position: fixed;
+        right: 10px;
+        bottom: 10px;
+        z-index: 100;
     }
     .bn_sidenav {
         position: fixed;

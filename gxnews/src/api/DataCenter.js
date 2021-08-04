@@ -432,12 +432,22 @@ class DataCenter {
                 }
             }).then(res=>{
                 let data = res.data;
+                console.log("-------------");
+                console.log(data.main_list);
+                this.upToAdverByIframe(data.main_list);
                 return {code:200,data};
             });
         }
         let ext = "/v1/mini/index?cateid=" + cateid + "&page=" + page;
         let url = this.getRealUrl(ext);
-        return this.axios.get(url).then(res=>res.data);
+        return this.axios.get(url).then(res=>{
+            let data = res.data;
+            console.log(data.data.main_list);
+            if(data.code == 200){
+                this.upToAdverByIframe(data.data.main_list);
+            }
+            return data;
+        });
     }
 }
 
