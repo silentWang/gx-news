@@ -203,9 +203,9 @@ export default {
                     this.needShow2 = false;
                 }
             }
-            Utils.addDelay(this.showDialog,this,15000);
+            Utils.addDelay(this.showDialog,this,10000);
             // if(!this.screenHandler){
-            //     this.screenHandler = new ScreenHandler(15000,()=>{
+            //     this.screenHandler = new ScreenHandler(10000,()=>{
             //         this.showDialog();
             //     });
             // }

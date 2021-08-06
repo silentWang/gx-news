@@ -22,15 +22,10 @@ export default new Router({
   routes: [
     {
       path: '/',
-      name: 'PageIndex',
-      component: PageIndex
+      name: 'PageMiniA',
+      component: PageMiniA
       
     },
-    // {
-    //   path:"/test",
-    //   name:"PageTest",
-    //   component:PageTest
-    // },
     {
       path:'/content',
       name:'PageContent',
