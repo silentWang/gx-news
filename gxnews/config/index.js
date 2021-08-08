@@ -3,6 +3,16 @@
 // see http://vuejs-templates.github.io/webpack for documentation.
 
 const path = require('path')
+let assetPath = "./";
+if(process.env.BUILD_MODE == 1){
+  assetPath = "//news.dtxww.cn/";
+}
+else if(process.env.BUILD_MODE == 2){
+  assetPath = "//news.dtxww.cn/mini/";
+}
+else if(process.env.BUILD_MODE == 3){
+  assetPath = "//news.dtxww.cn/content/";
+}
 module.exports = {
   dev: {
     assetsSubDirectory: 'static',
@@ -42,10 +52,7 @@ module.exports = {
     assetsRoot: path.resolve(__dirname, '../dist'),
     //正式
     assetsSubDirectory: 'static',
-    assetsPublicPath:'https://news-dtxww.oss-cn-hangzhou.aliyuncs.com/',
-    //测试
-    // assetsSubDirectory: 'static',
-    // assetsPublicPath: './',
+    assetsPublicPath:assetPath,
     /**
      * Source Maps
      */

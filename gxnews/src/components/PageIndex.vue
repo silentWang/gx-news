@@ -242,11 +242,13 @@ export default {
             })
         },
         gotoNews(idx){
-            let routeUrl = this.$router.resolve({
-                path: "/content",
-                query: {id:idx}            
-            });
-            window.open(routeUrl.href, '_blank');
+            // let routeUrl = this.$router.resolve({
+            //     path: "/content",
+            //     query: {id:idx}            
+            // });
+            // window.open(routeUrl.href, '_blank');
+            let turl = "https://news.dtxww.cn/content/?id="+idx;
+            window.open(turl, '_blank');
             return false;
         },
         playTimeNews(ele = null,isplay = false){

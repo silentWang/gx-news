@@ -17,24 +17,23 @@ window["requestAnimFrame"] = (function () {
            };
 })();
 
+let routeInfo = {name:"PageIndex",component:PageIndex};
+if(process.env.BUILD_MODE == 2){
+  routeInfo.name = "PageMiniA";
+  routeInfo.component = PageMiniA;
+}
+else if(process.env.BUILD_MODE == 3){
+  routeInfo.name = "PageContent";
+  routeInfo.component = PageContent;
+}
+
 export default new Router({
-  mode: 'history',
+  // mode: 'history',
   routes: [
     {
       path: '/',
-      name: 'PageMiniA',
-      component: PageMiniA
-      
-    },
-    {
-      path:'/content',
-      name:'PageContent',
-      component:PageContent
-    },
-    {
-      path:'/mini',
-      name:'PageMiniA',
-      component:PageMiniA
+      name: routeInfo.name,
+      component: routeInfo.component
     }
   ]
 })

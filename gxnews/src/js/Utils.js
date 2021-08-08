@@ -67,6 +67,23 @@ export default class Utils {
         return str
     }
 
+    static getUrlParams(){
+        let url = window.location.href;
+        let arr = url.split("?");
+        if(arr.length < 2) return null;
+        let str = arr[1];
+        let qarr = str.split("&");  
+        let obj = {};
+        for(let i = 0;i < qarr.length;i++){
+            let qstr = qarr[i];
+            let vls = qstr.split("=");
+            if(vls.length == 2){
+                obj[vls[0]] = vls[1];
+            }
+        }
+        return obj;
+    }
+
     static addAdverToPage(parent,adverId){
         let code = "";
         adverId = "u6531718";

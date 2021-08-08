@@ -416,7 +416,7 @@ class DataCenter {
     /****************************优化版接口******************************************** */
     /**详情页单接口 */
     getDetailInfo(){
-        let ext = "/data/mini_detail.json";
+        let ext = "//news.dtxww.cn/data/mini_detail.json";
         return this.axios.get(ext,{headers:{'Content-Type':'application/json'}}).then(res=>{
             let data = res.data;
             return {code:200,data};
@@ -425,15 +425,15 @@ class DataCenter {
     /**get mini info */
     getMiniInfo(cateid = 1,page = 1){
         if(page == 1){
-            let ext = `/data/mini_data_${cateid}.json`;
+            let ext = `//news.dtxww.cn/data/mini_data_${cateid}.json`;
             return this.axios.get(ext,{
                 headers:{
                     'Content-Type':'application/json'
                 }
             }).then(res=>{
                 let data = res.data;
-                console.log("-------------");
-                console.log(data.main_list);
+                // console.log("-------------");
+                // console.log(data.main_list);
                 this.upToAdverByIframe(data.main_list);
                 return {code:200,data};
             });

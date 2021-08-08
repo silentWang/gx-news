@@ -114,15 +114,15 @@ export default {
         }
     },
     created(){
-        let query = this.$route.query;
-        dataCenter.setQid(query.qid);
+        let query = Utils.getUrlParams();
         if(!query && !query.id) {
-            this.$router.push({path:'/'});
+            this.reloadHome();
             return;
         }
+        dataCenter.setQid(query.qid);
         dataCenter.getNewsDetailById(query.id).then(res=>{
             if(res.code != 200) {
-                this.$router.push({path:'/'});
+                this.reloadHome();
                 return;
             }
             let info = res.data;
@@ -189,10 +189,7 @@ export default {
     },
     methods:{
         reloadHome(evt){
-            let routeUrl = this.$router.resolve({
-                path: "/"
-            });
-            window.open(routeUrl.href);
+            window.open("https://news.dtxww.cn/");
         },
         resizeHandle(){
             let eles = document.getElementsByClassName("bn_left");
@@ -224,11 +221,13 @@ export default {
             window.open(routeUrl.href, '_blank');
         },
         gotoNews(idx){
-            let routeUrl = this.$router.resolve({
-                path: "/content",
-                query: {id:idx}
-            });
-            window.open(routeUrl.href, '_blank');
+            // let routeUrl = this.$router.resolve({
+            //     path: "/content",
+            //     query: {id:idx}
+            // });
+            // window.open(routeUrl.href, '_blank');
+            let turl = "https://news.dtxww.cn/content/?id="+idx;
+            window.open(turl, '_blank');
         },
         gotoPage(index){
             let len = this.allPages.length;

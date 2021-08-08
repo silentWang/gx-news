@@ -279,7 +279,7 @@ export default {
                     // window.open(item.url, '_blank');
                 }
                 else{
-                    window.open("/", '_blank');
+                    window.open("https://news.dtxww.cn/", '_blank');
                 }
                 return;
             }
@@ -307,11 +307,13 @@ export default {
                 this.newsList = xarr;
             }
             let idx = item.id;
-            let routeUrl = this.$router.resolve({
-                path: "/content",
-                query: {id:idx,qid:0}            
-            });
-            window.open(routeUrl.href, '_blank');
+            // let routeUrl = this.$router.resolve({
+            //     path: "//news.dtxww.cn/content",
+            //     query: {id:idx,qid:0}            
+            // });
+            // window.open(routeUrl,"_blank")
+            let xurl = "https://news.dtxww.cn/content/?id="+idx + "&qid=0";
+            window.open(xurl, '_blank');
             if(index == 0){
                 dataCenter.upToActivity(100002,"click","left");
             }
@@ -470,7 +472,7 @@ export default {
         position: absolute;
         margin-left: 10px;
         top: 10px;
-        right: 30px;
+        /* right: 30px; */
         z-index: 99;
         background: #fff;
     }
@@ -484,7 +486,7 @@ export default {
         width: 72px;
         height: 32px;
         margin:0px 0px 10px 0px;
-        background-color: #f0f8ff;
+        /* background-color: #f0f8ff; */
         display: block;
         list-style-type: none;
     }
@@ -522,10 +524,10 @@ export default {
         height: 40px;
     }
     .mini_middle {
-        width: 680px;
+        width: 802px;
         height: 595px;
         position: absolute;
-        left: 220px;
+        left: 95px;
         top: 5px;
         z-index: 20;
         overflow-y: hidden;
@@ -574,7 +576,7 @@ export default {
         width: 200px;
         position: absolute;
         top:10px;
-        left: 5px;
+        right: 30px;
         z-index: 10;
     }
     .mini_right_list {

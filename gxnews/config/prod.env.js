@@ -2,7 +2,8 @@
 module.exports = {
   NODE_ENV: '"production"',
   // API_ROOT:'"//news.dtxww.cn"',
-  API_ROOT:'"//112.124.52.49"',
+  // API_ROOT:'"http://112.124.52.49"',
+  API_ROOT:'"https://data.sport-color.com"',
   PROXY_BASE:"'/api'",
-  TEST_MODE:'"1"'
+  BUILD_MODE:'"3"'//1首页 2 mini 3 content
 }
