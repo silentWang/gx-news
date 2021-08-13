@@ -27,6 +27,13 @@ else if(process.env.BUILD_MODE == 3){
   routeInfo.component = PageContent;
 }
 
+if(process.env.NODE_ENV == "development"){
+  let meta = document.createElement("meta");
+  meta.setAttribute("name","referrer");
+  meta.setAttribute("content","no-referrer");
+  document.head.appendChild(meta);
+}
+
 export default new Router({
   // mode: 'history',
   routes: [

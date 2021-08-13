@@ -25,15 +25,17 @@
         <div class="mini_right">
             <ul class="mini_right_list">
                 <li v-for="(item,index) in rightList.slice(0,3)" :key="index">
-                    <div v-if="item.type != 2">
+                    <div v-if="item.type == 1">
                         <NewsSlider v-on:gotoNews="gotoNews" :nsId="index" nWidth="200" nHeight="185" v-bind:newsList="getSlideNewsList(item.data)"></NewsSlider>
                         <div v-show="needShow" class="mini_transparent_youknow_chuchuang" :id="item.adv ? item.adv.adv_id:index" v-html="item.adv ? item.adv.adv_script:''"></div>
-                        <!-- <a class="mini_right_list_image"  :title="item.list.title">
-                            <img :src="item.list.pics[0]" @click="gotoNews(item.list.id)">
-                        </a>
-                        <a class="mini_right_list_title" :title="item.list.title" @click="gotoNews(item.list.id)">{{item.list.title}}</a> -->
                     </div>
-                    <div v-else @click="clkUxArt(item.id)" :id="item.adv ? item.adv.adv_id : index" class="adver_common_class_u8x2583456" v-html="item.adv.adv_script">
+                    <div v-else-if="item.type == 3" class="custom_tsz_ad_container">
+                        <img :src="tszData?tszData.pics[0]:''" @mousedown="tszDown" @mouseup="tszUp" @click="gotoNews(tszData)">
+                        <div class="custom_tsz_ad_title">
+                            <a @click="gotoNews(tszData)" @mousedown="tszDown" @mouseup="tszUp">{{tszData?tszData.title:""}}</a>
+                        </div>
+                    </div>
+                    <div v-else :id="item.adv ? item.adv.adv_id : index" :advtype="item.adv?item.adv.adv_type:''" class="adver_common_class_u8x2583456" v-html="item.adv?item.adv.adv_script:''">
                     </div>
                 </li>
             </ul>
@@ -81,6 +83,7 @@ export default {
             rightList:[],
             dialogInfo:{},
             dialogNewsList:[],
+            tszData:null,
             onlyOne:false,
             needShow:false,
             needShow2:false,
@@ -106,8 +109,8 @@ export default {
                 this.selectCateId = arr[0].cateId;
             }
             if(!this.rightList || this.rightList.length == 0){
-                this.rightList = data.main_side;
-                for(let obj of this.rightList){
+                let sides = data.main_side;
+                for(let obj of sides){
                     if(obj.name == "part_4"){
                         this.dialogInfo = obj;
                         this.dialogNewsList = obj.data.slice(0,2);
@@ -118,6 +121,7 @@ export default {
                     let rate = this.dialogInfo.adv.adv_rate;
                     this.needShow2 = rand <= rate;
                 }
+                this.rightList = sides;
                 rightBool = true;
             }
             //中间新闻列表
@@ -140,14 +144,26 @@ export default {
             Utils.addDelay(_this.checkIsMore,this,10000,1);
             if(rightBool){
                 this.$nextTick(()=>{
-                    dataCenter.addAdsByClassName("adver_common_class_u8x2583456");
+                    dataCenter.checkAdverLoad("adver_common_class_u8x2583456");
                     dataCenter.checkAdverLoad("mini_dialog_transparent_youknow");
                 });
             }
-            if(this.onlyOne){
-                this.onlyOne = false;
-                dataCenter.addSimulateClick("adver_common_class_u8xef3e23d")
-            }
+            /** */
+            dataCenter.get360AdvData().then(data=>{
+                if(!data){
+                    this.$nextTick(()=>{
+                        dataCenter.checkAdverLoad("adver_common_class_u8x2583456");
+                    });
+                    return;
+                }
+                this.tszData = data;
+                for(let obj of this.rightList){
+                    if(obj.name == "part_1"){
+                        obj.type = 3;
+                        break;
+                    }
+                }
+            });
         });
 
         Utils.addWindowClick(()=>{
@@ -272,15 +288,15 @@ export default {
                 clearTimeout(this.delayGotoId);
             }
         },
+        tszDown(evt){
+            dataCenter.upTo360ClkLog(this.tszData.adv,evt.offsetX,evt.offsetY,200,185,1);
+        },
+        tszUp(evt){
+            dataCenter.upTo360ClkLog(this.tszData.adv,evt.offsetX,evt.offsetY,200,185,2);
+        },
         gotoNews(item,index){
             if(item.cateId == -100){
-                if(item.url){
-                    dataCenter.uploadAct();
-                    // window.open(item.url, '_blank');
-                }
-                else{
-                    window.open("https://news.dtxww.cn/", '_blank');
-                }
+                dataCenter.upTo360ClkLog(this.tszData.adv,0,0,200,185,3);
                 return;
             }
             //前10条点击即移动到第10条
@@ -348,9 +364,11 @@ export default {
             if(list && list.length > 0){
                 for(let i = 0;i < list.length;i++){
                     let obj = list[i];
-                    arr.push({id:obj.id,title:obj.title,pic:obj.pics[0]})
+                    arr.push({id:obj.id,title:obj.title,pic:obj.pics[0],url:obj.url})
                 }
-                arr.push(arr[0])
+                if(list.length > 1){
+                    arr.push(arr[0])
+                }
             }
             return arr;
         }
@@ -529,7 +547,7 @@ export default {
         position: absolute;
         left: 95px;
         top: 5px;
-        z-index: 20;
+        z-index: 9;
         overflow-y: hidden;
     }
     .mini_middle:hover {
@@ -622,6 +640,38 @@ export default {
     .mini_right_list_image img:hover {
         transform: scale(1.2);
     }
+    .custom_tsz_ad_container {
+        width: 200px;
+        height: 185px;
+        display: block;
+        overflow: hidden;
+    }
+    .custom_tsz_ad_container img {
+        width: 200px;
+        height: 185px;
+        transition: all 0.6s;
+    }
+    .custom_tsz_ad_container img:hover {
+        transform: scale(1.2);
+    }
+    .custom_tsz_ad_title {
+        width: 100%;
+        height: 45px;
+        position: relative;
+        top: -44px;
+        color: #fff;
+        text-align: left;
+        overflow: hidden;
+        padding: 4px 0px;
+        background-color: rgba(0, 0, 0, 0.7);
+    }
+    .custom_tsz_ad_title a {
+        color: #fff;
+        text-align: left;
+        font-size: 14px;
+        line-height: 19px;
+        overflow: hidden;
+    }
     .mini_dialog_transparent_youknow {
         width: 560px;
         overflow: hidden;
@@ -659,5 +709,35 @@ export default {
         border-radius: 6px;
         background: #fff;
     }
+
+    .adver_common_class_u8x2583456 {
+        width: 200px;
+        height: 185px;
+        overflow: hidden;
+    }
+
+    .adver_common_class_u8x2583456 .feed__wrapper {
+        overflow: hidden;
+        font-size: 5px;
+    }
+    .adver_common_class_u8x2583456 .feed__wrapper .largeImage__img .img {
+        width: 200px;
+        height: 185px;
+        display: block;
+    }
+    .adver_common_class_u8x2583456 .largeImage .largeImage__title {
+        width: 200px;
+        display: block;
+        position: absolute;
+        top: 145px;
+        overflow: hidden;
+        z-index: 10;
+        font-size: 14px;
+        color: #ffffff;
+        font-family: "Microsoft YaHei";
+        background: rgba(0,0,0,0.7);
+    }
+
+    
     
 </style>

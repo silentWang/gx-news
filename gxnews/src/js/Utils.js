@@ -93,6 +93,18 @@ export default class Utils {
             async: true
         });
     }
+    /**曝光打点统计 */
+    static upStatistics(url) {//url - 广告请求链接
+        let img = new Image();//new Image实例
+        let key = 'mediav_sio_log_' + Math.floor(Math.random() * 2147483648).toString(36);
+        window[key] = img;
+        img.onload = img.onerror = img.onabort = ()=>{//销毁相关实例
+            img.onload = img.onerror = img.onabort = null;
+            window[key] = null;
+            img = null;
+        };
+        img.src = url;//利用image src加载url实现曝光统计
+    }
 
     static changeAndExecuteJS(element){
         let sScript = element.getElementsByTagName("script")[0];
