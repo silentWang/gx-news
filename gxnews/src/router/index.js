@@ -18,7 +18,7 @@ window["requestAnimFrame"] = (function () {
 })();
 
 let routeInfo = {name:"PageIndex",component:PageIndex};
-if(process.env.BUILD_MODE == 2){
+if(process.env.BUILD_MODE == 2 || process.env.BUILD_MODE == 4){
   routeInfo.name = "PageMiniA";
   routeInfo.component = PageMiniA;
 }

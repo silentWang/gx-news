@@ -12,7 +12,8 @@
                         <p>{{item.from}}</p>
                     </div>
                 </div>
-                <div v-show="needShow2" class="mini_dialog_transparent_youknow" :advtype="dialogInfo.adv ? dialogInfo.adv.adv_type : 'advbd'" :id="dialogInfo.adv ? dialogInfo.adv.adv_id:'dialogadvid124iu9'" v-html="dialogInfo.adv ? dialogInfo.adv.adv_script:''"></div>
+                <div v-show="needShow2" class="mini_dialog_transparent_youknow" :advtype="dialogInfo.adv ? dialogInfo.adv.adv_type : 'advbd'" :id="dialogInfo.adv ? dialogInfo.adv.adv_id:''" v-html="dialogInfo.adv ? dialogInfo.adv.adv_script:''"></div>
+                <div v-show="needShow2 && dialogInfo.adv2" class="mini_dialog_transparent_youknow" style="top: 180px;" :advtype="dialogInfo.adv2 ? dialogInfo.adv2.adv_type : ''" :id="dialogInfo.adv2 ? dialogInfo.adv2.adv_id:''" v-html="dialogInfo.adv2 ? dialogInfo.adv2.adv_script:''"></div>
             </div>
         </div>
         <div class="mini_main_title">
@@ -112,14 +113,35 @@ export default {
                 let sides = data.main_side;
                 for(let obj of sides){
                     if(obj.name == "part_4"){
-                        this.dialogInfo = obj;
+                        let info = obj;
+                        let adv360 = obj.adv;
+                        let advbd = obj.advbd;
+                        let weight = adv360.adv_weight;
+                        console.log(rand + '--' + weight)
+                        if(rand < weight){
+                            info.adv = adv360;
+                            let adv_id = adv360.adv_id + "_02";
+                            let adv2 = {
+                                adv_id,
+                                adv_rate:adv360.adv_rate,
+                                adv_type:adv360.adv_type,
+                                adv_weight:adv360.adv_weight,
+                                adv_script:adv360.adv_script.replace(adv360.adv_id,adv_id)
+                            };
+                            info.adv2 = adv2;
+                        }
+                        else{
+                            info.adv = advbd;
+                        }
+                        // console.log(info)
+                        this.dialogInfo = info;
                         this.dialogNewsList = obj.data.slice(0,2);
                         break;
                     }
                 }
                 if(this.dialogInfo && this.dialogInfo.adv){
                     let rate = this.dialogInfo.adv.adv_rate;
-                    this.needShow2 = rand <= rate;
+                    this.needShow2 = rand <= rate && process.env.BUILD_MODE == 2;
                 }
                 this.rightList = sides;
                 rightBool = true;
@@ -135,7 +157,7 @@ export default {
                     break;
                 }
             }
-            this.needShow = rand <= xrate;
+            this.needShow = rand <= xrate && process.env.BUILD_MODE == 2;
             // console.log("content:" + rand + '------' + xrate)
             this.currentPage = 1;
             let cele = document.getElementsByClassName("mini_middle")[0];
@@ -145,8 +167,10 @@ export default {
             if(rightBool){
                 this.$nextTick(()=>{
                     dataCenter.checkAdverLoad("adver_common_class_u8x2583456");
-                    dataCenter.checkAdverLoad("mini_dialog_transparent_youknow");
                 });
+                Utils.addDelay(()=>{
+                    dataCenter.checkAdverLoad("mini_dialog_transparent_youknow");
+                },this,5000,1);
             }
             /** */
             dataCenter.get360AdvData().then(data=>{
@@ -213,7 +237,13 @@ export default {
             if(!redelay){
                 if(this.dialogFlag){
                     this.dialogFlag = false;
-                    dataCenter.upToActivity(100001,"close");
+                    let type = this.dialogInfo.adv.adv_type;
+                    if(type == "adv360"){
+                        dataCenter.upToActivity(100001,"close");
+                    }
+                    else if(type == "advbd"){
+                        dataCenter.upToActivity(100003,"close");
+                    }
                 }
                 if(this.needShow2){
                     this.needShow2 = false;
@@ -232,7 +262,16 @@ export default {
         },
         showDialog(){
             if(!this.dialogFlag){
-                dataCenter.upToActivity(100001,"open");
+                let type = this.dialogInfo.adv.adv_type;
+                if(type == "adv360"){
+                    dataCenter.upToActivity(100001,"open");
+                }
+                else if(type == "advbd"){
+                    dataCenter.upToActivity(100003,"open");
+                    Utils.addDelay(()=>{
+                        this.needShow2 = false;
+                    },this,8000,1)
+                }
             }
             this.dialogFlag = true;
         },
@@ -673,7 +712,7 @@ export default {
         overflow: hidden;
     }
     .mini_dialog_transparent_youknow {
-        width: 560px;
+        width: 500px;
         overflow: hidden;
         position: absolute;
         background: #fff;

@@ -13,6 +13,10 @@ else if(process.env.BUILD_MODE == 2){
 else if(process.env.BUILD_MODE == 3){
   assetPath = "//news.dtxww.cn/content/";
 }
+else if(process.env.BUILD_MODE == 4){
+  assetPath = "//news.dtxww.cn/mini/001/";
+}
+
 module.exports = {
   dev: {
     assetsSubDirectory: 'static',
