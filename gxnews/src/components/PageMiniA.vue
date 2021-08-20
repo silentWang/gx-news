@@ -141,7 +141,12 @@ export default {
                 }
                 if(this.dialogInfo && this.dialogInfo.adv){
                     let rate = this.dialogInfo.adv.adv_rate;
-                    this.needShow2 = rand <= rate && process.env.BUILD_MODE == 2;
+                    this.needShow2 = rand <= rate && process.env.BUILD_MODE == 4;
+                    let adwidth = this.dialogInfo.adv.adv_type == "advbd" ? "500px" : "560px";
+                    let eles = document.getElementsByClassName("mini_dialog_transparent_youknow");
+                    if(eles && eles.length > 0){
+                        eles[0].style.width = adwidth;
+                    }
                 }
                 this.rightList = sides;
                 rightBool = true;
@@ -157,7 +162,7 @@ export default {
                     break;
                 }
             }
-            this.needShow = rand <= xrate && process.env.BUILD_MODE == 2;
+            this.needShow = rand <= xrate && process.env.BUILD_MODE == 4;
             // console.log("content:" + rand + '------' + xrate)
             this.currentPage = 1;
             let cele = document.getElementsByClassName("mini_middle")[0];
@@ -754,29 +759,5 @@ export default {
         height: 185px;
         overflow: hidden;
     }
-
-    .adver_common_class_u8x2583456 .feed__wrapper {
-        overflow: hidden;
-        font-size: 5px;
-    }
-    .adver_common_class_u8x2583456 .feed__wrapper .largeImage__img .img {
-        width: 200px;
-        height: 185px;
-        display: block;
-    }
-    .adver_common_class_u8x2583456 .largeImage .largeImage__title {
-        width: 200px;
-        display: block;
-        position: absolute;
-        top: 145px;
-        overflow: hidden;
-        z-index: 10;
-        font-size: 14px;
-        color: #ffffff;
-        font-family: "Microsoft YaHei";
-        background: rgba(0,0,0,0.7);
-    }
-
-    
     
 </style>

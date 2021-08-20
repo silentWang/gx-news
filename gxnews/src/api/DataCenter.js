@@ -96,6 +96,18 @@ class DataCenter {
             this.changeAndExecuteJS(element);
         }
     }
+    /**默认打底广告 */
+    getDefaultBDAdv(){
+        let advcode = `<div class="_fnnhq1kgkkb"></div>
+        <script type="text/javascript">
+            (window.slotbydup = window.slotbydup || []).push({
+                id: "u6606892",
+                container: "_fnnhq1kgkkb",
+                async: true
+            });
+        </script>`;
+        return advcode;
+    }
     /**懒加载 进入可视范围才加载 */
     checkAdverLoad(classname){
         let elements = document.getElementsByClassName(classname);
@@ -184,6 +196,20 @@ class DataCenter {
                 }
             }
             if(bool) break;
+        }
+        if(arr2.length > 0){
+            Utils.addDelay(()=>{
+                let bdadv = this.getDefaultBDAdv();
+                for(let i = 0;i < arr2.length;i++){
+                    let ele = arr2[i];
+                    let fele = ele.firstChild;
+                    if(fele && fele.nodeName == 'NEWSFEED' && fele.offsetHeight <= 0){
+                        ele.innerHTML = bdadv;
+                        ele.isAdLoaded = false;
+                        this.changeAndExecuteJS(ele,true);
+                    }
+                }
+            },this,5000,1);
         }
     }
     
