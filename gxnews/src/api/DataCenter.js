@@ -197,20 +197,21 @@ class DataCenter {
             }
             if(bool) break;
         }
-        if(arr2.length > 0){
-            Utils.addDelay(()=>{
-                let bdadv = this.getDefaultBDAdv();
-                for(let i = 0;i < arr2.length;i++){
-                    let ele = arr2[i];
-                    let fele = ele.firstChild;
-                    if(fele && fele.nodeName == 'NEWSFEED' && fele.offsetHeight <= 0){
-                        ele.innerHTML = bdadv;
-                        ele.isAdLoaded = false;
-                        this.changeAndExecuteJS(ele,true);
-                    }
-                }
-            },this,5000,1);
-        }
+        //暂时屏蔽 打底百度
+        // if(arr2.length > 0){
+        //     Utils.addDelay(()=>{
+        //         let bdadv = this.getDefaultBDAdv();
+        //         for(let i = 0;i < arr2.length;i++){
+        //             let ele = arr2[i];
+        //             let fele = ele.firstChild;
+        //             if(fele && fele.nodeName == 'NEWSFEED' && fele.offsetHeight <= 0){
+        //                 ele.innerHTML = bdadv;
+        //                 ele.isAdLoaded = false;
+        //                 this.changeAndExecuteJS(ele,true);
+        //             }
+        //         }
+        //     },this,5000,1);
+        // }
     }
     
     handleTSZNext(pagenum,arr,check = false){

@@ -270,6 +270,9 @@ export default {
                 let type = this.dialogInfo.adv.adv_type;
                 if(type == "adv360"){
                     dataCenter.upToActivity(100001,"open");
+                    let rate = this.dialogInfo.adv.adv_rate;
+                    let rand = Math.ceil(100*Math.random());
+                    this.needShow2 = rand <= rate && process.env.BUILD_MODE == 4;
                 }
                 else if(type == "advbd"){
                     dataCenter.upToActivity(100003,"open");
