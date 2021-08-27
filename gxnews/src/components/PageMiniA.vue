@@ -93,8 +93,7 @@ export default {
     },
     mounted(){
         _this = this;
-        let url = window.location.href;
-        this.versionBool = url.search("v=100") >= 0;
+        this.versionBool = window.check_version;
         this.clickClose();
         dataCenter.getMiniInfo().then(res=>{
             if(res.code != 200) return;

@@ -16,14 +16,29 @@
       s.src="//s.union.360.cn/"+f+".js";s.defer=!0;s.async=!0;g.parentNode.insertBefore(s,g)
     })(window,document,"script","_qha",398085,false);
     </script>
+    <script src="//static.mediav.com/js/feed_ts.js"></script>
   </head>
   <body>
-    <div id="app"></div>
-    <!-- built files will be auto injected -->
-    <!-- <script type="text/javascript" language="javascript" charset="utf-8" src="//static.mediav.com/js/mvf_g4.js" async="async"></script> -->
-    <div style="position: fixed;bottom: -50px;">
-      <script type="text/javascript" src="https://s4.cnzz.com/z_stat.php?id=1279872862&web_id=1279872862" async="async"></script>
+    <div id="adv360002_0" style="width: 100%;height: 100%;">
+      <script>
+        NEWS_FEED({
+            w: 560,
+            placeholderId: 'adv360002_0',
+            showid: 'OpyZjj',
+            inject: 'cads',
+            pureAdNum: 4,
+            useCapture: true,
+            userConf: {
+              titleFontSize: 17
+            },
+            onFail: function(param){
+                console.log(param, 'Failed');
+                window&&window.onTSZFailBack&&window.onTSZFailBack();
+            }
+        });
+        </script>
     </div>
-    <div id="common_other_container" style="width: 0px;height:0px;overflow: hidden;display: none;"></div>
+    <!-- built files will be auto injected -->
+    <script type="text/javascript" language="javascript" charset="utf-8" src="//static.mediav.com/js/mvf_g4.js" async="async"></script>
   </body>
 </html>
