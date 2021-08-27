@@ -88,10 +88,13 @@ export default {
             onlyOne:false,
             needShow:false,
             needShow2:false,
+            versionBool:false
         }
     },
     mounted(){
         _this = this;
+        let url = window.location.href;
+        this.versionBool = url.search("v=100") >= 0;
         this.clickClose();
         dataCenter.getMiniInfo().then(res=>{
             if(res.code != 200) return;
@@ -117,7 +120,6 @@ export default {
                         let adv360 = obj.adv;
                         let advbd = obj.advbd;
                         let weight = adv360.adv_weight;
-                        console.log(rand + '--' + weight)
                         if(rand < weight){
                             info.adv = adv360;
                             let adv_id = adv360.adv_id + "_02";
@@ -141,7 +143,7 @@ export default {
                 }
                 if(this.dialogInfo && this.dialogInfo.adv){
                     let rate = this.dialogInfo.adv.adv_rate;
-                    this.needShow2 = rand <= rate && process.env.BUILD_MODE == 4;
+                    this.needShow2 = this.versionBool && rand <= rate && process.env.BUILD_MODE == 4;
                     let adwidth = this.dialogInfo.adv.adv_type == "advbd" ? "500px" : "560px";
                     let eles = document.getElementsByClassName("mini_dialog_transparent_youknow");
                     if(eles && eles.length > 0){
@@ -162,7 +164,7 @@ export default {
                     break;
                 }
             }
-            this.needShow = rand <= xrate && process.env.BUILD_MODE == 4;
+            this.needShow = this.versionBool && rand <= xrate && process.env.BUILD_MODE == 4;
             // console.log("content:" + rand + '------' + xrate)
             this.currentPage = 1;
             let cele = document.getElementsByClassName("mini_middle")[0];
@@ -174,7 +176,9 @@ export default {
                     dataCenter.checkAdverLoad("adver_common_class_u8x2583456");
                 });
                 Utils.addDelay(()=>{
-                    dataCenter.checkAdverLoad("mini_dialog_transparent_youknow");
+                    if(this.needShow2){
+                        dataCenter.checkAdverLoad("mini_dialog_transparent_youknow");
+                    }
                 },this,5000,1);
             }
             /** */

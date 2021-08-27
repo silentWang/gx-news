@@ -393,7 +393,7 @@ class DataCenter {
         });
     }
     /**获取360广告(单独样式信息流)0YzcKg */
-    get360AdvData(showid = "0YzcKg"){
+    get360AdvData(showid = "OpyZjj"){
         let userid = this.axios.defaults.headers["userId"];
         let uid = userid + "_" + new Date().getTime();
         let params = {
