@@ -17,6 +17,7 @@ class DataCenter {
         this.axios = axios;
         this.maxTSZNum = 4;
         this.isCanLoadNext = true;
+        this.areaBool = false;
     }
 
     setQid(qid){
@@ -435,6 +436,11 @@ class DataCenter {
             return info;
         });
     }
+    /**地域屏蔽 */
+    getAreaData(){
+        let url = this.getRealUrl("/v1/demo/area");
+        return this.axios.get(url).then(res=>res.data)
+    }
     /**新闻列表 */
     getNewsList(){
         if(isLocalTest){
@@ -570,23 +576,25 @@ class DataCenter {
         });
     }
     /**get mini info */
-    getMiniInfo(cateid = 1,page = 1){
+    async getMiniInfo(cateid = 1,page = 1){
         if(page == 1){
+            if(window.check_version && !this.areaBool){
+                let adata = await this.getAreaData();
+                // console.log("-------------");
+                // console.log(adata);
+                this.areaBool = true;
+                window.check_version = adata.data&&adata.data.is_sign != 1;
+            }
             let ext = `//news.dtxww.cn/data/mini_data_${cateid}.json`;
             if(process.env.NODE_ENV == "development"){
                 ext = `/data/mini_data_${cateid}.json`;
             }
-            return this.axios.get(ext,{
-                headers:{
-                    'Content-Type':'application/json'
-                }
-            }).then(res=>{
-                let data = res.data;
-                // console.log("-------------");
-                // console.log(data.main_list);
-                this.upToAdverByIframe(data.main_list);
-                return {code:200,data};
-            });
+            let res = await this.axios.get(ext,{headers:{'Content-Type':'application/json'}});
+            let data = res.data;
+            // console.log("-------------");
+            // console.log(data.main_list);
+            this.upToAdverByIframe(data.main_list);
+            return {code:200,data};
         }
         let ext = "/v1/mini/index?cateid=" + cateid + "&page=" + page;
         let url = this.getRealUrl(ext);
