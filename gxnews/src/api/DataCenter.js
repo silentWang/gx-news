@@ -438,7 +438,8 @@ class DataCenter {
     }
     /**地域屏蔽 */
     getAreaData(){
-        let url = this.getRealUrl("/v1/demo/area");
+        // let url = this.getRealUrl("/v1/demo/area");
+        let url = "https://1320418215543173.cn-hangzhou.fc.aliyuncs.com/2016-08-15/proxy/Dtxww/ClientArea/";
         return this.axios.get(url).then(res=>res.data)
     }
     /**新闻列表 */
@@ -578,13 +579,13 @@ class DataCenter {
     /**get mini info */
     async getMiniInfo(cateid = 1,page = 1){
         if(page == 1){
-            // if(window.check_version && !this.areaBool){
-            //     let adata = await this.getAreaData();
-            //     // console.log("-------------");
-            //     // console.log(adata);
-            //     this.areaBool = true;
-            //     window.check_version = adata.data&&adata.data.is_sign != 1;
-            // }
+            if(window.check_version && !this.areaBool){
+                let adata = await this.getAreaData();
+                // console.log("-------------");
+                // console.log(adata);
+                this.areaBool = true;
+                window.check_version = adata.data&&adata.data.is_sign != 1;
+            }
             let ext = `//news.dtxww.cn/data/mini_data_${cateid}.json`;
             if(process.env.NODE_ENV == "development"){
                 ext = `/data/mini_data_${cateid}.json`;
