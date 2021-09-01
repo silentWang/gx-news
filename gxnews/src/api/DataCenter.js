@@ -395,7 +395,7 @@ class DataCenter {
         });
     }
     /**获取360广告(单独样式信息流)0YzcKg */
-    get360AdvData(showid = "OpyZjj"){
+    get360AdvData(showid = "7dJ8Xl"){
         let userid = this.axios.defaults.headers["userId"];
         let uid = userid + "_" + new Date().getTime();
         let params = {
@@ -578,13 +578,13 @@ class DataCenter {
     /**get mini info */
     async getMiniInfo(cateid = 1,page = 1){
         if(page == 1){
-            if(window.check_version && !this.areaBool){
-                let adata = await this.getAreaData();
-                // console.log("-------------");
-                // console.log(adata);
-                this.areaBool = true;
-                window.check_version = adata.data&&adata.data.is_sign != 1;
-            }
+            // if(window.check_version && !this.areaBool){
+            //     let adata = await this.getAreaData();
+            //     // console.log("-------------");
+            //     // console.log(adata);
+            //     this.areaBool = true;
+            //     window.check_version = adata.data&&adata.data.is_sign != 1;
+            // }
             let ext = `//news.dtxww.cn/data/mini_data_${cateid}.json`;
             if(process.env.NODE_ENV == "development"){
                 ext = `/data/mini_data_${cateid}.json`;
