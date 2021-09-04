@@ -11,8 +11,10 @@ import axios from 'axios'
 Vue.config.productionTip = false
 Vue.prototype.$axios = axios
 
-window&&window.location&&window.location.href.search("v=101")>=0?window.check_version = true:window.check_version = false;
-window&&window.history&&window.history.pushState("","","/mini/001");
+if(process.env.BUILD_MODE == 2 || process.env.BUILD_MODE == 4){
+  window&&window.location&&window.location.href.search("v=101")>=0?window.check_version = true:window.check_version = false;
+  window&&window.history&&window.history.pushState("","","/mini/001");
+}
 let script = document.createElement("script");
 script.src = "//static.mediav.com/js/feed_ts.js";
 script.onload = ()=>{

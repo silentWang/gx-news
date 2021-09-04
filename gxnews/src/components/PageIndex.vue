@@ -45,7 +45,7 @@
             </div>
             <div class="an_right">
                 <div class="an_right_container">
-                    <div class="adver_common_class_u8u756412"></div>
+                    <div class="adver_common_class_u8u756412" :id="this.headAdver?this.headAdver.id:''" v-html="this.headAdver?this.headAdver.ad_script:''"></div>
                     <div class="an_right_today"><img src=".././assets/yuandian.png"/>今日热点</div>
                     <ul class="an_right_list">
                         <li v-for="(item,index) in twelveList" :key="index">
@@ -54,7 +54,7 @@
                             </div>
                         </li>
                     </ul>
-                    <div class="adver_common_class_u8u756412"></div>
+                    <div class="adver_common_class_u8u756412" :id="this.footAdver?this.footAdver.id:''" v-html="this.footAdver?this.footAdver.ad_script:''"></div>
                 </div>
             </div>
             <div class="an_sidenav">
@@ -97,7 +97,9 @@ export default {
             titleList:[],
             newsList:[],
             twelveList:[],
-            timeNewList:[]
+            timeNewList:[],
+            headAdver:null,
+            footAdver:null
         }
     },
     mounted(){
@@ -124,6 +126,8 @@ export default {
             _this.twelveList = res.data;
             if(!dataCenter.adverList){
                 dataCenter.getAdverInfo(3).then(()=>{
+                    this.headAdver = dataCenter.getRandomAdverInfo(Utils.PositionType.POSITION_HEADER);
+                    this.footAdver = dataCenter.getRandomAdverInfo(Utils.PositionType.POSITION_FOOTER);
                     _this.reRenderNow();
                 });
             }
@@ -212,6 +216,8 @@ export default {
             ele2.innerHTML = fad.ad_script;
             Utils.changeAndExecuteJS(ele1);
             Utils.changeAndExecuteJS(ele2);
+
+            dataCenter.addAdsByClassName("adver_common_class_u8u756412");
         },
         reloadHome(){
             window.location.reload();

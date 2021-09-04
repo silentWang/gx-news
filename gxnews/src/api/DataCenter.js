@@ -46,7 +46,8 @@ class DataCenter {
         let info;
         if(ad){
             info = {};
-            info.id = this._adverIdx;
+            info.onlyid = this._adverIdx;
+            info.id = ad.id;
             info.ad_script = ad.ad_script;
             info.ad_title = ad.ad_title;
         }
@@ -395,7 +396,7 @@ class DataCenter {
         });
     }
     /**获取360广告(单独样式信息流)0YzcKg */
-    get360AdvData(showid = "7dJ8Xl"){
+    get360AdvData(showid = "yKLy1r"){
         let userid = this.axios.defaults.headers["userId"];
         let uid = userid + "_" + new Date().getTime();
         let params = {
