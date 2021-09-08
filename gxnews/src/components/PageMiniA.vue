@@ -49,7 +49,7 @@
                 <div class="mini_content_item" v-for="(item,index) in newsList" :key="index + '_' + item.id + '_' + item.type">
                     <div v-if='item.type == 2' :id="item.adv_id" :advtype="item.adv_type" class="adver_common_class_u8xef3e23d" v-html="item.adv_script">
                     </div>
-                    <MiniNewsItem v-else v-on:gotoNews="gotoNews" :index=index :newsInfo="item" :cateName="getCateName()">
+                    <MiniNewsItem v-else v-on:gotoNews="gotoNews" :newsInfo="item" :cateName="getCateName()">
                         <div v-show="needShow" class="mini_transparent_youknow" :id="item.adv?item.adv.adv_id : index" :advtype="item.adv?item.adv.adv_type:''" v-html="item.adv?item.adv.adv_script:''"></div>
                     </MiniNewsItem>
                 </div>
@@ -269,6 +269,7 @@ export default {
             // }
         },
         showDialog(){
+            if(!this.dialogInfo || !this.dialogInfo.adv) return;
             if(!this.dialogFlag){
                 let type = this.dialogInfo.adv.adv_type;
                 if(type == "adv360"){

@@ -37,24 +37,34 @@
                 </div>
             </div>
             <div class="an_content">
-                <div class="an_content_item" v-for="(item,index) in newsList" :key="index">
-                    <HomeNewsItem v-if="item.type != 2" :cateName="getCateName()" :newsInfo='item' v-on:gotoNews="gotoNews"></HomeNewsItem>
+                <div class="an_content_item" v-for="(item,index) in newsList" :key="item.id + '_' + index">
+                    <HomeNewsItem v-if="item.type != 2" :cateName="getCateName()" :index='index' :newsInfoData="item" v-on:gotoNews="gotoNews"></HomeNewsItem>
                     <div v-else :id="item.id" class="adver_common_class_u8x3032d3" :advtype="item.advType" v-html="item.title">
                     </div>
                 </div>
             </div>
             <div class="an_right">
                 <div class="an_right_container">
-                    <div class="adver_common_class_u8u756412" :id="this.headAdver?this.headAdver.id:''" v-html="this.headAdver?this.headAdver.ad_script:''"></div>
+                    <div class="adv_class_for_jsonup" v-show="tszData != null">
+                        <img :src="tszData?tszData.pics[0]:''" @mousedown="tszDown" @mouseup="tszUp" @click="gotoNews(tszData)">
+                        <div class="custom_tsz_ad_title">
+                            <a @click="goto360News(tszData)" @mousedown="tszDown" @mouseup="tszUp">{{tszData?tszData.title:""}}</a>
+                        </div>
+                    </div>
                     <div class="an_right_today"><img src=".././assets/yuandian.png"/>今日热点</div>
                     <ul class="an_right_list">
                         <li v-for="(item,index) in twelveList" :key="index">
-                            <HomeNewsItem v-if="item.type != 2" type="small" :newsInfo='item' v-on:gotoNews="gotoNews"></HomeNewsItem>
-                            <div v-else :id="item.id" :advtype="item.advType" class="adver_common_class_u8x2583456" v-html="item.title">
+                            <HomeNewsItem v-if="item.type != 2" type="small" :newsInfoData='item' v-on:gotoNews="gotoNews"></HomeNewsItem>
+                            <div v-else :id="item.id" :advtype="item.advType" class="adver_common_class_u8x89348jdf" v-html="item.title">
                             </div>
                         </li>
                     </ul>
-                    <div class="adver_common_class_u8u756412" :id="this.footAdver?this.footAdver.id:''" v-html="this.footAdver?this.footAdver.ad_script:''"></div>
+                    <div class="adv_class_for_jsonup" v-show="tszData != null">
+                        <img :src="tszData?tszData.pics[0]:''" @mousedown="tszDown" @mouseup="tszUp" @click="gotoNews(tszData)">
+                        <div class="custom_tsz_ad_title">
+                            <a @click="goto360News(tszData)" @mousedown="tszDown" @mouseup="tszUp">{{tszData?tszData.title:""}}</a>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="an_sidenav">
@@ -99,13 +109,18 @@ export default {
             twelveList:[],
             timeNewList:[],
             headAdver:null,
-            footAdver:null
+            footAdver:null,
+            tszData:null
         }
     },
     mounted(){
         _this = this;
-        let query = this.$route.query;
-        dataCenter.setQid(query.qid);
+        let url = window.location.href;
+        let str1 = url.search("wow") >= 0 ? url.split("wow")[0] : "";
+        if(str1 && str1.search("cateid=") >= 0){
+            str1 = str1.split("cateid=")[1];
+        } 
+        // dataCenter.setQid(query.qid);
         dataCenter.getNewsList().then(res=>{
             if(res.code != 200) return;
             let list = res.data;
@@ -116,8 +131,8 @@ export default {
             }
             _this.titleList = arr;
             let cateId = arr[0].cateId;
-            if(query && query.id >= 0){
-                cateId = query.id;
+            if(str1){
+                cateId = str1;
             }
             _this.gotoCategry(cateId);
         })
@@ -144,6 +159,9 @@ export default {
                 _this.playTimeNews();
             }
         });
+        dataCenter.get360AdvData().then(res=>{
+            this.tszData = res;
+        });
         document.title = "热点新闻";
         window.onscroll = this.listScroll.bind(this);
         window.onresize = this.listScroll.bind(this);
@@ -152,7 +170,7 @@ export default {
     methods:{
         listScroll(evt){
             dataCenter.checkAdverLoad("adver_common_class_u8x3032d3");
-            dataCenter.checkAdverLoad("adver_common_class_u8x2583456");
+            dataCenter.checkAdverLoad("adver_common_class_u8x89348jdf");
             let mEle = document.getElementsByClassName("an_middle")[0];
             let rEle = document.getElementsByClassName("an_right")[0];
             if(!mEle || !rEle) return;
@@ -206,25 +224,31 @@ export default {
             }
             return cname;
         },
+        tszDown(evt){
+            dataCenter.upTo360ClkLog(this.tszData.adv,evt.offsetX,evt.offsetY,316,316,1);
+        },
+        tszUp(evt){
+            dataCenter.upTo360ClkLog(this.tszData.adv,evt.offsetX,evt.offsetY,316,316,2);
+        },
         addKitchAdver(){
-            let had = dataCenter.getRandomAdverInfo(Utils.PositionType.POSITION_HEADER);
-            let fad = dataCenter.getRandomAdverInfo(Utils.PositionType.POSITION_FOOTER);
-            let ele1 = document.getElementsByClassName("adver_common_class_u8u756412")[0];
-            let ele2 = document.getElementsByClassName("adver_common_class_u8u756412")[1];
-            if(!had || !fad) return;
-            ele1.innerHTML = had.ad_script;
-            ele2.innerHTML = fad.ad_script;
-            Utils.changeAndExecuteJS(ele1);
-            Utils.changeAndExecuteJS(ele2);
+            // let had = dataCenter.getRandomAdverInfo(Utils.PositionType.POSITION_HEADER);
+            // let fad = dataCenter.getRandomAdverInfo(Utils.PositionType.POSITION_FOOTER);
+            // let ele1 = document.getElementsByClassName("adv_class_for_jsonup")[0];
+            // let ele2 = document.getElementsByClassName("adv_class_for_jsonup")[1];
+            // if(!had || !fad) return;
+            // ele1.innerHTML = had.ad_script;
+            // ele2.innerHTML = fad.ad_script;
+            // Utils.changeAndExecuteJS(ele1);
+            // Utils.changeAndExecuteJS(ele2);
 
-            dataCenter.addAdsByClassName("adver_common_class_u8u756412");
+            // dataCenter.addAdsByClassName("adv_class_for_jsonup");
         },
         reloadHome(){
             window.location.reload();
         },
         reRenderNow(){
             this.$nextTick(()=>{
-                dataCenter.checkAdverLoad("adver_common_class_u8x2583456");
+                dataCenter.checkAdverLoad("adver_common_class_u8x89348jdf");
                 this.addKitchAdver();
             });
         },
@@ -238,7 +262,12 @@ export default {
                 _this.isChange = false;
                 if(res.code != 200) return
                 let news = res.data;
-                _this.newsList = _this.newsList.concat(news);
+                if(_this.curPageIndex <= 1){
+                    _this.newsList = news;
+                }
+                else{
+                    _this.newsList = _this.newsList.concat(news);
+                }
                 _this.$nextTick(()=>{
                     if(_this.curPageIndex <= 1){
                         window.scrollTo(0,0);
@@ -256,6 +285,12 @@ export default {
             let turl = "https://news.dtxww.cn/content/?id="+idx;
             window.open(turl, '_blank');
             return false;
+        },
+        goto360News(item){
+            if(item && item.cateId == -100){
+                dataCenter.upTo360ClkLog(this.tszData.adv,0,0,316,316,3);
+                return;
+            }
         },
         playTimeNews(ele = null,isplay = false){
             if(!ele){
@@ -578,6 +613,38 @@ export default {
         opacity: 1;
         color: #fff;
         background-color: #ff0000;
+    }
+    .adv_class_for_jsonup {
+        width: 316px;
+        height: 316px;
+        display: block;
+        overflow: hidden;
+    }
+    .adv_class_for_jsonup img {
+        width: 316px;
+        height: 316px;
+        transition: all 0.6s;
+    }
+    .adv_class_for_jsonup img:hover {
+        transform: scale(1.2);
+    }
+    .custom_tsz_ad_title {
+        width: 100%;
+        height: 45px;
+        position: relative;
+        top: -44px;
+        color: #fff;
+        text-align: left;
+        overflow: hidden;
+        padding: 4px 0px;
+        background-color: rgba(0, 0, 0, 0.7);
+    }
+    .custom_tsz_ad_title a {
+        color: #fff;
+        text-align: left;
+        font-size: 14px;
+        line-height: 19px;
+        overflow: hidden;
     }
     
 </style>

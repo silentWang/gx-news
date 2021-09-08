@@ -214,11 +214,11 @@ export default {
             }
         },
         gotoCategry(idx){
-            let routeUrl = this.$router.resolve({
-                path: "/",
-                query: {id:idx}
-            });
-            window.open(routeUrl.href, '_blank');
+            // let routeUrl = this.$router.resolve({
+            //     path: "/",
+            //     query: {id:idx}
+            // });
+            window.open("https://news.dtxww.cn/?cateid=" + idx + "wow", '_blank');
         },
         gotoNews(idx){
             // let routeUrl = this.$router.resolve({

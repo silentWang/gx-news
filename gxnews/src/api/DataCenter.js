@@ -396,7 +396,7 @@ class DataCenter {
         });
     }
     /**获取360广告(单独样式信息流)0YzcKg */
-    get360AdvData(showid = "yKLy1r"){
+    get360AdvData(showid = "7dJ8Xl"){
         let userid = this.axios.defaults.headers["userId"];
         let uid = userid + "_" + new Date().getTime();
         let params = {
@@ -419,6 +419,7 @@ class DataCenter {
         };
         let url = process.env.NODE_ENV == "development" ? "http://show.g.mediav.com/s" : "https://show-g.mediav.com/s";
         return NetHttp.jsonp(url,params).then((res)=>{
+            // res = {ads:[{curl:"https://wwww.baidu.com",title:"我是你爸爸",img:"https://s3m6.nzwgs.com/galileo/b8aebc644651b4d466feeaca30dd76c0.jpg_.webp"}]}
             if(!res || !res.ads || !res.ads.length) return null;
             let adv = res.ads[0];
             if(!adv) return null;

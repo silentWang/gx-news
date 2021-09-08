@@ -35,7 +35,7 @@ export default {
             }
         },
         cateName:"",
-        newsInfo:{
+        newsInfoData:{
             required:true
         }
     },
@@ -44,10 +44,12 @@ export default {
             title:"",
             image:"",
             from:"",
-            time:""
+            time:"",
+            newsInfo:{}
         }
     },
-    mounted(){
+    beforeMount(){
+        this.newsInfo = this.newsInfoData
         this.title = this.newsInfo.title;
         this.image = this.newsInfo.pics[0]
         this.from = this.newsInfo.from;
