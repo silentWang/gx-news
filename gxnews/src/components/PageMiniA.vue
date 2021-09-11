@@ -56,7 +56,7 @@
             </div>
         </div>
         <div class="game_bottom_adver_class" v-show="gameCloseLeftTime > 0">
-            <a href="https://www.baidu.com" target="_blank">
+            <a href="https://sdk.such-game.com/pcsdk/sdk.php?game=qiansheng" target="_blank">
                 <img src=".././assets/game_header1.gif">
             </a>
             <div class="game_bottom_adver_class_close">
