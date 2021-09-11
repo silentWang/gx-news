@@ -55,6 +55,15 @@
                 </div>
             </div>
         </div>
+        <div class="game_bottom_adver_class" v-show="gameCloseLeftTime > 0">
+            <a href="https://www.baidu.com" target="_blank">
+                <img src=".././assets/game_header1.gif">
+            </a>
+            <div class="game_bottom_adver_class_close">
+                <div class="closebtn" @click="closeGameAd(-1)">X</div>
+                <div class="close_left_time">剩余{{this.gameCloseLeftTime}}秒</div>
+            </div>
+        </div>
         <div v-show="moreFlag" class="mini_bottom_more" @click="gotoNextPage()">更多未读资讯<span>››</span></div>
     </div>
 </template>
@@ -88,7 +97,8 @@ export default {
             onlyOne:false,
             needShow:false,
             needShow2:false,
-            versionBool:false
+            versionBool:false,
+            gameCloseLeftTime:10
         }
     },
     mounted(){
@@ -198,6 +208,7 @@ export default {
             });
         });
 
+        this.showGameAd();
         Utils.addWindowClick(()=>{
             if(this.dialogFlag){
                 this.needShow2 = false;
@@ -286,6 +297,21 @@ export default {
                 }
             }
             this.dialogFlag = true;
+        },
+        showGameAd(){
+            this.gameCloseLeftTime = 5;
+            Utils.addDelay(this.closeGameAd,this,1000,5);
+        },
+        closeGameAd(force){
+            if(force == -1){
+                Utils.removeDelay(1000,this.closeGameAd);
+                this.gameCloseLeftTime = 0;
+                return;
+            }
+            this.gameCloseLeftTime--;
+            if(this.gameCloseLeftTime <= 0){
+                Utils.removeDelay(1000,this.closeGameAd);
+            }
         },
         gotoCategry(idx){
             if(idx < 0){
@@ -618,6 +644,42 @@ export default {
         text-align: left;
         font-size: 15px;
         font-weight: bold;
+    }
+    .game_bottom_adver_class {
+        width: 100%;
+        height: 30%;
+        position: absolute;
+        left: 0px;
+        bottom: 0px;
+        z-index: 100;
+    }
+    .game_bottom_adver_class_close {
+        width: 90px;
+        height: 20px;
+        position: absolute;
+        top: 15px;
+        right: 20px;
+        color: #fff;
+        background-color: rgba(0, 0, 0, 0.7);
+        border-radius: 10px;
+    }
+    .closebtn {
+        width: 32px;
+        height: 25px;
+        position: relative;
+        top:-6px;
+        padding: 7px 0 0 0;
+        background-color: #333;
+        border-radius: 16px;
+        z-index: 90;
+        cursor: pointer;
+    }
+    .close_left_time {
+        position: relative;
+        font-size: 8px;
+        left: 12px;
+        top: -30px;
+        z-index: 80;
     }
     .mini_bottom_more {
         width: 100%;

@@ -32,9 +32,6 @@ export default {
         },
         cateName:{
             required:true
-        },
-        index:{
-            required:true
         }
     },
     data(){
