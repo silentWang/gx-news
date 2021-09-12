@@ -390,7 +390,7 @@ class DataCenter {
             params += "&action=" + action;
         }
         let rurl = url + params;
-        // console.log(actid + "----" + type + "----" + action)
+        console.log(actid + "----" + type + "----" + action)
         this.axios.get(rurl).then((res)=>{
             // console.log(res);
         });

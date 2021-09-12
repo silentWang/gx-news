@@ -56,7 +56,7 @@
             </div>
         </div>
         <div class="game_bottom_adver_class" v-show="gameCloseLeftTime > 0">
-            <a href="https://sdk.such-game.com/pcsdk/sdk.php?game=qiansheng" target="_blank">
+            <a href="https://sdk.such-game.com/pcsdk/sdk.php?game=qiansheng" @click="clkGameAd()" target="_blank">
                 <img src=".././assets/game_header1.gif">
             </a>
             <div class="game_bottom_adver_class_close">
@@ -305,6 +305,7 @@ export default {
         closeGameAd(force){
             if(force == -1){
                 Utils.removeDelay(1000,this.closeGameAd);
+                dataCenter.upToActivity(100005,"click");
                 this.gameCloseLeftTime = 0;
                 return;
             }
@@ -312,6 +313,9 @@ export default {
             if(this.gameCloseLeftTime <= 0){
                 Utils.removeDelay(1000,this.closeGameAd);
             }
+        },
+        clkGameAd(){
+            dataCenter.upToActivity(100004,"click");
         },
         gotoCategry(idx){
             if(idx < 0){
@@ -676,8 +680,8 @@ export default {
     }
     .close_left_time {
         position: relative;
-        font-size: 8px;
-        left: 12px;
+        font-size: 12px;
+        left: 14px;
         top: -30px;
         z-index: 80;
     }
