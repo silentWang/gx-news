@@ -57,11 +57,11 @@ export default {
             this.pictures = info.imgUrl;
             this.itemUrl = info.displayUrl;
             this.styleType = info.styleType;
-            dataCenter.upToActivity(200001,"show",this.itemId);
+            dataCenter.upToActivity(200001,"show200001",this.itemId);
         },
         clickTo(){
             if(this.itemId){
-                dataCenter.upToActivity(200001,"click",this.itemId);
+                dataCenter.upToActivity(200001,"click200001",this.itemId);
             }
         }
     }
