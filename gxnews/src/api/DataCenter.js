@@ -283,6 +283,7 @@ class DataCenter {
         }
         return true;
     }
+
     /**广告iframe上报 */
     upToAdverByIframe(advers = []){
         if(!advers || advers.length == 0) return;
@@ -303,6 +304,7 @@ class DataCenter {
         // console.log(div);
         element.appendChild(div);
     }
+
     /**upTo360Adver */
     upTo360ShowLog(adv){
         if(!adv) return;
@@ -380,6 +382,7 @@ class DataCenter {
     }
     /**上报  type : click open close  action:left,right*/
     upToActivity(actid,type,action){
+        if(process.env.NODE_ENV != "production") return;
         let url = this.getRealUrl("/v1/demo/index");
         let userid = this.axios.defaults.headers["userId"];
         let params = "?userid=" + userid + "&" + "actid=" + actid;
@@ -603,7 +606,7 @@ class DataCenter {
         let url = this.getRealUrl(ext);
         return this.axios.get(url).then(res=>{
             let data = res.data;
-            console.log(data.data.main_list);
+            // console.log(data.data.main_list);
             if(data.code == 200){
                 this.upToAdverByIframe(data.data.main_list);
             }

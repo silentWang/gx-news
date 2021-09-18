@@ -5,5 +5,5 @@ module.exports = {
   // API_ROOT:'"http://112.124.52.49"',
   API_ROOT:'"https://www.dtw-tech.cn"',
   PROXY_BASE:"'/api'",
-  BUILD_MODE:'"4"'//1首页 2 mini 3 content
+  BUILD_MODE:'"5"'//1首页 2 mini 3 content
 }

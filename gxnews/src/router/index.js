@@ -5,6 +5,7 @@ import PageIndex from '@/components/PageIndex'
 import PageContent from '@/components/PageContent'
 // import PageMini from '@/components/PageMini'
 import PageMiniA from '@/components/PageMiniA'
+import PageMiniB from '@/components/PageMiniB'
 
 Vue.use(Router)
 
@@ -25,6 +26,10 @@ if(process.env.BUILD_MODE == 2 || process.env.BUILD_MODE == 4){
 else if(process.env.BUILD_MODE == 3){
   routeInfo.name = "PageContent";
   routeInfo.component = PageContent;
+}
+else if(process.env.BUILD_MODE == 5){
+  routeInfo.name = "PageMiniB";
+  routeInfo.component = PageMiniB;
 }
 
 if(process.env.NODE_ENV == "development"){

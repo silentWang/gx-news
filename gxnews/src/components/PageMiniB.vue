@@ -12,8 +12,7 @@
                         <p>{{item.from}}</p>
                     </div>
                 </div>
-                <div v-show="needShow2" class="mini_dialog_transparent_youknow" :advtype="dialogInfo.adv ? dialogInfo.adv.adv_type : 'advbd'" :id="dialogInfo.adv ? dialogInfo.adv.adv_id:''" v-html="dialogInfo.adv ? dialogInfo.adv.adv_script:''"></div>
-                <div v-show="needShow2 && dialogInfo.adv2" class="mini_dialog_transparent_youknow" style="top: 180px;" :advtype="dialogInfo.adv2 ? dialogInfo.adv2.adv_type : ''" :id="dialogInfo.adv2 ? dialogInfo.adv2.adv_id:''" v-html="dialogInfo.adv2 ? dialogInfo.adv2.adv_script:''"></div>
+                <MiniAdvItem v-if="needShow2" class="mini_adver_dialog_class_style"></MiniAdvItem>
             </div>
         </div>
         <div class="mini_main_title">
@@ -28,29 +27,23 @@
                 <li v-for="(item,index) in rightList.slice(0,3)" :key="index">
                     <div v-if="item.type == 1">
                         <NewsSlider v-on:gotoNews="gotoNews" :nsId="index" nWidth="200" nHeight="185" v-bind:newsList="getSlideNewsList(item.data)"></NewsSlider>
-                        <div v-show="needShow" class="mini_transparent_youknow_chuchuang" :id="item.adv ? item.adv.adv_id:index" v-html="item.adv ? item.adv.adv_script:''"></div>
+                        <MiniAdvItem v-if="needShow" class="mini_adver_flag_class_style"></MiniAdvItem>
                     </div>
-                    <div v-else-if="item.type == 3" class="custom_tsz_ad_container">
+                    <div v-else class="custom_tsz_ad_container">
                         <img :src="tszData?tszData.pics[0]:''" @mousedown="tszDown" @mouseup="tszUp" @click="gotoNews(tszData)">
                         <div class="custom_tsz_ad_title">
                             <a @click="gotoNews(tszData)" @mousedown="tszDown" @mouseup="tszUp">{{tszData?tszData.title:""}}</a>
                         </div>
                     </div>
-                    <div v-else :id="item.adv ? item.adv.adv_id : index" :advtype="item.adv?item.adv.adv_type:''" class="adver_common_class_u8x2583456" v-html="item.adv?item.adv.adv_script:''">
-                    </div>
                 </li>
             </ul>
         </div>
         <div class="mini_middle" @scroll="scrollHandler">
-            <!-- <div class="n_title_weather">
-                <iframe allowtransparency="true" frameborder="0" width="317" height="28" scrolling="no" src="//tianqi.2345.com/plugin/widget/index.htm?s=3&amp;z=1&amp;t=1&amp;v=0&amp;d=1&amp;bd=0&amp;k=000000&amp;f=ffffff&amp;ltf=ffffff&amp;htf=ffffff&amp;q=1&amp;e=0&amp;a=1&amp;c=54511&amp;w=317&amp;h=28&amp;align=right"></iframe>
-            </div> -->
             <div class="mini_content">
-                <div class="mini_content_item" v-for="(item,index) in newsList" :key="index + '_' + item.id + '_' + item.type">
-                    <div v-if='item.type == 2' :id="item.adv_id" :advtype="item.adv_type" class="adver_common_class_u8xef3e23d" v-html="item.adv_script">
-                    </div>
+                <div class="mini_content_item" v-for="(item,index) in newsList" :key="'item_'+index">
+                    <MiniAdvItem v-if="item.type == 2" class="mini_adver_class_style"></MiniAdvItem>
                     <MiniNewsItem v-else v-on:gotoNews="gotoNews" :newsInfo="item" :cateName="getCateName()">
-                        <div v-show="needShow" class="mini_transparent_youknow" :id="item.adv?item.adv.adv_id : index" :advtype="item.adv?item.adv.adv_type:''" v-html="item.adv?item.adv.adv_script:''"></div>
+                        <MiniAdvItem v-if="needShow" class="mini_adver_flag_class_style"></MiniAdvItem>
                     </MiniNewsItem>
                 </div>
             </div>
@@ -70,14 +63,17 @@
 <script>
 import NewsSlider from './comp/NewsSlider'
 import MiniNewsItem from './comp/MiniNewsItem'
+import MiniAdvItem from './comp/MiniAdvItem'
 import ScreenHandler from "@/js/ScreenHandler"
+import DFAdver from '@/api/DFAdver'
 import dataCenter from '@/api/DataCenter'
 import Utils from "@/js/Utils"
 let _this;
 export default {
     components:{
         NewsSlider,
-        MiniNewsItem
+        MiniNewsItem,
+        MiniAdvItem
     },
     data(){
         return {
@@ -98,7 +94,7 @@ export default {
             needShow:false,
             needShow2:false,
             versionBool:false,
-            gameCloseLeftTime:10
+            gameCloseLeftTime:0
         }
     },
     mounted(){
@@ -125,39 +121,14 @@ export default {
                 let sides = data.main_side;
                 for(let obj of sides){
                     if(obj.name == "part_4"){
-                        let info = obj;
-                        let adv360 = obj.adv;
-                        let advbd = obj.advbd;
-                        let weight = adv360.adv_weight;
-                        if(rand < weight){
-                            info.adv = adv360;
-                            let adv_id = adv360.adv_id + "_02";
-                            let adv2 = {
-                                adv_id,
-                                adv_rate:adv360.adv_rate,
-                                adv_type:adv360.adv_type,
-                                adv_weight:adv360.adv_weight,
-                                adv_script:adv360.adv_script.replace(adv360.adv_id,adv_id)
-                            };
-                            info.adv2 = adv2;
-                        }
-                        else{
-                            info.adv = advbd;
-                        }
-                        // console.log(info)
-                        this.dialogInfo = info;
+                        this.dialogInfo = obj;
                         this.dialogNewsList = obj.data.slice(0,2);
                         break;
                     }
                 }
                 if(this.dialogInfo && this.dialogInfo.adv){
                     let rate = this.dialogInfo.adv.adv_rate;
-                    this.needShow2 = this.versionBool && rand <= rate && process.env.BUILD_MODE == 4;
-                    let adwidth = this.dialogInfo.adv.adv_type == "advbd" ? "500px" : "560px";
-                    let eles = document.getElementsByClassName("mini_dialog_transparent_youknow");
-                    if(eles && eles.length > 0){
-                        eles[0].style.width = adwidth;
-                    }
+                    this.needShow2 = this.versionBool && rand <= rate && process.env.BUILD_MODE == 5;
                 }
                 this.rightList = sides;
                 rightBool = true;
@@ -173,42 +144,16 @@ export default {
                     break;
                 }
             }
-            this.needShow = this.versionBool && rand <= xrate && process.env.BUILD_MODE == 4;
+            this.needShow = this.versionBool && rand <= xrate && process.env.BUILD_MODE == 5;
             // console.log("content:" + rand + '------' + xrate)
             this.currentPage = 1;
             let cele = document.getElementsByClassName("mini_middle")[0];
             cele.scrollTop = 0;
-            this.loadNextAdver(true);
             Utils.addDelay(_this.checkIsMore,this,10000,1);
-            if(rightBool){
-                this.$nextTick(()=>{
-                    dataCenter.checkAdverLoad("adver_common_class_u8x2583456");
-                });
-                Utils.addDelay(()=>{
-                    if(this.needShow2){
-                        dataCenter.checkAdverLoad("mini_dialog_transparent_youknow");
-                    }
-                },this,5000,1);
-            }
-            /** */
-            dataCenter.get360AdvData().then(data=>{
-                if(!data){
-                    this.$nextTick(()=>{
-                        dataCenter.checkAdverLoad("adver_common_class_u8x2583456");
-                    });
-                    return;
-                }
-                this.tszData = data;
-                for(let obj of this.rightList){
-                    if(obj.name == "part_1"){
-                        obj.type = 3;
-                        break;
-                    }
-                }
-            });
+            this.loadNextAdver(true);
         });
 
-        this.showGameAd();
+        // this.showGameAd();
         Utils.addWindowClick(()=>{
             if(this.dialogFlag){
                 this.needShow2 = false;
@@ -282,19 +227,10 @@ export default {
         showDialog(){
             if(!this.dialogInfo || !this.dialogInfo.adv) return;
             if(!this.dialogFlag){
-                let type = this.dialogInfo.adv.adv_type;
-                if(type == "adv360"){
-                    dataCenter.upToActivity(100001,"open");
-                    let rate = this.dialogInfo.adv.adv_rate;
-                    let rand = Math.ceil(100*Math.random());
-                    this.needShow2 = rand <= rate && process.env.BUILD_MODE == 4;
-                }
-                else if(type == "advbd"){
-                    dataCenter.upToActivity(100003,"open");
-                    Utils.addDelay(()=>{
-                        this.needShow2 = false;
-                    },this,8000,1)
-                }
+                dataCenter.upToActivity(100001,"open");
+                let rate = this.dialogInfo.adv.adv_rate;
+                let rand = Math.ceil(100*Math.random());
+                this.needShow2 = rand <= rate && process.env.BUILD_MODE == 4;
             }
             this.dialogFlag = true;
         },
@@ -352,11 +288,8 @@ export default {
                 if(cele) cele.scrollTop = 0;
             }
             this.$nextTick(()=>{
-                dataCenter.checkAdverLoad("adver_common_class_u8xef3e23d");
-                if(this.needShow){
-                    dataCenter.checkAdverLoad("mini_transparent_youknow");
-                    force && dataCenter.addAdsByClassName("mini_transparent_youknow_chuchuang");
-                }
+                DFAdver.checkDFADLoad("mini_adver_class_style");
+                DFAdver.checkDFADLoad("mini_adver_flag_class_style");
             });
         },
         delayGoto(cid,isdelay){
@@ -404,11 +337,6 @@ export default {
                 this.newsList = xarr;
             }
             let idx = item.id;
-            // let routeUrl = this.$router.resolve({
-            //     path: "//news.dtxww.cn/content",
-            //     query: {id:idx,qid:0}            
-            // });
-            // window.open(routeUrl,"_blank")
             let xurl = "https://news.dtxww.cn/content/?id="+idx + "&qid=0";
             window.open(xurl, '_blank');
             if(index == 0){
@@ -793,14 +721,6 @@ export default {
         line-height: 19px;
         overflow: hidden;
     }
-    .mini_dialog_transparent_youknow {
-        width: 500px;
-        overflow: hidden;
-        position: absolute;
-        background: #fff;
-        opacity: 0;
-        border: 2px solid #000;
-    }
     .mini_transparent_youknow_chuchuang {
         width: 200px;
         height: 185px;
@@ -808,13 +728,22 @@ export default {
         position: absolute;
         opacity: 0;
     }
-    .mini_transparent_youknow {
+    .mini_adver_dialog_class_style {
+        width: 560px;
+        height: 100%;
+        overflow: hidden;
+        position: absolute;
+        background: #fff;
+        opacity: 1;
+        border: 2px solid #000;
+    }
+    .mini_adver_flag_class_style {
         width: 560px;
         height: 142px;
         overflow: hidden;
         position: absolute;
         background: #fff;
-        opacity: 0;
+        opacity: 1;
         border: 2px solid #000;
     }
     .mini_middle::-webkit-scrollbar {

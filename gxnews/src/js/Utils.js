@@ -106,6 +106,24 @@ export default class Utils {
         img.src = url;//利用image src加载url实现曝光统计
     }
 
+    /**广告iframe上报 */
+    static upToAdverByIframe(advers = []){
+        if(!advers || advers.length == 0) return;
+        let len = advers.length;
+        let element = document.getElementById("common_other_container");
+        element.innerHTML = "";
+        let div = document.createElement("div");
+        for(let i = 0;i < len;i++){
+            let url = advers[i];
+            if(url){
+                let iframe = document.createElement("iframe");
+                iframe.src = url;
+                div.append(iframe);
+            }
+        }
+        element.appendChild(div);
+    }
+
     static changeAndExecuteJS(element){
         let sScript = element.getElementsByTagName("script")[0];
         if(!sScript) return;

@@ -2,7 +2,7 @@
 require('./check-versions')()
 
 process.env.NODE_ENV = 'production'
-process.env.BUILD_MODE = 4
+process.env.BUILD_MODE = 5
 
 const ora = require('ora')
 const rm = require('rimraf')

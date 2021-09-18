@@ -1,21 +1,21 @@
 <template>
     <div>
         <div v-if="pictures.length >= 3" class="mini_three_div">
-            <a target="_blank" :href="itemUrl" @click="gotoNews">{{itemTitle}}</a>
+            <a target="_blank" @click="gotoNews">{{itemTitle}}</a>
             <div class="mini_content_image" @click="gotoNews">
-                <a target="_blank" :href="itemUrl"><img :src='pictures[0]'/></a>
-                <a target="_blank" :href="itemUrl"><img :src='pictures[1]'/></a>
-                <a target="_blank" :href="itemUrl"><img :src='pictures[2]'/></a>
+                <a target="_blank"><img :src='pictures[0]'/></a>
+                <a target="_blank"><img :src='pictures[1]'/></a>
+                <a target="_blank"><img :src='pictures[2]'/></a>
                 <div class="mini_content_more" target="_blank"><span>查看更多>></span></div>
             </div>
             <span class="mini_content_image_p">{{this.cateName}}{{itemFrom}}</span>
         </div>
         <div v-else>
             <div class="mini_content_one_image" @click="gotoNews">
-                <a target="_blank" :href="itemUrl"><img :src='pictures[0]'/></a>
+                <a target="_blank"><img :src='pictures[0]'/></a>
             </div>
             <div class="mini_content_one_image_title">
-                <a target="_blank" :href="itemUrl" @click="gotoNews">{{itemTitle}}</a>
+                <a target="_blank" @click="gotoNews">{{itemTitle}}</a>
                 <span>{{this.cateName}}{{itemFrom}}</span>
             </div>
         </div>
@@ -36,34 +36,36 @@ export default {
     },
     data(){
         return {
-            type:2,
             itemId:"",
             itemTitle:"",
             pictures:[],
-            itemUrl:"",
             itemFrom:"",
-            isShowAd:false
+            itemTitle1:"",
+            pictures1:[],
+            itemUrl:"",
+            adUniqeId:''
         }
     },
     beforeMount(){
-        this.type = this.newsInfo.type;
-        this.itemId = this.newsInfo.id ? this.newsInfo.id : "";
-        this.itemTitle = this.newsInfo.title;
-        this.pictures = this.newsInfo.pics ? this.newsInfo.pics : [];
-        this.itemUrl = this.newsInfo.url ? this.newsInfo.url : "";
-        this.itemFrom = this.newsInfo.from ? this.newsInfo.from : "";
+        this.setInfo();
     },
     methods:{
+        setInfo(){
+            this.itemId = this.newsInfo.id ? this.newsInfo.id : "";
+            this.itemTitle = this.newsInfo.title;
+            this.pictures = this.newsInfo.pics ? this.newsInfo.pics : [];
+            this.itemUrl = this.newsInfo.url ? this.newsInfo.url : "";
+            this.itemFrom = this.newsInfo.from ? this.newsInfo.from : "";
+        },
         gotoNews(evt){
             if(this.newsInfo.type == 3){
                 window.open(this.newsInfo.url,"_blank");
                 return;
             }
             this.$emit("gotoNews",this.newsInfo)
-        },
-        
+        }
     }
-    
+
 }
 </script>
 <style>
