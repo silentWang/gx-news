@@ -24,7 +24,7 @@
         </div>
         <div class="mini_right">
             <ul class="mini_right_list">
-                <li v-for="(item,index) in rightList.slice(0,3)" :key="index">
+                <li v-for="(item,index) in rightList.slice(1,4)" :key="index">
                     <div v-if="item.type == 1">
                         <NewsSlider v-on:gotoNews="gotoNews" :nsId="index" nWidth="200" nHeight="185" v-bind:newsList="getSlideNewsList(item.data)"></NewsSlider>
                         <MiniAdvItem v-if="needShow" class="mini_adver_flag_class_style"></MiniAdvItem>

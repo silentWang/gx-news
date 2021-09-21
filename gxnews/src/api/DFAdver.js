@@ -166,7 +166,7 @@ class DFAdver {
             // 站点信息
             site: {
                 uid: new Date().getTime() + "" + Math.random().toString().slice(3,7), // required | String | 17 位用户ID (13 位时间戳 + 4 位随机数)
-                qid: '1', // required | String / Number | 渠道
+                qid: '04369', // required | String / Number | 渠道
                 siteid: 1015, // required | String / Number | 站点 ID，dsp 广告提供
                 sitename: 'waibu', // required | String | 站点名称，dsp 广告提供
                 version: '1.0.1' // recommended | String | 软件版本，默认为 1.0.1

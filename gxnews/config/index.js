@@ -16,6 +16,9 @@ else if(process.env.BUILD_MODE == 3){
 else if(process.env.BUILD_MODE == 4){
   assetPath = "//news.dtxww.cn/mini/001/";
 }
+else if(process.env.BUILD_MODE == 5){
+  assetPath = "//news.dtxww.cn/mini/002/";
+}
 
 module.exports = {
   dev: {

@@ -584,7 +584,7 @@ class DataCenter {
     /**get mini info */
     async getMiniInfo(cateid = 1,page = 1){
         if(page == 1){
-            if(window.check_version && !this.areaBool){
+            if(window.check_version && !this.areaBool && process.env.BUILD_MODE == 4){
                 let adata = await this.getAreaData();
                 // console.log("-------------");
                 // console.log(adata);
