@@ -32,6 +32,12 @@ class DataCenter {
         this.axios.get(url);
     }
 
+    getNextId(){
+        if(!this.index) this.index = 10000;
+        this.index++;
+        return this.index;
+    }
+
     getRandomAdverInfo(position){
         if(!this._adverIdx){
             this._adverIdx = 110000;
@@ -393,7 +399,7 @@ class DataCenter {
             params += "&action=" + action;
         }
         let rurl = url + params;
-        console.log(actid + "----" + type + "----" + action)
+        // console.log(actid + "----" + type + "----" + action)
         this.axios.get(rurl).then((res)=>{
             // console.log(res);
         });

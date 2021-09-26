@@ -67,6 +67,15 @@ export default class Utils {
         return str
     }
 
+    static getObjectLength(object){
+        let needlen = 0;
+        if(!object || typeof object != "object") return needlen;
+        for(let key in object){
+            needlen++;
+        }
+        return needlen;
+    }
+
     static getUrlParams(){
         let url = window.location.href;
         let arr = url.split("?");

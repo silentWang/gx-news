@@ -40,7 +40,7 @@
         </div>
         <div class="mini_middle" @scroll="scrollHandler">
             <div class="mini_content">
-                <div class="mini_content_item" v-for="(item,index) in newsList" :key="'item_'+index">
+                <div class="mini_content_item" v-for="(item,index) in newsList" :key="getNextKey(item,index)">
                     <MiniAdvItem v-if="item.type == 2" class="mini_adver_class_style"></MiniAdvItem>
                     <MiniNewsItem v-else v-on:gotoNews="gotoNews" :newsInfo="item" :cateName="getCateName()">
                         <MiniAdvItem v-if="needShow" class="mini_adver_flag_class_style"></MiniAdvItem>
@@ -167,6 +167,17 @@ export default {
         document.title = "MiniPage";
     },
     methods:{
+        getNextKey(item,index){
+            let skey = "";
+            if(item.type == 2){
+                skey = item.adv_id;
+            }
+            else{
+                let id = dataCenter.getNextId();
+                skey = "item_" + id + "_" + index;
+            }
+            return skey;
+        },
         scrollHandler(e){
             let ele = e.srcElement ? e.srcElement : e.target;
             if(!ele) return;
@@ -743,7 +754,7 @@ export default {
         overflow: hidden;
         position: absolute;
         background: #fff;
-        opacity: 1;
+        opacity: 0;
         border: 2px solid #000;
     }
     .mini_middle::-webkit-scrollbar {

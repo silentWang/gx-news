@@ -1,4 +1,5 @@
 import Utils from "@/js/Utils"
+import TSZAdver from "./TSZAdver";
 class DFAdver {
     static instance(){
         if(!DFAdver._instance){
@@ -33,11 +34,14 @@ class DFAdver {
 
     getAdvDataById(id){
         if(!this.advConfig[id]) return null;
-        return this.advConfig[id].data;
+        let info = this.advConfig[id];
+        return info.data;
     }
 
-    addAdvData(data){
-        if(!data) return;
+    addAdvData(data,advType){
+        console.log(advType);
+        console.log(data)
+        if(!data || Utils.getObjectLength(data) == 0) return;
         let array = [];
         let needlen = 0;
         for(let key in data){
@@ -51,6 +55,12 @@ class DFAdver {
             for(let id in data){
                 if(id == conf.advID){
                     conf.data = data[id].data;
+                    if(!conf.data){
+                        conf.data = {advType};
+                    }
+                    else{
+                        conf.data.advType = advType;
+                    }
                     array.push(conf);
                     step++;
                     break;
@@ -71,10 +81,8 @@ class DFAdver {
             this.callbacks = {};
         }
         this.callbacks[eid] = {func,context};
-        let data = this.getAdvDataById(eid);
-        if(data){
-            func.call(context);
-        }
+        // let data = this.getAdvDataById(eid);
+        func.call(context);
     }
 
     /**懒加载 进入可视范围才加载 */
@@ -151,7 +159,7 @@ class DFAdver {
             if(conf.data) continue;
             imparray.push(conf.advID);
             report[conf.advID] = {
-                "container": conf.elementID,
+                "container": "#"+conf.elementID,
                 "$scrollBox":$("mini_middle")[0]
             }
             start++;
@@ -219,10 +227,18 @@ class DFAdver {
             // return;
 
             let params = this.getReqParams(pagenum);
-            NEWDSP_20200715.GET_DSP_DATA(params, (data) => {
+            NEWDSP_20200715.GET_DSP_DATA(params, (res1) => {
                 // console.log(JSON.stringify(data))
-                this.addAdvData(data);
-                resolve();
+                if(!res1 || Utils.getObjectLength(res1) == 0){
+                    TSZAdver.getAdvData(params).then(res2=>{
+                        this.addAdvData(res2,"adv360");
+                        resolve();
+                    });
+                }
+                else{
+                    this.addAdvData(res1,"advDFTT");
+                    resolve();
+                }
             });
         });
     }
