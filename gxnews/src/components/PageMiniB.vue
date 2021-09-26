@@ -241,7 +241,7 @@ export default {
                 dataCenter.upToActivity(100001,"open");
                 let rate = this.dialogInfo.adv.adv_rate;
                 let rand = Math.ceil(100*Math.random());
-                this.needShow2 = rand <= rate && process.env.BUILD_MODE == 4;
+                this.needShow2 = rand <= rate && process.env.BUILD_MODE == 5;
             }
             this.dialogFlag = true;
         },
@@ -301,6 +301,7 @@ export default {
             this.$nextTick(()=>{
                 DFAdver.checkDFADLoad("mini_adver_class_style");
                 DFAdver.checkDFADLoad("mini_adver_flag_class_style");
+                DFAdver.checkDFADLoad("mini_adver_dialog_class_style");
             });
         },
         delayGoto(cid,isdelay){
@@ -744,8 +745,7 @@ export default {
         height: 100%;
         overflow: hidden;
         position: absolute;
-        background: #fff;
-        opacity: 1;
+        opacity: 0;
         border: 2px solid #000;
     }
     .mini_adver_flag_class_style {
