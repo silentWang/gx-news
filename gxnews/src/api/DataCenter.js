@@ -1,7 +1,7 @@
 import axios from './request'
-import AdvertiseUtils from './AdvertiseUtils'
 import Utils from '.././js/Utils'
 import NetHttp from './NetHttp'
+import AdvDFTT from './AdvDFTT'
 //本地化
 let isLocalTest = false;
 class DataCenter {
@@ -24,12 +24,19 @@ class DataCenter {
         axios.defaults.headers["qid"] = qid ? qid : ""
     }
 
-    getRealUrl(cmd = ""){
-        return process.env.PROXY_BASE + cmd;
+    /**创建一个广告管理
+     * container 父滚动容器
+     * dfttIds 东方广告ids
+     * showIds  360 showids
+     */
+    createAdvItem(dfttIds,showIds,container = ""){
+        let item = new AdvDFTT(container,dfttIds,showIds);
+        item.name = container ? container : "window";
+        return item;
     }
 
-    uploadAct(url){
-        this.axios.get(url);
+    getRealUrl(cmd = ""){
+        return process.env.PROXY_BASE + cmd;
     }
 
     getNextId(){
@@ -58,38 +65,6 @@ class DataCenter {
             info.ad_title = ad.ad_title;
         }
         return info;
-    }
-    
-    addSimulateClick(classname){
-        if(!Utils.checkIsIE()) return;
-        // console.log("执行了 准备");
-        Utils.addDelay(()=>{
-            let elements = document.getElementsByClassName(classname);
-            if(!elements || elements.length == 0) return;
-            let info = this.adsPieces && this.adsPieces[classname];
-            // console.log("开始判断info");
-            if(!info) return;
-            let page = -1;
-            for(let num in info){
-                let data = info[num];
-                if(data && data.loaded){
-                    page = data.pagenum;
-                    if(Math.random() > 0.5) break;
-                }
-            }
-            if(page < 0) return;
-            let index = 0;
-            index = (page - 1) * this.maxTSZNum + Math.floor(this.maxTSZNum*Math.random());
-            // console.log("ddddddddd:"+index);
-            if(index >= elements.length) return;
-            let ele = elements[index];
-            let links = ele.getElementsByTagName("a");
-            if(!links || links.length == 0) return;
-            let link = links[0];
-            link.click();
-            // window.open(link.href,"_blank");
-            // console.log("跳转了" + link.href)
-        },this,3600);
     }
 
     /**加载广告 360一次最多4条 */
@@ -272,22 +247,6 @@ class DataCenter {
         nScript.innerHTML = sScript.innerHTML;
         element.appendChild(nScript);
         element.isAdLoaded = loaded;
-    }
-    /**get current ads copy */
-    addAdCopied(sclsname,tclsname){
-        if(!this.adsPieces) return false;
-        let savedAds = this.adsPieces[tclsname];
-        if(!savedAds || savedAds.length == 0) return false;
-        let elements = document.getElementsByClassName(sclsname);
-        if(!elements) return false;
-        let len = elements.length;
-        if(len == 0) return false;
-        for(let i = 0;i < len;i++){
-            let sele = elements[i];
-            let tele = savedAds[~~(savedAds.length * Math.random())];
-            sele.innerHTML = tele.innerHTML;
-        }
-        return true;
     }
 
     /**广告iframe上报 */
@@ -577,10 +536,10 @@ class DataCenter {
     }
     /****************************优化版接口******************************************** */
     /**详情页单接口 */
-    getDetailInfo(){
-        let ext = "//news.dtxww.cn/data/mini_detail.json";
+    getDetailInfo(cateid){
+        let ext = `//news.dtxww.cn/data/mini_detail_v_${cateid}.json`;
         if(process.env.NODE_ENV == "development"){
-            ext = "/data/mini_detail.json";
+            ext = `/data/mini_detail_v_${cateid}.json`;
         }
         return this.axios.get(ext,{headers:{'Content-Type':'application/json'}}).then(res=>{
             let data = res.data;
@@ -597,9 +556,9 @@ class DataCenter {
                 this.areaBool = true;
                 window.check_version = adata.data&&adata.data.is_sign != 1;
             }
-            let ext = `//news.dtxww.cn/data/mini_data_${cateid}.json`;
+            let ext = `//news.dtxww.cn/data/mini_data_${cateid}.json?v=${new Date().getTime()}`;
             if(process.env.NODE_ENV == "development"){
-                ext = `/data/mini_data_${cateid}.json`;
+                ext = `/data/mini_data_${cateid}.json?v=${new Date().getTime()}`;
             }
             let res = await this.axios.get(ext,{headers:{'Content-Type':'application/json'}});
             let data = res.data;

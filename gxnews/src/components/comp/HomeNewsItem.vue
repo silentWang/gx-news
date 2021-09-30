@@ -61,7 +61,7 @@ export default {
                 window.open(this.newsInfo.url,"_blank");
                 return;
             }
-            this.$emit("gotoNews",this.newsInfo.id)
+            this.$emit("gotoNews",this.newsInfo)
         }
     }
 }

@@ -60,7 +60,7 @@
                         </li>
                     </ul>
                     <div class="adv_class_for_jsonup" v-show="tszData != null">
-                        <img :src="tszData?tszData.pics[0]:''" @mousedown="tszDown" @mouseup="tszUp" @click="gotoNews(tszData)">
+                        <img :src="tszData?tszData.pics[0]:''" @mousedown="tszDown" @mouseup="tszUp" @click="goto360News(tszData)">
                         <div class="custom_tsz_ad_title">
                             <a @click="goto360News(tszData)" @mousedown="tszDown" @mouseup="tszUp">{{tszData?tszData.title:""}}</a>
                         </div>
@@ -276,13 +276,13 @@ export default {
                 });
             })
         },
-        gotoNews(idx){
+        gotoNews(item){
             // let routeUrl = this.$router.resolve({
             //     path: "/content",
             //     query: {id:idx}            
             // });
             // window.open(routeUrl.href, '_blank');
-            let turl = "https://news.dtxww.cn/content/?id="+idx;
+            let turl = "https://news.dtxww.cn/content/?id="+item.id + "&cateid=" + item.cateId;
             window.open(turl, '_blank');
             return false;
         },

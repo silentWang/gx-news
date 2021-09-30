@@ -11,17 +11,46 @@ import axios from 'axios'
 Vue.config.productionTip = false
 Vue.prototype.$axios = axios
 
-if(process.env.BUILD_MODE == 2 || process.env.BUILD_MODE == 4){
-  window&&window.location&&window.location.href.search("v=101")>=0?window.check_version = true:window.check_version = false;
+let mode = process.env.BUILD_MODE;
+let scripts = ["//static.mediav.com/js/feed_ts.js","../static/js/v9.js"];
+if(mode == 2 || mode == 4){
+  window.check_version = window.location && window.location.href.search("v=101") >= 0;
   window&&window.history&&window.history.pushState("","","/mini/001");
 }
-else if(process.env.BUILD_MODE == 5){
-  window&&window.location&&window.location.href.search("v=101")>=0?window.check_version = true:window.check_version = false;
+else if(mode == 5){
+  window.check_version = window.location&&window.location.href.search("v=101") >= 0;
   window&&window.history&&window.history.pushState("","","/mini/002");
 }
-let script = document.createElement("script");
-script.src = "//static.mediav.com/js/feed_ts.js";
-script.onload = ()=>{
+else if(mode == 6){
+  window.check_version = window.location&&window.location.href.search("v=101") >= 0;
+  window&&window.history&&window.history.pushState("","","/mini/000");
+}
+else if(mode == 3){
+  scripts.push("//static.mediav.com/js/mvf_g4.js");
+}
+if(process.env.NODE_ENV != "production"){
+  // window.check_version = true;
+}
+
+let index = 0;
+function loadNext(){
+  let script = document.createElement("script");
+  script.src = scripts[index];
+  script.onload = ()=>{
+    index++;
+    if(index >= scripts.length){
+      setUpNow();
+      console.log("init complete")
+    }
+    else{
+      loadNext();
+    }
+  }
+  document.body.appendChild(script);
+}
+loadNext();
+
+function setUpNow(){
   /* eslint-disable no-new */
   new Vue({
     el: '#app',
@@ -30,4 +59,3 @@ script.onload = ()=>{
     template: '<App/>'
   })
 }
-document.body.appendChild(script);

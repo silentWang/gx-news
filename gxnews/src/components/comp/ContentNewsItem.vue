@@ -6,11 +6,11 @@
                     <img :src="images[0]" @click="gotoNews"/>
                 </a>
             </div>
-            <div class="an_dialog_list_news_title_content">
+            <div class="acn_news_next_title_content">
                 <div>
                     <a class="bn_left_link"  @click="gotoNews">{{title}}</a>
                 </div>
-                <div class="an_dialog_list_news_tag" @click="gotoNews">
+                <div class="acn_next_list_news_tag" @click="gotoNews">
                     <span class="tags_wrapper">
                         <a href="#">娱乐</a>&nbsp;
                         <a href="#">新闻</a>&nbsp;
@@ -20,29 +20,47 @@
             </div>
         </div>
         <div v-else-if="type == 'nup'">
-            <div class="nup_three_div" v-if="images.length >= 3">
-                <a :title="title" @click="gotoNews">{{title}}</a>
-                <div class="nup_three_img_div">
-                    <a href="" @click="gotoNews">
-                        <img :src="images[0]">
-                    </a>
-                    <a href="" @click="gotoNews">
-                        <img :src="images[1]">
-                    </a>
-                    <a href="" @click="gotoNews">
-                        <img :src="images[2]">
-                    </a>
-                </div>
-                <span class="nup_three_from_time" @click="gotoNews">{{from}}&nbsp;&nbsp;&nbsp;</span>
-            </div>
-            <div class="nup_one_div" v-else>
+            <div class="nup_one_div">
                 <a class="n_up_image_a"  :title="title">
                     <img :src="images[0]" @click="gotoNews">
                 </a>
                 <div class="n_up_pp">
                     <a :title="title" @click="gotoNews">{{title}}</a>
                 </div>
-                <p><span class="n_up_pp_span" @click="gotoNews">{{from}}&nbsp;&nbsp;&nbsp;&nbsp;</span></p>
+                <p><span class="n_up_pp_span" @click="gotoNews"><span>{{from}}</span>的人还浏览了</span></p>
+            </div>
+        </div>
+        <div v-else-if="type == 'nlink'">
+            <div class="nup_nlink_div">
+                <a @click="gotoNews">{{from}}&nbsp;&nbsp;&nbsp;&nbsp;</a>
+                <a :title="title" @click="gotoNews">{{title}}</a>
+            </div>
+        </div>
+        <div v-else-if="type == 'hot'">
+            <div class="nup_hot_div">
+                <a class="nup_hot_image_a"  :title="title">
+                    <img :src="images[0]" @click="gotoNews">
+                </a>
+                <a :title="title" class="hot_title" @click="gotoNews">{{title}}</a>
+            </div>
+        </div>
+        <div v-if="type == 'dialog'">
+            <div id="next_pic">
+                <a target="_blank">
+                    <img :src="images[0]" @click="gotoNews"/>
+                </a>
+            </div>
+            <div class="acn_news_dialog_title_content">
+                <div>
+                    <a class="bn_left_link"  @click="gotoNews">{{title}}</a>
+                </div>
+                <div class="acn_dialog_list_news_tag" @click="gotoNews">
+                    <span class="tags_wrapper">
+                        <a href="#">娱乐</a>&nbsp;
+                        <a href="#">新闻</a>&nbsp;
+                    </span>
+                    <span>{{time}}</span>
+                </div>
             </div>
         </div>
     </div>
@@ -57,7 +75,8 @@ export default {
         },
         newsInfo:{
             required:true
-        }
+        },
+        cateName:""
     },
     data(){
         return {
@@ -70,12 +89,21 @@ export default {
     mounted(){
         this.images = this.newsInfo.pics;
         this.title = this.newsInfo.title;
-        this.from = this.newsInfo.from;
         this.time = this.newsInfo.time;
+        if(this.type == "nup"){
+            let rate = 20 + Math.floor(80*Math.random());
+            this.from = rate + "%";
+        }
+        else if(this.type == "nlink"){
+            this.from = this.cateName ? this.cateName : "推荐"
+        }
+        else{
+            this.from = this.newsInfo.from;
+        }
     },
     methods:{
         gotoNews(){
-            this.$emit("gotoNews",this.newsInfo.id)
+            this.$emit("gotoNews",this.newsInfo)
         }
     }
 }
@@ -104,24 +132,34 @@ export default {
     #next_pic img:hover {
         transform: scale(1.2);
     }
-    .an_dialog_list_news_title_content {
+    .acn_news_next_title_content {
         text-align: left;
         float: left;
         width: 500px;
         height: 95px;
         position: relative;
     }
-    .an_dialog_list_news_title_content div {
+    .acn_news_next_title_content div {
         background: #fff;
         text-align: left;
     }
+    .acn_news_dialog_title_content {
+        text-align: left;
+        float: left;
+        width: 500px;
+        height: 95px;
+        position: relative;
+    }
+    .acn_news_dialog_title_content div {
+        text-align: left;
+    }
     .bn_left_link {
-        color: #222222;
+        color: #333;
         font-size: 20px;
         font-weight: bold;
         text-align: left;
     }
-    .an_dialog_list_news_tag {
+    .acn_next_list_news_tag {
         position: absolute;
         bottom: 0px;
         left: 0px;
@@ -130,11 +168,23 @@ export default {
         font-size: 12px;
         color: #bbb;
     }
-    .tags_wrapper a {
+    .acn_dialog_list_news_tag {
+        position: absolute;
+        bottom: 0px;
+        left: 0px;
+        zoom: 1;
+        width: 100%;
+        font-size: 12px;
+        color: #666;
+    }
+    .acn_next_list_news_tag .tags_wrapper a {
         border: 1px solid #eee;
+    }
+    .tags_wrapper a {
+        border: 1px solid #f24e4e;
         border-radius: 3px;
         padding: 2px 6px;
-        color: #a0a0a0;
+        color: #f24e4e;
         font-style: normal;
     }
     .tags_wrapper a:hover {
@@ -143,47 +193,6 @@ export default {
         padding: 2px 6px;
         color: #f24e4e;
         font-style: normal;
-    }
-    .nup_three_div {
-        text-align: left;
-    }
-    .nup_three_div a {
-        color: #333;
-        font-size: 17px;
-        font-weight: bold;
-        font-family: "Microsoft YaHei";
-        letter-spacing: .5px;
-    }
-    .nup_three_div a:hover {
-        color: #f24e4e;
-    }
-    .nup_three_img_div {
-        position: relative;
-        margin-left: -5px;
-        top: 5px;
-    }
-    .nup_three_img_div a {
-        width: 140px;
-        height: 90px;
-        display: block;
-        overflow: hidden;
-        float: left;
-        margin-left: 5px;
-    }
-    .nup_three_img_div img {
-        width: 140px;
-        height: 90px;
-        transition: all .5s;
-    }
-    .nup_three_img_div img:hover {
-        transform: scale(1.2);
-    }
-    .nup_three_from_time {
-        color: #A6A6A6;
-        text-decoration: none;
-        font-size: 12px;
-        position: relative;
-        top: 10px;
     }
     .nup_one_div {
         width: 100%;
@@ -211,15 +220,16 @@ export default {
         transform: scale(1.2);
     }
     .n_up_pp {
-        width: 280px;
+        width: 340px;
         position: relative;
         text-align: left;
-        overflow: hidden;
     }
     .n_up_pp a {
-        font-size: 17px;
-        font-weight: bold;
-        font-family: "Microsoft YaHei";
+        display: block;
+        width: 190px;
+        height: 200px;
+        font-size: 14px;
+        overflow: hidden;
     }
     .n_up_pp_span {
         display: block;
@@ -227,6 +237,35 @@ export default {
         color: #A6A6A6;
         font-size: 12px;
         left: 150px;
-        bottom: 0px;
+        bottom: 10px;
+    }
+    .n_up_pp_span span {
+        color: #ee4b4c;
+    }
+    .nup_nlink_div {
+        width: 350px;
+        display: inline-block;
+        text-align: left;
+        padding-left: 6px;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+    .nup_hot_div {
+        width: 166px;
+    }
+    .nup_hot_div .hot_title {
+        display: block;
+        width: 156px;
+        height: 36px;
+        overflow: hidden;
+    }
+    .nup_hot_div .nup_hot_image_a {
+        width: 166px;
+        height: 92px;
+    }
+    .nup_hot_div .nup_hot_image_a img{
+        width: 166px;
+        height: 100%;
     }
 </style>

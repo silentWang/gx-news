@@ -66,6 +66,36 @@ export default class Utils {
         str = str.replace(/max-width:(\s+)(\d+)px/g,"");
         return str
     }
+    /**
+     * yMdhmsw
+     */
+    static getTimeStr(type = "y",dots = [":"]){
+        let time = new Date();
+        let y = time.getFullYear();
+        let M = time.getMonth() < 10 ? "0" + time.getMonth() : time.getMonth();
+        let d = time.getDate() < 10 ? "0" + time.getDate() : time.getDate();
+        let h = time.getHours() < 10 ? "0" + time.getHours() : time.getHours();
+        let m = time.getMinutes() < 10 ? "0" + time.getMinutes() : time.getMinutes();
+        let s = time.getSeconds() < 10 ? "0" + time.getSeconds() : time.getSeconds();
+        let weeks = "日一二三四五六";
+        let w = "星期" + weeks[time.getDay()];
+        let obj = {y,M,d,h,m,s,w};
+        let str = "";
+        let dot = "";
+        let dlen = dots.length;
+        let len = type.length;
+        for(let i = 0;i < len;i++){
+            let key = type[i];
+            if(i < dlen){
+                dot = dots[i];
+            }
+            else{
+                dot = "";
+            }
+            str += obj[key] + dot;
+        }
+        return str;
+    }
 
     static getObjectLength(object){
         let needlen = 0;
@@ -87,7 +117,8 @@ export default class Utils {
             let qstr = qarr[i];
             let vls = qstr.split("=");
             if(vls.length == 2){
-                obj[vls[0]] = vls[1];
+                let v = vls[1];
+                obj[vls[0]] = v.split("#")[0];
             }
         }
         return obj;

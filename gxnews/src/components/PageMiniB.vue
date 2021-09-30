@@ -12,7 +12,7 @@
                         <p>{{item.from}}</p>
                     </div>
                 </div>
-                <MiniAdvItem v-if="needShow2" class="mini_adver_dialog_class_style"></MiniAdvItem>
+                <MiniAdvItem v-if="showAdvFlag2" class="mini_adver_dialog_class_style" :actionItem="actionItem1"></MiniAdvItem>
             </div>
         </div>
         <div class="mini_main_title">
@@ -24,16 +24,13 @@
         </div>
         <div class="mini_right">
             <ul class="mini_right_list">
-                <li v-for="(item,index) in rightList.slice(1,4)" :key="index">
+                <li v-for="(item,index) in rightList" :key="index">
                     <div v-if="item.type == 1">
                         <NewsSlider v-on:gotoNews="gotoNews" :nsId="index" nWidth="200" nHeight="185" v-bind:newsList="getSlideNewsList(item.data)"></NewsSlider>
-                        <MiniAdvItem v-if="needShow" class="mini_adver_flag_class_style"></MiniAdvItem>
+                        <MiniAdvItem v-if="showAdvFlag1" :actionItem="actionItem2" class="mini_adver_flag_class_style"></MiniAdvItem>
                     </div>
-                    <div v-else class="custom_tsz_ad_container">
-                        <img :src="tszData?tszData.pics[0]:''" @mousedown="tszDown" @mouseup="tszUp" @click="gotoNews(tszData)">
-                        <div class="custom_tsz_ad_title">
-                            <a @click="gotoNews(tszData)" @mousedown="tszDown" @mouseup="tszUp">{{tszData?tszData.title:""}}</a>
-                        </div>
+                    <div v-else-if="item.type == 2">
+                        <MiniAdvItem :actionItem="actionItemCC" type="kitchen" class="mini_adver_kicthen_class_style"></MiniAdvItem>
                     </div>
                 </li>
             </ul>
@@ -41,9 +38,9 @@
         <div class="mini_middle" @scroll="scrollHandler">
             <div class="mini_content">
                 <div class="mini_content_item" v-for="(item,index) in newsList" :key="getNextKey(item,index)">
-                    <MiniAdvItem v-if="item.type == 2" class="mini_adver_class_style"></MiniAdvItem>
+                    <MiniAdvItem v-if="item.type == 2" class="mini_adver_class_style" :actionItem="actionItem3"></MiniAdvItem>
                     <MiniNewsItem v-else v-on:gotoNews="gotoNews" :newsInfo="item" :cateName="getCateName()">
-                        <MiniAdvItem v-if="needShow" class="mini_adver_flag_class_style"></MiniAdvItem>
+                        <MiniAdvItem v-if="showAdvFlag1" class="mini_adver_flag_class_style" :actionItem="actionItem3"></MiniAdvItem>
                     </MiniNewsItem>
                 </div>
             </div>
@@ -65,7 +62,6 @@ import NewsSlider from './comp/NewsSlider'
 import MiniNewsItem from './comp/MiniNewsItem'
 import MiniAdvItem from './comp/MiniAdvItem'
 import ScreenHandler from "@/js/ScreenHandler"
-import DFAdver from '@/api/DFAdver'
 import dataCenter from '@/api/DataCenter'
 import Utils from "@/js/Utils"
 let _this;
@@ -77,7 +73,6 @@ export default {
     },
     data(){
         return {
-            todayWeather:"",
             selectCateId:-1,
             currentPage:1,
             curLoadPage:1,
@@ -90,22 +85,28 @@ export default {
             dialogInfo:{},
             dialogNewsList:[],
             tszData:null,
-            onlyOne:false,
-            needShow:false,
-            needShow2:false,
-            versionBool:false,
-            gameCloseLeftTime:0
+            showAdvFlag1:false,
+            showAdvFlag2:false,
+            gameCloseLeftTime:0,
+            actionItem1:null,
+            actionItem2:null,
+            actionItem3:null,
+            actionItemCC:null
         }
+    },
+    beforeMount(){
+        this.actionItem1 = dataCenter.createAdvItem([101232,101233,101234,101235,101236],null);
+        this.actionItem2 = dataCenter.createAdvItem([101232,101233,101234,101235,101236],null);
+        this.actionItem3 = dataCenter.createAdvItem([101232,101233,101234,101235,101236],null,"mini_main");
+        this.actionItemCC = dataCenter.createAdvItem([101253],null);
     },
     mounted(){
         _this = this;
-        this.versionBool = window.check_version;
         this.clickClose();
         dataCenter.getMiniInfo().then(res=>{
             if(res.code != 200) return;
             let data = res.data;
             let rand = Math.ceil(100*Math.random());
-            let rightBool = false;
             if(!this.titleList || this.titleList.length == 0){
                 let list = data.category;
                 let arr = [];
@@ -128,10 +129,9 @@ export default {
                 }
                 if(this.dialogInfo && this.dialogInfo.adv){
                     let rate = this.dialogInfo.adv.adv_rate;
-                    this.needShow2 = this.versionBool && rand <= rate && process.env.BUILD_MODE == 5;
+                    this.showAdvFlag2 = window.check_version && rand <= rate;
                 }
                 this.rightList = sides;
-                rightBool = true;
             }
             //中间新闻列表
             let news = data.main_list;
@@ -144,23 +144,22 @@ export default {
                     break;
                 }
             }
-            this.needShow = this.versionBool && rand <= xrate && process.env.BUILD_MODE == 5;
-            // console.log("content:" + rand + '------' + xrate)
+            this.showAdvFlag1 = window.check_version && rand <= xrate;
             this.currentPage = 1;
             let cele = document.getElementsByClassName("mini_middle")[0];
             cele.scrollTop = 0;
             Utils.addDelay(_this.checkIsMore,this,10000,1);
-            this.loadNextAdver(true);
+            this.loadNextAdver(0);
         });
 
         // this.showGameAd();
         Utils.addWindowClick(()=>{
             if(this.dialogFlag){
-                this.needShow2 = false;
+                this.showAdvFlag2 = false;
                 return;
             }
-            if(this.needShow){
-                this.needShow = false;
+            if(this.showAdvFlag1){
+                this.showAdvFlag1 = false;
             }
             this.clickClose(true);
         },this);
@@ -170,7 +169,7 @@ export default {
         getNextKey(item,index){
             let skey = "";
             if(item.type == 2){
-                skey = item.adv_id;
+                skey = item.type + "_" + item.cateId + "_" + index;
             }
             else{
                 let id = dataCenter.getNextId();
@@ -182,7 +181,7 @@ export default {
             let ele = e.srcElement ? e.srcElement : e.target;
             if(!ele) return;
             if(!this.isloading){
-                this.loadNextAdver();
+                this.loadNextAdver(2);
             }
             if(ele.scrollTop + ele.offsetHeight > ele.scrollHeight - 100){
                 if(!this.isloading){
@@ -194,7 +193,6 @@ export default {
                 this.moreFlag = false;
                 Utils.addDelay(this.checkIsMore,this,10000);
             }
-            this.clickClose(true);
         },
         getCateName(item){
             if(item && item.cateId == -100) return "";
@@ -220,8 +218,8 @@ export default {
                         dataCenter.upToActivity(100003,"close");
                     }
                 }
-                if(this.needShow2){
-                    this.needShow2 = false;
+                if(this.showAdvFlag2){
+                    this.showAdvFlag2 = false;
                 }
             }
             Utils.addDelay(this.showDialog,this,10000);
@@ -241,7 +239,12 @@ export default {
                 dataCenter.upToActivity(100001,"open");
                 let rate = this.dialogInfo.adv.adv_rate;
                 let rand = Math.ceil(100*Math.random());
-                this.needShow2 = rand <= rate && process.env.BUILD_MODE == 5;
+                this.showAdvFlag2 = window.check_version && rand <= rate;
+                if(this.showAdvFlag2){
+                    this.$nextTick(()=>{
+                        this.actionItem1.checkLoad();
+                    });
+                }
             }
             this.dialogFlag = true;
         },
@@ -276,7 +279,15 @@ export default {
                 if(res.code != 200) return
                 let data = res.data;
                 this.newsList = data.main_list;
-                this.loadNextAdver(true);
+                this.actionItem3.reset();
+                let cele = document.getElementsByClassName("mini_middle")[0];
+                if(cele && cele.scrollTop > 0){
+                    cele.scrollTop = 0;
+                    this.currentPage = 1;
+                }
+                else{
+                    this.loadNextAdver(1);
+                }
                 Utils.addDelay(_this.checkIsMore,this,10000,1);
             });
         },
@@ -288,20 +299,20 @@ export default {
                 if(res.code != 200) return
                 let data = res.data;
                 this.newsList = this.newsList.concat(data.main_list);
-                this.loadNextAdver(false);
+                this.loadNextAdver(2);
                 Utils.addDelay(_this.checkIsMore,this,10000,1);
             });
         },
-        loadNextAdver(force = false){
-            if(force){
+        loadNextAdver(force = 2){
+            if(force == 1){
                 this.currentPage = 1;
-                let cele = document.getElementsByClassName("mini_middle")[0];
-                if(cele) cele.scrollTop = 0;
             }
             this.$nextTick(()=>{
-                DFAdver.checkDFADLoad("mini_adver_class_style");
-                DFAdver.checkDFADLoad("mini_adver_flag_class_style");
-                DFAdver.checkDFADLoad("mini_adver_dialog_class_style");
+                this.actionItem3.checkLoad();
+                if(force == 0){
+                    this.actionItem2.checkLoad();
+                    this.actionItemCC.checkLoad();
+                }
             });
         },
         delayGoto(cid,isdelay){
@@ -321,10 +332,6 @@ export default {
             dataCenter.upTo360ClkLog(this.tszData.adv,evt.offsetX,evt.offsetY,200,185,2);
         },
         gotoNews(item,index){
-            if(item.cateId == -100){
-                dataCenter.upTo360ClkLog(this.tszData.adv,0,0,200,185,3);
-                return;
-            }
             //前10条点击即移动到第10条
             let sindex = this.newsList.indexOf(item);
             if(sindex <= 19 && item.type != 2){
@@ -349,7 +356,7 @@ export default {
                 this.newsList = xarr;
             }
             let idx = item.id;
-            let xurl = "https://news.dtxww.cn/content/?id="+idx + "&qid=0";
+            let xurl = "https://news.dtxww.cn/content/?id="+idx + "&qid=0&cateid="+item.cateId;
             window.open(xurl, '_blank');
             if(index == 0){
                 dataCenter.upToActivity(100002,"click","left");
@@ -701,45 +708,6 @@ export default {
     .mini_right_list_image img:hover {
         transform: scale(1.2);
     }
-    .custom_tsz_ad_container {
-        width: 200px;
-        height: 185px;
-        display: block;
-        overflow: hidden;
-    }
-    .custom_tsz_ad_container img {
-        width: 200px;
-        height: 185px;
-        transition: all 0.6s;
-    }
-    .custom_tsz_ad_container img:hover {
-        transform: scale(1.2);
-    }
-    .custom_tsz_ad_title {
-        width: 100%;
-        height: 45px;
-        position: relative;
-        top: -44px;
-        color: #fff;
-        text-align: left;
-        overflow: hidden;
-        padding: 4px 0px;
-        background-color: rgba(0, 0, 0, 0.7);
-    }
-    .custom_tsz_ad_title a {
-        color: #fff;
-        text-align: left;
-        font-size: 14px;
-        line-height: 19px;
-        overflow: hidden;
-    }
-    .mini_transparent_youknow_chuchuang {
-        width: 200px;
-        height: 185px;
-        background: #ff0000;
-        position: absolute;
-        opacity: 0;
-    }
     .mini_adver_dialog_class_style {
         width: 560px;
         height: 100%;
@@ -757,6 +725,12 @@ export default {
         opacity: 0;
         border: 2px solid #000;
     }
+    .mini_adver_kicthen_class_style {
+        width: 200px;
+        height: 185px;
+        overflow: hidden;
+        position: absolute;
+    }
     .mini_middle::-webkit-scrollbar {
         width : 8px;
     }
@@ -769,12 +743,6 @@ export default {
         box-shadow: inset 0 0 5px #fff;
         border-radius: 6px;
         background: #fff;
-    }
-
-    .adver_common_class_u8x2583456 {
-        width: 200px;
-        height: 185px;
-        overflow: hidden;
     }
     
 </style>

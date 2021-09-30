@@ -63,8 +63,8 @@ export default {
                 img.style.height = sheight;
             }
         },
-        gotoNews(id){
-            this.$emit("gotoNews",id)
+        gotoNews(item){
+            this.$emit("gotoNews",item)
         },
         getNsId(type){
             let str = "";

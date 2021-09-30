@@ -152,7 +152,7 @@ export default {
                 }
                 if(this.dialogInfo && this.dialogInfo.adv){
                     let rate = this.dialogInfo.adv.adv_rate;
-                    this.needShow2 = this.versionBool && rand <= rate && process.env.BUILD_MODE == 4;
+                    this.needShow2 = this.versionBool && rand <= rate;
                     let adwidth = this.dialogInfo.adv.adv_type == "advbd" ? "500px" : "560px";
                     let eles = document.getElementsByClassName("mini_dialog_transparent_youknow");
                     if(eles && eles.length > 0){
@@ -173,7 +173,7 @@ export default {
                     break;
                 }
             }
-            this.needShow = this.versionBool && rand <= xrate && process.env.BUILD_MODE == 4;
+            this.needShow = this.versionBool && rand <= xrate;
             // console.log("content:" + rand + '------' + xrate)
             this.currentPage = 1;
             let cele = document.getElementsByClassName("mini_middle")[0];
@@ -287,7 +287,7 @@ export default {
                     dataCenter.upToActivity(100001,"open");
                     let rate = this.dialogInfo.adv.adv_rate;
                     let rand = Math.ceil(100*Math.random());
-                    this.needShow2 = rand <= rate && process.env.BUILD_MODE == 4;
+                    this.needShow2 = rand <= rate;
                 }
                 else if(type == "advbd"){
                     dataCenter.upToActivity(100003,"open");

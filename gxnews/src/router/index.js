@@ -19,15 +19,16 @@ window["requestAnimFrame"] = (function () {
 })();
 
 let routeInfo = {name:"PageIndex",component:PageIndex};
-if(process.env.BUILD_MODE == 2 || process.env.BUILD_MODE == 4){
+let mode = process.env.BUILD_MODE;
+if(mode == 2 || mode == 4){
   routeInfo.name = "PageMiniA";
   routeInfo.component = PageMiniA;
 }
-else if(process.env.BUILD_MODE == 3){
+else if(mode == 3){
   routeInfo.name = "PageContent";
   routeInfo.component = PageContent;
 }
-else if(process.env.BUILD_MODE == 5){
+else if(mode == 5 || mode == 6){
   routeInfo.name = "PageMiniB";
   routeInfo.component = PageMiniB;
 }

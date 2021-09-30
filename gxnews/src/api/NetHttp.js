@@ -73,7 +73,7 @@ export default class NetHttp {
                 pk = pks.join("");
             }
             xhr.withCredentials = false;
-            xhr.open("POST",this.DFTT_ADVER_URL + url,false);
+            xhr.open("POST",url,false);
             xhr.setRequestHeader("Content-Type",contentType);
             xhr.send(pk);
             xhr.onreadystatechange = ()=>{

@@ -4,20 +4,24 @@
 
 const path = require('path')
 let assetPath = "./";
-if(process.env.BUILD_MODE == 1){
+let mode = process.env.BUILD_MODE;
+if(mode == 1){
   assetPath = "//news.dtxww.cn/";
 }
-else if(process.env.BUILD_MODE == 2){
+else if(mode == 2){
   assetPath = "//news.dtxww.cn/mini/";
 }
-else if(process.env.BUILD_MODE == 3){
+else if(mode == 3){
   assetPath = "//news.dtxww.cn/content/";
 }
-else if(process.env.BUILD_MODE == 4){
+else if(mode == 4){
   assetPath = "//news.dtxww.cn/mini/001/";
 }
-else if(process.env.BUILD_MODE == 5){
+else if(mode == 5){
   assetPath = "//news.dtxww.cn/mini/002/";
+}
+else if(mode == 6){
+  assetPath = "//news.dtxww.cn/mini/000/";
 }
 
 module.exports = {
