@@ -42,7 +42,6 @@
                 </div>
                 <div class="a_left_block">
                     <div class="a_title">热点排行</div>
-                    <!-- <NewsSlider v-on:gotoNews="gotoNews" :nsId="index" nWidth="380" nHeight="300"></NewsSlider> -->
                     <div class="n_hot_list">
                         <div class="n_hot_list_item" v-for="(item,index) in rankHots" :key="index">
                             <content-news-item type="hot" :newsInfo="item" v-on:gotoNews="gotoNews"></content-news-item>
@@ -125,7 +124,7 @@
                 </div>
             </div>
         </div>
-        <div v-if="needShow && showDialogFlag" class="adv_detail_class_show">
+        <div v-if="showAdvFlag && showDialogFlag" class="adv_detail_class_show">
             <content-adv-item class="content_adver_dialog_class_style" :actionItem="dialogAction" type="dialog"></content-adv-item>
             <content-adv-item class="content_adver_dialog_class_style" :actionItem="dialogAction" type="dialog"></content-adv-item>
             <content-adv-item class="content_adver_dialog_class_style" :actionItem="dialogAction" type="dialog"></content-adv-item>
@@ -136,7 +135,6 @@
 <script>
 import ContentNewsItem from './comp/ContentNewsItem.vue'
 import ContentAdvItem from './comp/ContentAdvItem.vue'
-import NewsSlider from './comp/NewsSlider.vue'
 import dataCenter from '@/api/DataCenter'
 import Utils from "@/js/Utils"
 import CompatibleUtils from '@/js/CompatibleUtils'
@@ -144,7 +142,6 @@ import ScreenHandler from "@/js/ScreenHandler"
 export default {
     components:{
         ContentNewsItem,
-        NewsSlider,
         ContentAdvItem
     },
     data(){
@@ -165,7 +162,7 @@ export default {
             headAdvInfo:null,
             footAdvInfo:null,
             floatAdvInfo:null,
-            needShow:false,
+            showAdvFlag:false,
             nowTime:"",
             nowDate:"",
             nongDate:"",
@@ -177,10 +174,14 @@ export default {
     },
     beforeMount(){
         //101259 内页标题页下方   //101260内页右下方悬浮
-        this.kitchenAction = dataCenter.createAdvItem([101254,101255,101256,101257,101258],"cls_main");
-        this.hotAction = dataCenter.createAdvItem([101261,101262,101263,101264],"cls_main");
-        this.commonAction = dataCenter.createAdvItem([101237,101238,101239,101240,101241],"cls_main");
+        this.kitchenAction = dataCenter.createAdvItem([101254,101255,101256,101257,101258]);
+        this.hotAction = dataCenter.createAdvItem([101261,101262,101263,101264]);
+        this.commonAction = dataCenter.createAdvItem([101237,101238,101239,101240,101241]);
         this.dialogAction = dataCenter.createAdvItem([101237,101238,101239,101240,101241],null,"an_dialog_second_cont");
+        this.kitchenAction.isFirst = false;
+        this.hotAction.isFirst = false;
+        this.commonAction.isFirst = false;
+        this.dialogAction.isFirst = false;
     },
     created(){
         let query = Utils.getUrlParams();
@@ -205,8 +206,7 @@ export default {
             this.detailInfo = info;
             document.title = info.title;
             this.gotoPage(0);
-        })
-
+        });
         dataCenter.getDetailInfo(cateid).then(res=>{
             let data = res.data;
             // console.log(data);
@@ -248,12 +248,14 @@ export default {
             }
             
             let rate = ~~(100*Math.random());
-            this.needShow = this.headAdvInfo.adv_rate > rate;
-
+            this.showAdvFlag = this.headAdvInfo.adv_rate > rate;
             this.$nextTick(()=>{
                 dataCenter.addAdsByClassName("adver_common_class_u9oe3r8d25");
                 dataCenter.addAdsByClassName("adver_common_class_u9803ide66");
                 dataCenter.addAdsByClassName("bn_content_float_advs");
+                this.kitchenAction.checkLoad();
+                this.hotAction.checkLoad();
+                this.commonAction.checkLoad();
             });
         });
         Utils.addDelay(()=>{
@@ -263,28 +265,19 @@ export default {
         },this,1000,0);
 
         Utils.addWindowClick(()=>{
-            if(this.needShow && this.showDialogFlag){
-                this.needShow = false;
+            if(this.showAdvFlag && this.showDialogFlag){
+                this.showAdvFlag = false;
             }
         },this);
         
         window.onscroll = this.listScroll.bind(this);
-        window.onresize = this.resizeHandle.bind(this);
         this.$nextTick(()=>{
             this.listScroll();
-            this.resizeHandle();
         });
     },
     methods:{
         reloadHome(evt){
             window.open("https://news.dtxww.cn/");
-        },
-        resizeHandle(){
-            let eles = document.getElementsByClassName("bn_left");
-            if(!eles || eles.length == 0) return;
-            let ele = eles[0];
-            let comps = CompatibleUtils.getViewPort();
-            // ele.style.height = comps.clientHeight + "px";
         },
         listScroll(){
             let rEle = document.getElementsByClassName("bn_left")[0];
@@ -308,9 +301,12 @@ export default {
                 rEle.style.top = "10px";
                 rEle.style.position = "relative";
             }
+            this.kitchenAction.checkLoad();
+            this.hotAction.checkLoad();
+            this.commonAction.checkLoad();
         },
         dialogScroll(){
-            // DFTTAdv.checkDFADLoad("content_adver_dialog_class_style","an_dialog_second_cont");
+            this.dialogAction.checkLoad();
         },
         getCateName(cateid){
             let list = this.titleList;
@@ -353,7 +349,7 @@ export default {
                     document.body.style.overflow = "hidden";
                     this.dialogList = this.dialogListCopy;
                     this.$nextTick(()=>{
-                        // DFTTAdv.checkDFADLoad("content_adver_dialog_class_style","an_dialog_second_cont");
+                        this.dialogScroll();
                     });
                 });
             }
