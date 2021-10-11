@@ -22,6 +22,7 @@ class AdvManager {
     /**********************************df优先 360打底式请求队列 start *****************************************/
     pushMergeRequest(params){
         this.dfQueues.push(params);
+        console.log("params;",params)
         if(this.isRequest) return;
         this.sendMergeMsg();
     }
@@ -32,16 +33,36 @@ class AdvManager {
         }
         this.isRequest = true;
         let queueData = this.dfQueues.shift();
-        let advType = "advDFTT";
-        let res = await AdvService.requestDFTT(queueData);
-        if(!res || Utils.getObjectLength(res) == 0){
-            let length = queueData.showarray.length;
+        let advType = "";
+        let res = null;
+        if(queueData.weight == 0){
+            advType = "advDFTT";
+            res = await AdvService.requestDFTT(queueData);
+            if(!res || Utils.getObjectLength(res) == 0){
+                let length = queueData.showarray.length;
+                res = {};
+                for(let i = 0;i < length;i++){
+                    let tdata = await AdvService.request360(queueData.showarray[i]);
+                    res[queueData.imparray[i]] = {data:tdata};
+                }
+                advType = "adv360";
+            }
+        }
+        else{
+            advType = "adv360";
             res = {};
+            let length = queueData.showarray.length;
             for(let i = 0;i < length;i++){
                 let tdata = await AdvService.request360(queueData.showarray[i]);
-                res[queueData.imparray[i]] = {data:tdata};
+                if(tdata){
+                    res[queueData.imparray[i]] = {data:tdata};
+                }
             }
-            advType = "adv360";
+            if(!res || Utils.getObjectLength(res) == 0){
+                advType = "advDFTT";
+                res = await AdvService.requestDFTT(queueData);
+            }
+
         }
         // console.log(advType,res);
         if(res && Utils.getObjectLength(res) > 0){

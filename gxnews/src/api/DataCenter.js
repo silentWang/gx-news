@@ -29,8 +29,8 @@ class DataCenter {
      * dfttIds 东方广告ids
      * showIds  360 showids
      */
-    createAdvItem(dfttIds,showIds,container = ""){
-        let item = new AdvDFTT(container,dfttIds,showIds);
+    createAdvItem(container = ""){
+        let item = new AdvDFTT(container);
         item.name = container ? container : "window";
         return item;
     }
@@ -347,7 +347,11 @@ class DataCenter {
     }
     /**上报  type : click open close  action:left,right*/
     upToActivity(actid,type,action){
-        if(process.env.NODE_ENV != "production") return;
+        if(process.env.NODE_ENV != "production"){
+            console.log(actid + "----" + type + "----" + action)
+            return;
+        }
+        console.log(actid + "----" + type + "----" + action)
         let url = this.getRealUrl("/v1/demo/index");
         let userid = this.axios.defaults.headers["userId"];
         let params = "?userid=" + userid + "&" + "actid=" + actid;
@@ -358,7 +362,6 @@ class DataCenter {
             params += "&action=" + action;
         }
         let rurl = url + params;
-        // console.log(actid + "----" + type + "----" + action)
         this.axios.get(rurl).then((res)=>{
             // console.log(res);
         });
@@ -539,7 +542,10 @@ class DataCenter {
     getDetailInfo(cateid){
         let ext = `//news.dtxww.cn/data/mini_detail_v_${cateid}.json`;
         if(process.env.NODE_ENV == "development"){
-            ext = `/data/mini_detail_v_${cateid}.json`;
+            ext = `/data/develop/mini_detail_v_${cateid}.json`;
+        }
+        else if(process.env.BUILD_MODE == 7){
+            ext = `//news.dtxww.cn/data/develop/mini_detail_v_${cateid}.json`;
         }
         return this.axios.get(ext,{headers:{'Content-Type':'application/json'}}).then(res=>{
             let data = res.data;
@@ -558,7 +564,10 @@ class DataCenter {
             }
             let ext = `//news.dtxww.cn/data/mini_data_${cateid}.json?v=${new Date().getTime()}`;
             if(process.env.NODE_ENV == "development"){
-                ext = `/data/mini_data_${cateid}.json?v=${new Date().getTime()}`;
+                ext = `/data/develop/mini_data_${cateid}.json?v=${new Date().getTime()}`;
+            }
+            else if(process.env.BUILD_MODE == 6){
+                ext = `//news.dtxww.cn/data/develop/mini_data_${cateid}.json?v=${new Date().getTime()}`;
             }
             let res = await this.axios.get(ext,{headers:{'Content-Type':'application/json'}});
             let data = res.data;

@@ -14,26 +14,27 @@
                     <div class="four_image" v-for="(item,index) in pictures" :key="index">
                         <a :href="itemUrl" target="_blank" @click="clickTo" @mousedown="advDown" @mouseup="advUp"><img :src="item"></a>
                     </div>
-                    <a :href="itemUrl" target="_blank" @click="clickTo" @mousedown="advDown" @mouseup="advUp"><span class="mini_content_image_p">广告</span></a>
+                    <a :href="itemUrl" target="_blank" @click="clickTo" @mousedown="advDown" @mouseup="advUp"><span class="mini_content_image_p">{{itemSource}}</span></a>
                 </div>
                 <div class="mini_adv_three" v-if="pictures.length == 3">
                     <a class="mini_adv_title" target="_blank" :href="itemUrl" @click="clickTo" @mousedown="advDown" @mouseup="advUp">{{itemTitle}}</a>
                     <div class="three_image" v-for="(item,index) in pictures" :key="index">
                         <a :href="itemUrl" target="_blank" @click="clickTo" @mousedown="advDown" @mouseup="advUp"><img :src="item"></a>
                     </div>
-                    <a :href="itemUrl" target="_blank" @click="clickTo" @mousedown="advDown" @mouseup="advUp"><span class="mini_content_image_p" @mousedown="advDown" @mouseup="advUp">广告</span></a>
+                    <a :href="itemUrl" target="_blank" @click="clickTo" @mousedown="advDown" @mouseup="advUp"><span class="mini_content_image_p" @mousedown="advDown" @mouseup="advUp">{{itemSource}}</span></a>
                 </div>
                 <div class="mini_adv_two" v-if="pictures.length == 2">
                     <a class="mini_adv_title" target="_blank" :href="itemUrl" @click="clickTo" @mousedown="advDown" @mouseup="advUp">{{itemTitle}}</a>
                     <div class="two_image" v-for="(item,index) in pictures" :key="index">
                         <a :href="itemUrl" target="_blank" @click="clickTo" @mousedown="advDown" @mouseup="advUp"><img :src="item"></a>
                     </div>
-                    <a :href="itemUrl" target="_blank" @click="clickTo" @mousedown="advDown" @mouseup="advUp"><span class="mini_content_image_p" @mousedown="advDown" @mouseup="advUp">广告</span></a>
+                    <a :href="itemUrl" target="_blank" @click="clickTo" @mousedown="advDown" @mouseup="advUp"><span class="mini_content_image_p" @mousedown="advDown" @mouseup="advUp">{{itemSource}}</span></a>
                 </div>
                 <div v-else>
                     <a class="mini_adv_title" target="_blank" :href="itemUrl" @click="clickTo" @mousedown="advDown" @mouseup="advUp">{{itemTitle}}</a>
                     <a target="_blank" :href="itemUrl" @click="clickTo" class="pic_ad_a" @mousedown="advDown" @mouseup="advUp"><img :src='pictures[0]'/></a>
-                    <a :href="itemUrl" target="_blank" @click="clickTo" @mousedown="advDown" @mouseup="advUp"><span class="mini_content_image_p" @mousedown="advDown" @mouseup="advUp">广告</span></a>
+                    <span class="adv_mini_guanggao">广告</span>
+                    <a :href="itemUrl" target="_blank" @click="clickTo" @mousedown="advDown" @mouseup="advUp"><span class="mini_content_image_p" @mousedown="advDown" @mouseup="advUp">{{itemSource}}</span></a>
                 </div>
             </div>
         </div>
@@ -62,6 +63,7 @@ export default {
             itemTitle:"",
             pictures:[],
             itemUrl:"",
+            itemSource:"",
             bdcode:""
         }
     },
@@ -86,6 +88,7 @@ export default {
                 this.pictures = info.imgUrl;
                 this.itemUrl = info.displayUrl;
                 this.styleType = info.styleType;
+                this.itemSource = info.adSource;
             }
             else if(this.advType == "adv360"){
                 this.itemTitle = info.title;
@@ -93,6 +96,7 @@ export default {
                 this.itemUrl = info.curl;
                 this.styleType = info.type;
                 this.tszData = info;
+                this.itemSource = info.adSource ? info.adSource:"热门";
                 dataCenter.upTo360ShowLog(this.tszData);
             }
         },
@@ -193,5 +197,14 @@ export default {
     }
     .pic_ad_a img{
         width: 100%;
+    }
+    .adv_mini_guanggao {
+        display: block;
+        float: right;
+        color: #eee;
+        font-size: smaller;
+        position: relative;
+        top: -20px;
+        opacity: .5;
     }
 </style>

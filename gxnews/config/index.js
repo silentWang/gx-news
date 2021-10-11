@@ -23,6 +23,9 @@ else if(mode == 5){
 else if(mode == 6){
   assetPath = "//news.dtxww.cn/mini/000/";
 }
+else if(mode == 7){
+  assetPath = "//news.dtxww.cn/content/000/";
+}
 
 module.exports = {
   dev: {

@@ -24,13 +24,13 @@
         </div>
         <div class="mini_right">
             <ul class="mini_right_list">
-                <li v-for="(item,index) in rightList" :key="index">
-                    <div v-if="item.type == 1">
+                <li v-for="(item,index) in rightList.slice(0,3)" :key="index">
+                    <div v-if="item.type == 2">
+                        <MiniAdvItem :actionItem="actionItemCC" type="kitchen" class="mini_adver_kicthen_class_style"></MiniAdvItem>
+                    </div>
+                    <div v-else>
                         <NewsSlider v-on:gotoNews="gotoNews" :nsId="index" nWidth="200" nHeight="185" v-bind:newsList="getSlideNewsList(item.data)"></NewsSlider>
                         <MiniAdvItem v-if="showAdvFlag1" :actionItem="actionItem2" class="mini_adver_flag_class_style"></MiniAdvItem>
-                    </div>
-                    <div v-else-if="item.type == 2">
-                        <MiniAdvItem :actionItem="actionItemCC" type="kitchen" class="mini_adver_kicthen_class_style"></MiniAdvItem>
                     </div>
                 </li>
             </ul>
@@ -38,7 +38,7 @@
         <div class="mini_middle" @scroll="scrollHandler">
             <div class="mini_content">
                 <div class="mini_content_item" v-for="(item,index) in newsList" :key="getNextKey(item,index)">
-                    <MiniAdvItem v-if="item.type == 2" class="mini_adver_class_style" :actionItem="actionItem3"></MiniAdvItem>
+                    <MiniAdvItem v-if="item.type == 2" class="mini_adver_class_style" :actionItem="actionItemList"></MiniAdvItem>
                     <MiniNewsItem v-else v-on:gotoNews="gotoNews" :newsInfo="item" :cateName="getCateName()">
                         <MiniAdvItem v-if="showAdvFlag1" class="mini_adver_flag_class_style" :actionItem="actionItem3"></MiniAdvItem>
                     </MiniNewsItem>
@@ -82,7 +82,6 @@ export default {
             titleList:[],
             newsList:[],
             rightList:[],
-            dialogInfo:{},
             dialogNewsList:[],
             tszData:null,
             showAdvFlag1:false,
@@ -91,67 +90,40 @@ export default {
             actionItem1:null,
             actionItem2:null,
             actionItem3:null,
+            actionItemList:null,
             actionItemCC:null
         }
     },
     beforeMount(){
-        this.actionItem1 = dataCenter.createAdvItem([101232,101233,101234,101235,101236],null);
-        this.actionItem2 = dataCenter.createAdvItem([101232,101233,101234,101235,101236],null);
-        this.actionItem3 = dataCenter.createAdvItem([101232,101233,101234,101235,101236],null,"mini_main");
-        this.actionItemCC = dataCenter.createAdvItem([101253],null);
+        this.actionItem1 = dataCenter.createAdvItem("mini_main");
+        this.actionItem2 = dataCenter.createAdvItem("mini_main");
+        this.actionItemList = dataCenter.createAdvItem("mini_main");
+        this.actionItem3 = dataCenter.createAdvItem("mini_main");
+        this.actionItemCC = dataCenter.createAdvItem("mini_main");
     },
     mounted(){
-        _this = this;
-        this.clickClose();
+        _this = this;        
         dataCenter.getMiniInfo().then(res=>{
             if(res.code != 200) return;
             let data = res.data;
-            let rand = Math.ceil(100*Math.random());
-            if(!this.titleList || this.titleList.length == 0){
-                let list = data.category;
-                let arr = [];
-                for(let i = 0;i < list.length;i++){
-                    let cate = list[i];
-                    arr.push({id:cate.cateId - 1,cateId:cate.cateId,cateName:cate.cateName})
-                }
-                arr.push({id:-1,cateId:-1,cateName:'更多'})
-                this.titleList = arr;
-                this.selectCateId = arr[0].cateId;
+            let list = data.category;
+            let arr = [];
+            for(let i = 0;i < list.length;i++){
+                let cate = list[i];
+                arr.push({id:cate.cateId - 1,cateId:cate.cateId,cateName:cate.cateName})
             }
-            if(!this.rightList || this.rightList.length == 0){
-                let sides = data.main_side;
-                for(let obj of sides){
-                    if(obj.name == "part_4"){
-                        this.dialogInfo = obj;
-                        this.dialogNewsList = obj.data.slice(0,2);
-                        break;
-                    }
-                }
-                if(this.dialogInfo && this.dialogInfo.adv){
-                    let rate = this.dialogInfo.adv.adv_rate;
-                    this.showAdvFlag2 = window.check_version && rand <= rate;
-                }
-                this.rightList = sides;
-            }
+            arr.push({id:-1,cateId:-1,cateName:'更多'})
+            this.titleList = arr;
+            this.selectCateId = arr[0].cateId;          
             //中间新闻列表
-            let news = data.main_list;
-            this.newsList = news;
-            let xrate = 0;
-            for(let i = 0;i < news.length;i++){
-                let obj = news[i];
-                if(obj.type == 2){
-                    xrate = obj.adv_rate;
-                    break;
-                }
-            }
-            this.showAdvFlag1 = window.check_version && rand <= xrate;
             this.currentPage = 1;
             let cele = document.getElementsByClassName("mini_middle")[0];
             cele.scrollTop = 0;
-            Utils.addDelay(_this.checkIsMore,this,10000,1);
-            this.loadNextAdver(0);
+            this.createAdv(data);            
+            Utils.addDelay(_this.checkIsMore,this,10000,1);            
         });
 
+        Utils.addDelay(this.showDialog,this,15000,1);        
         // this.showGameAd();
         Utils.addWindowClick(()=>{
             if(this.dialogFlag){
@@ -161,11 +133,43 @@ export default {
             if(this.showAdvFlag1){
                 this.showAdvFlag1 = false;
             }
-            this.clickClose(true);
         },this);
         document.title = "MiniPage";
     },
     methods:{
+        createAdv(data){
+            let rand = Math.ceil(100*Math.random());
+            let sides = []
+            let main_side = data.main_side
+            for(let info of main_side){
+                if(info.name == "part_0"){
+                    this.actionItemList.setIDS(info.adv);
+                    this.actionItem3.setIDS(info.adv,false);
+                    let xrate = info.adv.open_rate;
+                    this.showAdvFlag1 = window.check_version && rand <= xrate;
+                }
+                else if(info.name == "part_1"){
+                    this.actionItemCC.setIDS(info.adv);
+                    info.type = 2
+                    sides.push(info)
+                } 
+                else if(info.name == "part_2" || info.name == "part_3"){
+                    sides.push(info)
+                    this.actionItem2.setIDS(info.adv,false);
+                } 
+                else if(info.name == "part_4"){
+                    this.actionItem1.setIDS(info.adv);
+                    this.dialogNewsList = info.data.slice(0,2);
+                    let rate = info.adv.open_rate;
+                    this.showAdvFlag2 = window.check_version && rand <= rate;
+                } 
+            }
+            this.$nextTick(()=>{
+                this.newsList = data.main_list;
+                this.rightList = sides;
+                this.loadNextAdver(0);
+            });
+        },
         getNextKey(item,index){
             let skey = "";
             if(item.type == 2){
@@ -206,40 +210,24 @@ export default {
             }
             return cname + "    ";
         },
-        clickClose(redelay = false){
-            if(!redelay){
-                if(this.dialogFlag){
-                    this.dialogFlag = false;
-                    let type = this.dialogInfo.adv.adv_type;
-                    if(type == "adv360"){
-                        dataCenter.upToActivity(100001,"close");
-                    }
-                    else if(type == "advbd"){
-                        dataCenter.upToActivity(100003,"close");
-                    }
-                }
-                if(this.showAdvFlag2){
-                    this.showAdvFlag2 = false;
-                }
+        clickClose(){
+            this.dialogFlag = false;    
+            if(this.showAdvFlag2){
+                this.showAdvFlag2 = false;
+            }            
+            if(!this.screenHandler){
+                this.screenHandler = new ScreenHandler(30000,()=>{
+                    this.showDialog();
+                });
             }
-            Utils.addDelay(this.showDialog,this,10000);
-            // if(!this.screenHandler){
-            //     this.screenHandler = new ScreenHandler(10000,()=>{
-            //         this.showDialog();
-            //     });
-            // }
-            // else {
-            //     this.dialogFlag = false;
-            //     this.screenHandler.reWatch();
-            // }
+            else {
+                this.dialogFlag = false;
+                this.screenHandler.reWatch();
+            }
         },
         showDialog(){
-            if(!this.dialogInfo || !this.dialogInfo.adv) return;
             if(!this.dialogFlag){
                 dataCenter.upToActivity(100001,"open");
-                let rate = this.dialogInfo.adv.adv_rate;
-                let rand = Math.ceil(100*Math.random());
-                this.showAdvFlag2 = window.check_version && rand <= rate;
                 if(this.showAdvFlag2){
                     this.$nextTick(()=>{
                         this.actionItem1.checkLoad();
@@ -278,12 +266,12 @@ export default {
             dataCenter.getMiniInfo(idx,this.curLoadPage).then(res=>{
                 if(res.code != 200) return
                 let data = res.data;
-                this.newsList = data.main_list;
                 this.actionItem3.reset();
+                this.newsList = data.main_list;
                 let cele = document.getElementsByClassName("mini_middle")[0];
                 if(cele && cele.scrollTop > 0){
-                    cele.scrollTop = 0;
                     this.currentPage = 1;
+                    cele.scrollTop = 0;
                 }
                 else{
                     this.loadNextAdver(1);
@@ -308,7 +296,9 @@ export default {
                 this.currentPage = 1;
             }
             this.$nextTick(()=>{
-                this.actionItem3.checkLoad();
+                let num = this.showAdvFlag1 || force == 1 ? 3 : 2;
+                this.actionItem3.checkLoad(num);
+                this.actionItemList.checkLoad(num);
                 if(force == 0){
                     this.actionItem2.checkLoad();
                     this.actionItemCC.checkLoad();
@@ -356,7 +346,8 @@ export default {
                 this.newsList = xarr;
             }
             let idx = item.id;
-            let xurl = "https://news.dtxww.cn/content/?id="+idx + "&qid=0&cateid="+item.cateId;
+            let mode = process.env.BUILD_MODE == 5 ? "" : "000/";
+            let xurl = `https://news.dtxww.cn/content/${mode}?id=${idx}&qid=0&cateid=${item.cateId}`;
             window.open(xurl, '_blank');
             if(index == 0){
                 dataCenter.upToActivity(100002,"click","left");

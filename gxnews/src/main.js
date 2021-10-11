@@ -25,7 +25,7 @@ else if(mode == 6){
   window.check_version = window.location&&window.location.href.search("v=101") >= 0;
   window&&window.history&&window.history.pushState("","","/mini/000");
 }
-else if(mode == 3){
+else if(mode == 3 || mode == 7){
   scripts.push("//static.mediav.com/js/mvf_g4.js");
 }
 if(process.env.NODE_ENV != "production"){

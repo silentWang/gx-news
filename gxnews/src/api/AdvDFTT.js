@@ -1,18 +1,46 @@
 import Utils from "@/js/Utils"
 import AdvManager from "./AdvManager";
 export default class AdvDFTT {
-    constructor(container = "",dfttIds = [],showIds = []){
-        let sids = [101237,101238,101239,101240,101241];
-        this.dfttIDS = dfttIds && dfttIds.length > 0 ? dfttIds : sids;
-        let tids = ["k9ohe1","u7zGw0","YOOvNu","XpSS6i","z8dR81","jzKRfS","s5RjZC","uEwdQM","xuUEzU","th3oer"];
-        this.showIDS = showIds && showIds.length > 0 ? showIds : tids;
+    constructor(container = ""){
+        // let sids = [101237,101238,101239,101240,101241];
+        // this.dfttIDS = dfttIds && dfttIds.length > 0 ? dfttIds : sids;
+        // let tids = ["k9ohe1","u7zGw0","YOOvNu","XpSS6i","z8dR81","jzKRfS","s5RjZC","uEwdQM","xuUEzU","th3oer"];
+        // this.showIDS = showIds && showIds.length > 0 ? showIds : tids;
+
+        this.dfttIDS = [];
+        this.showIDS = [];
         this.advConfigList = [];
         this.stepIndex = 0;
         this.showIndex = 0;
-        this.maxOnePage = this.dfttIDS.length;
+        
+        this.advData = [];
         let element = document.getElementsByClassName(container);
         this.container = element && element[0] ? element[0] : "";
         this.isFirst = true;
+    }
+    
+    setIDS(info,isNormal = true,isFirst = false){
+        if(!info || info.length == 0) return
+        let advs = isNormal ? info.ad_script :info.open_script;
+        if(!advs || advs.length == 0) return
+        // let w = Math.ceil(100*Math.random());
+        let r = Math.ceil(100*Math.random());
+        advs.sort((a,b)=>{
+            return b.ad_weight - a.ad_weight;
+        })
+        this.advData = advs;
+        for(let adv of advs){
+            if(adv.ad_type == "advdf"){
+                let dfttIds = adv.ad_script.split(",")
+                this.dfttIDS = dfttIds && dfttIds.length > 0 ? dfttIds : [];
+            }
+            else if(adv.ad_type == "adv360"){
+                let showIds = adv.ad_script.split(",")
+                this.showIDS = showIds && showIds.length > 0 ? showIds : [];
+            }
+            
+        }
+        this.maxOnePage = this.dfttIDS.length > 0 ? this.dfttIDS.length : 1;
     }
 
     getNextAd(callback,context){
@@ -25,15 +53,18 @@ export default class AdvDFTT {
         this.stepIndex = index1 + 1;
         this.showIndex = index2 + 1;
         this.advConfigList.push(config);
+        // console.log("ccccc",this.advConfigList)
         return config;
     }
-    /**懒加载 进入可视范围才加载  flag*/
-    checkLoad(){
+    /**懒加载 进入可视范围才加载  
+     * firstNum
+     * flag*/
+    checkLoad(firstNum = 1){
         let length = this.advConfigList.length;
         if(length == 0) return;
         let array = [];
         if(this.isFirst){
-            for(let i = 0;i < 2;i++){
+            for(let i = 0;i < firstNum;i++){
                 let config = this.advConfigList[i];
                 if(i < this.maxOnePage){
                     array.push(config);
@@ -80,7 +111,8 @@ export default class AdvDFTT {
                 $scrollBox: this.container
             }
         }
-        AdvManager.pushMergeRequest({imparray,report,showarray,array});
+        let weight = this.advData[0].ad_type == "advdf" ? 0 : 1
+        AdvManager.pushMergeRequest({imparray,report,showarray,array,weight});
     }
 
     reset(){

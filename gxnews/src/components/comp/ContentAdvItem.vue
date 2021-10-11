@@ -13,11 +13,20 @@
                 </div>
             </div>
             <div v-else-if="type == 'kitchen'">
-                <div class="kitchen_adv_class">
+                <div class="kitchen_adv_class" >
                     <a class="kitchen_img_a" :href="itemUrl" target="_blank" @click="clickTo" @mousedown="advDown" @mouseup="advUp">
                         <img :src="pictures[0]">
                     </a>
                     <a class="kitchen_title" :href="itemUrl" target="_blank" @click="clickTo" @mousedown="advDown" @mouseup="advUp">{{itemTitle}}</a>
+                </div>
+            </div>
+            <div v-else-if="type == 'float'">
+                <div class="float_adv_class" v-show="closeFlag">
+                    <a class="float_img_a" :href="itemUrl" target="_blank" @click="clickTo" @mousedown="advDown" @mouseup="advUp">
+                        <img :src="pictures[0]">
+                    </a>
+                    <a class="float_title" :href="itemUrl" target="_blank" @click="clickTo" @mousedown="advDown" @mouseup="advUp">{{itemTitle}}</a>
+                    <div class="adv_float_closebtn" @click="closeFlag = false" >X</div>                        
                 </div>
             </div>
             <div v-else>
@@ -76,7 +85,8 @@ export default {
             itemTitle:"",
             pictures:[],
             itemUrl:"",
-            bdcode:""
+            bdcode:"",
+            closeFlag:true
         }
     },
     created(){
@@ -246,5 +256,45 @@ export default {
         display: block;
         position: relative;
         width: 100%;
+        font-size: medium;
+    }
+    .float_adv_class {
+        border:1px solid #ececec;
+        width: 300px;
+        height: 250px;
+        margin: 0px auto;
+    }
+    .float_img_a {
+        width: 100%;
+        height: 100%;
+        display: block;
+    }
+    .float_img_a img {
+        width: 100%;
+        height: 100%;
+    }
+    .float_title {
+        display: block;
+        position: relative;
+        width: 100%;
+        color: white;
+        font-size: small;
+        top: -40px;
+        text-align: left;
+        height: 40px;
+        overflow: hidden;
+    }
+    .adv_float_closebtn {
+        width: 30px;
+        height: 22px;
+        position: relative;
+        color: seashell;
+        left: 265px;
+        top: -288px;
+        padding: 7px 0 0 0;
+        background-color: rgba(0, 0, 0, 0.2);
+        border-radius: 16px;
+        z-index: 90;
+        cursor: pointer;
     }
 </style>

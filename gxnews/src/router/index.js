@@ -24,7 +24,7 @@ if(mode == 2 || mode == 4){
   routeInfo.name = "PageMiniA";
   routeInfo.component = PageMiniA;
 }
-else if(mode == 3){
+else if(mode == 3 || mode == 7){
   routeInfo.name = "PageContent";
   routeInfo.component = PageContent;
 }

@@ -14,8 +14,8 @@
         </div>
         <div :class="showDialogFlag ? 'bn_main_filter_blur':'bn_main'">
             <div class="bn_left">
-                <div class="chuchuang_class">
-                    <content-adv-item class="content_adver_kitch_class_style" :actionItem="kitchenAction" type="kitchen"></content-adv-item>
+                <div v-if="kitchenFlag" class="chuchuang_class">
+                    <content-adv-item class="content_adver_kitch_class_style" :actionItem="kitchenAction1" type="kitchen"></content-adv-item>
                 </div>
                 <div class="a_left_block">
                     <div class="a_title">今日热点</div>
@@ -25,8 +25,8 @@
                             <content-adv-item v-else class="content_adver_hot_class_style" :actionItem="hotAction" type="left"></content-adv-item>
                         </li>
                     </ul>
-                    <div class="chuchuang_class2">
-                        <content-adv-item class="content_adver_kitch_class_style" :actionItem="kitchenAction" type="kitchen"></content-adv-item>
+                    <div v-if="kitchenFlag" class="chuchuang_class2">
+                        <content-adv-item class="content_adver_kitch_class_style" :actionItem="kitchenAction2" type="kitchen"></content-adv-item>
                     </div>
                 </div>
                 <div class="a_left_block">
@@ -36,8 +36,8 @@
                             <content-news-item type="nlink" :cateName="getCateName(item.cateId)" :newsInfo="item" v-on:gotoNews="gotoNews"></content-news-item>
                         </li>
                     </ul>
-                    <div class="chuchuang_class2">
-                        <content-adv-item class="content_adver_kitch_class_style" :actionItem="kitchenAction" type="kitchen"></content-adv-item>
+                    <div v-if="kitchenFlag" class="chuchuang_class2">
+                        <content-adv-item class="content_adver_kitch_class_style" :actionItem="kitchenAction3" type="kitchen"></content-adv-item>
                     </div>
                 </div>
                 <div class="a_left_block">
@@ -47,11 +47,11 @@
                             <content-news-item type="hot" :newsInfo="item" v-on:gotoNews="gotoNews"></content-news-item>
                         </div>
                     </div>
-                    <div class="chuchuang_class2">
-                        <content-adv-item class="content_adver_kitch_class_style" :actionItem="kitchenAction" type="kitchen"></content-adv-item>
+                    <div v-if="kitchenFlag" class="chuchuang_class2">
+                        <content-adv-item class="content_adver_kitch_class_style" :actionItem="kitchenAction4" type="kitchen"></content-adv-item>
                     </div>
-                    <div class="chuchuang_class2">
-                        <content-adv-item class="content_adver_kitch_class_style" :actionItem="kitchenAction" type="kitchen"></content-adv-item>
+                    <div v-if="kitchenFlag" class="chuchuang_class2">
+                        <content-adv-item class="content_adver_kitch_class_style" :actionItem="kitchenAction5" type="kitchen"></content-adv-item>
                     </div>
                 </div>
             </div>
@@ -83,7 +83,9 @@
                     </li>
                 </ul>
             </div>
-            <div class="bn_content_float_advs" :id="floatAdvInfo?floatAdvInfo.adv_id:''" :advtype="floatAdvInfo?floatAdvInfo.adv_type:''" v-html="floatAdvInfo?floatAdvInfo.adv_script:''"></div>
+            <div class="bn_content_float_advs" v-if="floatFlag">
+                <content-adv-item :actionItem="floatAction" type="float"></content-adv-item>
+            </div>
             <div class="bn_sidenav">
                 <ul>
                     <li class="home">
@@ -126,9 +128,6 @@
         </div>
         <div v-if="showAdvFlag && showDialogFlag" class="adv_detail_class_show">
             <content-adv-item class="content_adver_dialog_class_style" :actionItem="dialogAction" type="dialog"></content-adv-item>
-            <content-adv-item class="content_adver_dialog_class_style" :actionItem="dialogAction" type="dialog"></content-adv-item>
-            <content-adv-item class="content_adver_dialog_class_style" :actionItem="dialogAction" type="dialog"></content-adv-item>
-            <content-adv-item class="content_adver_dialog_class_style" :actionItem="dialogAction" type="dialog"></content-adv-item>
         </div>
     </div>
 </template>
@@ -148,6 +147,8 @@ export default {
         return {
             showDialogFlag:false,
             showGoTopFlag:false,
+            kitchenFlag:false,
+            floatFlag:false,
             currentPageIndex:0,
             detailHtml:"",
             allPages:[],
@@ -157,16 +158,19 @@ export default {
             choseHots:[],
             rankHots:[],
             dialogList:[],
-            dialogListCopy:[],
             detailInfo:{},
             headAdvInfo:null,
             footAdvInfo:null,
-            floatAdvInfo:null,
             showAdvFlag:false,
             nowTime:"",
             nowDate:"",
             nongDate:"",
-            kitchenAction:null,
+            floatAction:null,
+            kitchenAction1:null,
+            kitchenAction2:null,
+            kitchenAction3:null,
+            kitchenAction4:null,
+            kitchenAction5:null,
             hotAction:null,
             commonAction:null,
             dialogAction:null
@@ -174,11 +178,21 @@ export default {
     },
     beforeMount(){
         //101259 内页标题页下方   //101260内页右下方悬浮
-        this.kitchenAction = dataCenter.createAdvItem([101254,101255,101256,101257,101258]);
-        this.hotAction = dataCenter.createAdvItem([101261,101262,101263,101264]);
-        this.commonAction = dataCenter.createAdvItem([101237,101238,101239,101240,101241]);
-        this.dialogAction = dataCenter.createAdvItem([101237,101238,101239,101240,101241],null,"an_dialog_second_cont");
-        this.kitchenAction.isFirst = false;
+        this.kitchenAction1 = dataCenter.createAdvItem();
+        this.kitchenAction2 = dataCenter.createAdvItem();
+        this.kitchenAction3 = dataCenter.createAdvItem();
+        this.kitchenAction4 = dataCenter.createAdvItem();
+        this.kitchenAction5 = dataCenter.createAdvItem();
+        this.floatAction = dataCenter.createAdvItem();
+        this.kitchenAction1.isFirst = false;
+        this.kitchenAction2.isFirst = false;
+        this.kitchenAction3.isFirst = false;
+        this.kitchenAction4.isFirst = false;
+        this.kitchenAction5.isFirst = false;
+        this.floatAction.isFirst = false;
+        this.hotAction = dataCenter.createAdvItem();
+        this.commonAction = dataCenter.createAdvItem();
+        this.dialogAction = dataCenter.createAdvItem("an_dialog_second_cont");
         this.hotAction.isFirst = false;
         this.commonAction.isFirst = false;
         this.dialogAction.isFirst = false;
@@ -209,7 +223,6 @@ export default {
         });
         dataCenter.getDetailInfo(cateid).then(res=>{
             let data = res.data;
-            // console.log(data);
             let list = data.category;
             let arr = [];
             for(let i = 0;i < list.length;i++){
@@ -217,45 +230,114 @@ export default {
                 arr.push({id:cate.cateId,cateId:cate.cateId,cateName:cate.cateName})
             }
             this.titleList = arr;
+            let todayHots = [];
+            let bottomList = [];
+            let dialogList = [];
+            let choseHots = [];
+            let rankHots = [];
             let details = data.detail_side;
             for(let i = 0;i < details.length;i++){
                 let detail = details[i];
                 if(detail.name == "part_1"){
-                    this.todayHots = detail.data;
+                    todayHots = detail.data;
+                    this.hotAction.setIDS(detail.adv)
                 }
                 else if(detail.name == "part_2"){
-                    this.bottomList = detail.data;
+                    bottomList = detail.data;
+                    this.commonAction.setIDS(detail.adv)
                 }
                 else if(detail.name == "part_3"){
-                    this.headAdvInfo = detail.adv;
+                    let infos = detail.adv.ad_script;
+                    let xobj = {}
+                    for(let obj of infos){
+                        if(obj.ad_type == "adv360"){
+                            xobj.adv_type = "adv360"
+                            let msc = obj.ad_script.split("mediav.ad.show('")[1]
+                            if(msc){                                
+                                xobj.adv_id = msc.split("',")[0]
+                                console.log(xobj.adv_id)
+                            }
+                            xobj.adv_script = obj.ad_script
+                            break
+                        }
+                    }
+                    this.headAdvInfo = xobj;
                 }
                 else if(detail.name == "part_4"){
-                    this.footAdvInfo = detail.adv;
+                    let infos = detail.adv.ad_script;
+                    let xobj = {}
+                    for(let obj of infos){
+                        if(obj.ad_type == "adv360"){
+                            xobj.adv_type = "adv360"
+                            let msc = obj.ad_script.split("mediav.ad.show('")[1]
+                            if(msc){                                
+                                xobj.adv_id = msc.split("',")[0]
+                                console.log(xobj.adv_id)
+                            }
+                            xobj.adv_script = obj.ad_script
+                            break
+                        }
+                    }
+                    this.footAdvInfo = xobj;
                 }
                 else if(detail.name == "part_5"){
-                    this.dialogListCopy = detail.data;
-                    this.checkStayState();
+                    dialogList = detail.data;
+                    this.dialogAction.setIDS(detail.adv)                    
                 }
-                else if(detail.name == "part_6" || detail.name == "part_7" || detail.name == "part_8" || detail.name == "part_9" || detail.name == "part_10"){
+                else if(detail.name == "part_6"){
                     //左侧五个橱窗
+                    this.kitchenAction1.setIDS(detail.adv)                    
+                }
+                else if(detail.name == "part_7"){
+                    //左侧五个橱窗
+                    this.kitchenAction2.setIDS(detail.adv)                    
+                }
+                else if(detail.name == "part_8"){
+                    //左侧五个橱窗
+                    this.kitchenAction3.setIDS(detail.adv)                    
+                }
+                else if(detail.name == "part_9"){
+                    //左侧五个橱窗
+                    this.kitchenAction4.setIDS(detail.adv)                    
+                }
+                else if(detail.name == "part_10"){
+                    //左侧五个橱窗
+                    this.kitchenAction5.setIDS(detail.adv)                    
                 }
                 else if(detail.name == "part_11"){
-                    this.choseHots = detail.data;
+                    choseHots = detail.data;
                 }
                 else if(detail.name == "part_12"){
-                    this.rankHots = detail.data;
+                    rankHots = detail.data;
+                }
+                else if(detail.name == "part_13"){
+                    this.floatAction.setIDS(detail.adv)
+                    this.floatFlag = true                    
                 }
             }
-            
             let rate = ~~(100*Math.random());
             this.showAdvFlag = this.headAdvInfo.adv_rate > rate;
             this.$nextTick(()=>{
-                dataCenter.addAdsByClassName("adver_common_class_u9oe3r8d25");
-                dataCenter.addAdsByClassName("adver_common_class_u9803ide66");
-                dataCenter.addAdsByClassName("bn_content_float_advs");
-                this.kitchenAction.checkLoad();
-                this.hotAction.checkLoad();
-                this.commonAction.checkLoad();
+                this.todayHots = todayHots     
+                this.bottomList = bottomList     
+                this.dialogList = dialogList     
+                this.choseHots = choseHots     
+                this.rankHots = rankHots
+                this.kitchenFlag = true;
+                this.$nextTick(()=>{
+                    dataCenter.addAdsByClassName("adver_common_class_u9oe3r8d25");
+                    dataCenter.addAdsByClassName("adver_common_class_u9803ide66");
+                    dataCenter.addAdsByClassName("bn_content_float_advs");
+                    this.kitchenAction1.checkLoad();
+                    this.kitchenAction2.checkLoad();
+                    this.kitchenAction3.checkLoad();
+                    this.kitchenAction4.checkLoad();
+                    this.kitchenAction5.checkLoad();
+                    this.hotAction.checkLoad();
+                    this.commonAction.checkLoad();
+                    this.floatAction.checkLoad();
+                })
+                this.checkStayState();     
             });
         });
         Utils.addDelay(()=>{
@@ -271,9 +353,9 @@ export default {
         },this);
         
         window.onscroll = this.listScroll.bind(this);
-        this.$nextTick(()=>{
-            this.listScroll();
-        });
+        // this.$nextTick(()=>{
+        //     this.listScroll();
+        // });
     },
     methods:{
         reloadHome(evt){
@@ -301,7 +383,11 @@ export default {
                 rEle.style.top = "10px";
                 rEle.style.position = "relative";
             }
-            this.kitchenAction.checkLoad();
+            this.kitchenAction1.checkLoad();
+            this.kitchenAction2.checkLoad();
+            this.kitchenAction3.checkLoad();
+            this.kitchenAction4.checkLoad();
+            this.kitchenAction5.checkLoad();
             this.hotAction.checkLoad();
             this.commonAction.checkLoad();
         },
@@ -323,7 +409,8 @@ export default {
             window.open("https://news.dtxww.cn/?cateid=" + idx + "wow", '_blank');
         },
         gotoNews(item){
-            let turl = "https://news.dtxww.cn/content/?id="+item.id + "&cateid=" + item.cateId;
+            let mode = process.env.BUILD_MODE == 5 ? "" : "000/";
+            let turl = `https://news.dtxww.cn/content/${mode}?id=${item.id}&cateid=${item.cateId}`;
             window.open(turl, '_blank');
         },
         gotoPage(index){
@@ -347,7 +434,6 @@ export default {
                 this.screenHandler = new ScreenHandler(15000,()=>{
                     _this.showDialogFlag = true;
                     document.body.style.overflow = "hidden";
-                    this.dialogList = this.dialogListCopy;
                     this.$nextTick(()=>{
                         this.dialogScroll();
                     });
