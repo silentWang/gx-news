@@ -30,7 +30,7 @@
                     </div>
                     <div v-else>
                         <NewsSlider v-on:gotoNews="gotoNews" :nsId="index" nWidth="200" nHeight="185" v-bind:newsList="getSlideNewsList(item.data)"></NewsSlider>
-                        <MiniAdvItem v-if="showAdvFlag1" :actionItem="actionItem2" class="mini_adver_flag_class_style"></MiniAdvItem>
+                        <MiniAdvItem v-if="showAdvFlag3" :actionItem="actionItem2" class="mini_adver_flag_class_style"></MiniAdvItem>
                     </div>
                 </li>
             </ul>
@@ -86,6 +86,7 @@ export default {
             tszData:null,
             showAdvFlag1:false,
             showAdvFlag2:false,
+            showAdvFlag3:false,
             gameCloseLeftTime:0,
             actionItem1:null,
             actionItem2:null,
@@ -133,6 +134,12 @@ export default {
             if(this.showAdvFlag1){
                 this.showAdvFlag1 = false;
             }
+            if(this.showAdvFlag2){
+                this.showAdvFlag2 = false;
+            }
+            if(this.showAdvFlag3){
+                this.showAdvFlag3 = false;
+            }
         },this);
         document.title = "MiniPage";
     },
@@ -154,7 +161,8 @@ export default {
                     sides.push(info)
                 } 
                 else if(info.name == "part_2" || info.name == "part_3"){
-                    sides.push(info)
+                    sides.push(info);
+                    this.showAdvFlag3 = true;
                     this.actionItem2.setIDS(info.adv,false);
                 } 
                 else if(info.name == "part_4"){
@@ -296,9 +304,8 @@ export default {
                 this.currentPage = 1;
             }
             this.$nextTick(()=>{
-                let num = this.showAdvFlag1 || force == 1 ? 3 : 2;
-                this.actionItem3.checkLoad(num);
-                this.actionItemList.checkLoad(num);
+                this.actionItem3.checkLoad(3);
+                this.actionItemList.checkLoad(3);
                 if(force == 0){
                     this.actionItem2.checkLoad();
                     this.actionItemCC.checkLoad();
@@ -383,7 +390,7 @@ export default {
             if(list && list.length > 0){
                 for(let i = 0;i < list.length;i++){
                     let obj = list[i];
-                    arr.push({id:obj.id,title:obj.title,pic:obj.pics[0],url:obj.url})
+                    arr.push({id:obj.id,title:obj.title,pic:obj.pics[0],url:obj.url,cateId:obj.cateId})
                 }
                 if(list.length > 1){
                     arr.push(arr[0])

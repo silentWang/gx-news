@@ -242,6 +242,7 @@ export default {
             let choseHots = [];
             let rankHots = [];
             let details = data.detail_side;
+            let rate = ~~(100*Math.random());
             for(let i = 0;i < details.length;i++){
                 let detail = details[i];
                 if(detail.name == "part_1"){
@@ -254,40 +255,45 @@ export default {
                 }
                 else if(detail.name == "part_3"){
                     let infos = detail.adv.ad_script;
-                    let xobj = {}
-                    for(let obj of infos){
-                        if(obj.ad_type == "adv360"){
-                            xobj.adv_type = "adv360"
-                            let msc = obj.ad_script.split("mediav.ad.show('")[1]
-                            if(msc){                                
-                                xobj.adv_id = msc.split("',")[0]
-                                console.log(xobj.adv_id)
+                    if(infos){
+                        let xobj = {}
+                        for(let obj of infos){
+                            if(obj.ad_type == "adv360"){
+                                xobj.adv_type = "adv360"
+                                let msc = obj.ad_script.split("mediav.ad.show('")[1]
+                                if(msc){                                
+                                    xobj.adv_id = msc.split("',")[0]
+                                    console.log(xobj.adv_id)
+                                }
+                                xobj.adv_script = obj.ad_script
+                                break
                             }
-                            xobj.adv_script = obj.ad_script
-                            break
                         }
+                        this.headAdvInfo = xobj;
                     }
-                    this.headAdvInfo = xobj;
                 }
                 else if(detail.name == "part_4"){
                     let infos = detail.adv.ad_script;
-                    let xobj = {}
-                    for(let obj of infos){
-                        if(obj.ad_type == "adv360"){
-                            xobj.adv_type = "adv360"
-                            let msc = obj.ad_script.split("mediav.ad.show('")[1]
-                            if(msc){                                
-                                xobj.adv_id = msc.split("',")[0]
-                                console.log(xobj.adv_id)
+                    if(infos){
+                        let xobj = {}
+                        for(let obj of infos){
+                            if(obj.ad_type == "adv360"){
+                                xobj.adv_type = "adv360"
+                                let msc = obj.ad_script.split("mediav.ad.show('")[1]
+                                if(msc){                                
+                                    xobj.adv_id = msc.split("',")[0]
+                                    console.log(xobj.adv_id)
+                                }
+                                xobj.adv_script = obj.ad_script
+                                break
                             }
-                            xobj.adv_script = obj.ad_script
-                            break
                         }
+                        this.footAdvInfo = xobj;
                     }
-                    this.footAdvInfo = xobj;
                 }
                 else if(detail.name == "part_5"){
                     dialogList = detail.data;
+                    this.showAdvFlag = detail.adv && detail.adv.adv_rate > rate;
                     this.dialogAction.setIDS(detail.adv)                    
                 }
                 else if(detail.name == "part_6"){
@@ -322,8 +328,6 @@ export default {
                     this.floatFlag = true                    
                 }
             }
-            let rate = ~~(100*Math.random());
-            this.showAdvFlag = this.headAdvInfo.adv_rate > rate;
             this.$nextTick(()=>{
                 this.todayHots = todayHots     
                 this.bottomList = bottomList     
@@ -417,7 +421,7 @@ export default {
             window.open("https://news.dtxww.cn/?cateid=" + idx + "wow", '_blank');
         },
         gotoNews(item){
-            let mode = process.env.BUILD_MODE == 5 ? "" : "000/";
+            let mode = process.env.BUILD_MODE == 3 ? "" : "000/";
             let turl = `https://news.dtxww.cn/content/${mode}?id=${item.id}&cateid=${item.cateId}`;
             window.open(turl, '_blank');
         },

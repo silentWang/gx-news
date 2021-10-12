@@ -13,7 +13,7 @@ export default class AdvDFTT {
         this.isFirst = true;
     }
     
-    setIDS(info,isNormal = true,isFirst = false){
+    setIDS(info,isNormal = true){
         if(!info) return
         let advs = isNormal ? info.ad_script :info.open_script;
         if(!advs || advs.length == 0) return
@@ -90,21 +90,39 @@ export default class AdvDFTT {
 
     getData(array){
         let length = array.length;
-        let imparray = [];
-        let report = {};
-        let showarray = [];
+        // let imparray = [];
+        // let report = {};
+        // let showarray = [];
         for(let i = 0;i < length;i++){
             let conf = array[i];
             if(conf.data) continue;
-            imparray.push(conf.advID);
-            showarray.push(conf.showId);
+            let imparray = [conf.advID];
+            let showarray = [conf.showId];
+            let report = {};
             report[conf.advID] = {
                 container: "#"+conf.elementID, // required | selector | 广告位选择器（通过此选择器只能获取到唯一 dom 的选择器），class / id / 属性选择器 / ...
                 $scrollBox: this.container
             }
+            AdvManager.pushMergeRequest({imparray,report,showarray,array:[array[i]],advs:this.advData});
         }
-        AdvManager.pushMergeRequest({imparray,report,showarray,array,advs:this.advData});
     }
+    // getData(array){
+    //     let length = array.length;
+    //     let imparray = [];
+    //     let report = {};
+    //     let showarray = [];
+    //     for(let i = 0;i < length;i++){
+    //         let conf = array[i];
+    //         if(conf.data) continue;
+    //         imparray.push(conf.advID);
+    //         showarray.push(conf.showId);
+    //         report[conf.advID] = {
+    //             container: "#"+conf.elementID, // required | selector | 广告位选择器（通过此选择器只能获取到唯一 dom 的选择器），class / id / 属性选择器 / ...
+    //             $scrollBox: this.container
+    //         }
+    //     }
+    //     AdvManager.pushMergeRequest({imparray,report,showarray,array,advs:this.advData});
+    // }
 
     reset(){
         let length = this.advConfigList.length;
