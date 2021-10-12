@@ -158,7 +158,7 @@ export default {
                     this.actionItem2.setIDS(info.adv,false);
                 } 
                 else if(info.name == "part_4"){
-                    this.actionItem1.setIDS(info.adv);
+                    this.actionItem1.setIDS(info.adv,false);
                     this.dialogNewsList = info.data.slice(0,2);
                     let rate = info.adv.open_rate;
                     this.showAdvFlag2 = window.check_version && rand <= rate;
@@ -415,6 +415,12 @@ export default {
     }
     a:hover{ 
         color:#f24e4e;
+    }
+    img {
+        transition: all 0.6s;
+    }
+    img:hover {
+        transform: scale(1.1);
     }
     .mini_main {
         display: block;

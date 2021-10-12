@@ -13,6 +13,12 @@ export default class Utils {
         POSITION_BOTTOM:"bottom"
     }
 
+    static ADV_TYPE = {
+        DFTT:"advdf",
+        TSZ:"adv360",
+        BAIDU:"advbd",
+    }
+
     static addWindowClick(func,context){
         if(!this.windowClkFunc){
             this.windowClkFunc = [{func,context}];

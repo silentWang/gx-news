@@ -16,19 +16,29 @@
                     </div>
                     <a :href="itemUrl" target="_blank" @click="clickTo" @mousedown="advDown" @mouseup="advUp"><span class="mini_content_image_p">{{itemSource}}</span></a>
                 </div>
-                <div class="mini_adv_three" v-if="pictures.length == 3">
+                <div class="mini_adv_three" v-else-if="pictures.length == 3">
                     <a class="mini_adv_title" target="_blank" :href="itemUrl" @click="clickTo" @mousedown="advDown" @mouseup="advUp">{{itemTitle}}</a>
                     <div class="three_image" v-for="(item,index) in pictures" :key="index">
                         <a :href="itemUrl" target="_blank" @click="clickTo" @mousedown="advDown" @mouseup="advUp"><img :src="item"></a>
                     </div>
                     <a :href="itemUrl" target="_blank" @click="clickTo" @mousedown="advDown" @mouseup="advUp"><span class="mini_content_image_p" @mousedown="advDown" @mouseup="advUp">{{itemSource}}</span></a>
                 </div>
-                <div class="mini_adv_two" v-if="pictures.length == 2">
+                <div class="mini_adv_two" v-else-if="pictures.length == 2">
                     <a class="mini_adv_title" target="_blank" :href="itemUrl" @click="clickTo" @mousedown="advDown" @mouseup="advUp">{{itemTitle}}</a>
                     <div class="two_image" v-for="(item,index) in pictures" :key="index">
                         <a :href="itemUrl" target="_blank" @click="clickTo" @mousedown="advDown" @mouseup="advUp"><img :src="item"></a>
                     </div>
                     <a :href="itemUrl" target="_blank" @click="clickTo" @mousedown="advDown" @mouseup="advUp"><span class="mini_content_image_p" @mousedown="advDown" @mouseup="advUp">{{itemSource}}</span></a>
+                </div>
+                <div v-else-if="singleSmallBool">
+                    <a class="pic_ad_small_a" target="_blank" :href="itemUrl" @click="clickTo" @mousedown="advDown" @mouseup="advUp">
+                        <img :src='pictures[0]'/>
+                        <span class="adv_mini_guanggao">广告</span>
+                    </a>
+                    <a class="mini_adv_small_title" target="_blank" :href="itemUrl" @click="clickTo" @mousedown="advDown" @mouseup="advUp">
+                        <span>{{itemTitle}}</span>
+                        <div>{{itemSource}}</div>
+                    </a>
                 </div>
                 <div v-else>
                     <a class="mini_adv_title" target="_blank" :href="itemUrl" @click="clickTo" @mousedown="advDown" @mouseup="advUp">{{itemTitle}}</a>
@@ -44,6 +54,7 @@
 </template>
 <script>
 import dataCenter from '@/api/DataCenter'
+import Utils from "@/js/Utils"
 export default {
     props:{
         actionItem:{
@@ -56,7 +67,7 @@ export default {
     data(){
         return {
             itemId:"",
-            advType:"advDFTT",
+            advType:"",
             advData:'',
             tszData:"",
             styleType:108,
@@ -64,7 +75,8 @@ export default {
             pictures:[],
             itemUrl:"",
             itemSource:"",
-            bdcode:""
+            bdcode:"",
+            singleSmallBool:false,
         }
     },
     created(){
@@ -83,39 +95,54 @@ export default {
                 return;
             }
             this.advType = info.advType;
-            if(this.advType == "advDFTT"){
+            if(this.advType == Utils.ADV_TYPE.DFTT){
                 this.itemTitle = info.title;
                 this.pictures = info.imgUrl;
                 this.itemUrl = info.displayUrl;
                 this.styleType = info.styleType;
-                this.itemSource = info.adSource;
+                this.itemSource = info.adSource ? info.adSource:"热门";
+                this.singleSmallBool = info.styleType == "1001" || info.styleType == "1003";
             }
-            else if(this.advType == "adv360"){
+            else if(this.advType == Utils.ADV_TYPE.TSZ){
                 this.itemTitle = info.title;
                 this.pictures = [info.img];
                 this.itemUrl = info.curl;
                 this.styleType = info.type;
-                this.tszData = info;
                 this.itemSource = info.adSource ? info.adSource:"热门";
+                this.tszData = info;
+                if(info.type == 1){
+                    this.singleSmallBool = true;
+                }
+                else if(info.type == 2){
+                    let assets = info.assets;
+                    if(assets && assets.length > 0){
+                        let arr = [];
+                        for(let i = 0;i < assets.length;i++){
+                            let asset = assets[i];
+                            arr.push(asset.img);
+                        }
+                        this.pictures = arr;
+                    }
+                }
                 dataCenter.upTo360ShowLog(this.tszData);
             }
         },
         clickTo(evt){
-            if(this.advType == "advDFTT"){
+            if(this.advType == Utils.ADV_TYPE.DFTT){
                 dataCenter.upToActivity(200001,"click200001",this.itemId);
             }
-            else if(this.advType == "adv360"){
+            else if(this.advType == Utils.ADV_TYPE.TSZ){
                 dataCenter.upToActivity(200002,"click200002",this.itemId);
                 dataCenter.upTo360ClkLog(this.tszData,evt.offsetX,evt.offsetY,560,244,3);
             }
         },
         advDown(evt){
-            if(this.advType == "adv360"){
+            if(this.advType == Utils.ADV_TYPE.TSZ){
                 dataCenter.upTo360ClkLog(this.tszData,evt.offsetX,evt.offsetY,560,244,1);
             }
         },
         advUp(evt){
-            if(this.advType == "adv360"){
+            if(this.advType == Utils.ADV_TYPE.TSZ){
                 dataCenter.upTo360ClkLog(this.tszData,evt.offsetX,evt.offsetY,560,244,2);
             }
         },
@@ -198,13 +225,47 @@ export default {
     .pic_ad_a img{
         width: 100%;
     }
+    .pic_ad_small_a {
+        width: 150px;
+        height: 108px;
+        display: block;
+        float: left;
+    }
+    .pic_ad_small_a img {
+        width: 100%;
+        height: 100%;
+    }
+    .mini_adv_small_title {
+        width: 400px;
+        height: 108px;
+        padding: 3px 0px 4px 0px;
+        float: right;
+    }
+    .mini_adv_small_title span {
+        width: 100%;
+        height: 60px;
+        display: block;
+        font-size: 17px;
+        font-weight: bold;
+        float: left;
+        overflow:hidden;
+    }
+    .mini_adv_small_title div {
+        font-size: 12px;
+        color: #bbb;
+        text-align: left;
+        float: left;
+        display: block;
+        position: relative;
+        top: 25px;
+    }
     .adv_mini_guanggao {
         display: block;
         float: right;
         color: #eee;
-        font-size: smaller;
+        font-size: x-small;
         position: relative;
         top: -20px;
-        opacity: .5;
+        opacity: .2;
     }
 </style>

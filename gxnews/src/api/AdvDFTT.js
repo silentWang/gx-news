@@ -2,17 +2,11 @@ import Utils from "@/js/Utils"
 import AdvManager from "./AdvManager";
 export default class AdvDFTT {
     constructor(container = ""){
-        // let sids = [101237,101238,101239,101240,101241];
-        // this.dfttIDS = dfttIds && dfttIds.length > 0 ? dfttIds : sids;
-        // let tids = ["k9ohe1","u7zGw0","YOOvNu","XpSS6i","z8dR81","jzKRfS","s5RjZC","uEwdQM","xuUEzU","th3oer"];
-        // this.showIDS = showIds && showIds.length > 0 ? showIds : tids;
-
         this.dfttIDS = [];
         this.showIDS = [];
         this.advConfigList = [];
         this.stepIndex = 0;
         this.showIndex = 0;
-        
         this.advData = [];
         let element = document.getElementsByClassName(container);
         this.container = element && element[0] ? element[0] : "";
@@ -20,10 +14,9 @@ export default class AdvDFTT {
     }
     
     setIDS(info,isNormal = true,isFirst = false){
-        if(!info || info.length == 0) return
+        if(!info) return
         let advs = isNormal ? info.ad_script :info.open_script;
         if(!advs || advs.length == 0) return
-        // let w = Math.ceil(100*Math.random());
         let r = Math.ceil(100*Math.random());
         advs.sort((a,b)=>{
             return b.ad_weight - a.ad_weight;
@@ -38,7 +31,7 @@ export default class AdvDFTT {
                 let showIds = adv.ad_script.split(",")
                 this.showIDS = showIds && showIds.length > 0 ? showIds : [];
             }
-            
+            else if(adv.ad_type == "advbd"){}
         }
         this.maxOnePage = this.dfttIDS.length > 0 ? this.dfttIDS.length : 1;
     }
@@ -53,7 +46,6 @@ export default class AdvDFTT {
         this.stepIndex = index1 + 1;
         this.showIndex = index2 + 1;
         this.advConfigList.push(config);
-        // console.log("ccccc",this.advConfigList)
         return config;
     }
     /**懒加载 进入可视范围才加载  
@@ -61,7 +53,7 @@ export default class AdvDFTT {
      * flag*/
     checkLoad(firstNum = 1){
         let length = this.advConfigList.length;
-        if(length == 0) return;
+        if(length == 0 || !this.advData || this.advData.length == 0) return;
         let array = [];
         if(this.isFirst){
             for(let i = 0;i < firstNum;i++){
@@ -111,8 +103,7 @@ export default class AdvDFTT {
                 $scrollBox: this.container
             }
         }
-        let weight = this.advData[0].ad_type == "advdf" ? 0 : 1
-        AdvManager.pushMergeRequest({imparray,report,showarray,array,weight});
+        AdvManager.pushMergeRequest({imparray,report,showarray,array,advs:this.advData});
     }
 
     reset(){

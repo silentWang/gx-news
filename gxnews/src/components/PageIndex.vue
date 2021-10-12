@@ -1,13 +1,6 @@
 <template>
     <div class="an_main">
         <div class="an-title" id="toptitle">
-            <!-- <div class="an-title-div">
-                <ul class="an-title-ul">
-                    <li v-for="item in titleList" :key="item.cateId">
-                        <a  @click="gotoCategry(item.cateId)" class="navLink">{{item.cateName}}</a>
-                    </li>
-                </ul>
-            </div> -->
             <div class="an_title_scrollnews_div">
                 <div v-show="timeNewList.length > 0">今日热搜:</div>
                 <ul class="an_title_scrollnews_ul">
@@ -39,31 +32,23 @@
             <div class="an_content">
                 <div class="an_content_item" v-for="(item,index) in newsList" :key="item.id + '_' + index">
                     <HomeNewsItem v-if="item.type != 2" :cateName="getCateName()" :index='index' :newsInfoData="item" v-on:gotoNews="gotoNews"></HomeNewsItem>
-                    <div v-else :id="item.id" class="adver_common_class_u8x3032d3" :advtype="item.advType" v-html="item.title">
-                    </div>
+                    <home-adv-item v-else :actionItem="mainAction"></home-adv-item>
                 </div>
             </div>
             <div class="an_right">
                 <div class="an_right_container">
-                    <div class="adv_class_for_jsonup" v-show="tszData != null">
-                        <img :src="tszData?tszData.pics[0]:''" @mousedown="tszDown" @mouseup="tszUp" @click="gotoNews(tszData)">
-                        <div class="custom_tsz_ad_title">
-                            <a @click="goto360News(tszData)" @mousedown="tszDown" @mouseup="tszUp">{{tszData?tszData.title:""}}</a>
-                        </div>
+                    <div class="adv_class_for_jsonup" v-if="kitchenFlag">
+                        <home-adv-item :actionItem="kitchenAction1" type="kitchen"></home-adv-item>
                     </div>
                     <div class="an_right_today"><img src=".././assets/yuandian.png"/>今日热点</div>
                     <ul class="an_right_list">
                         <li v-for="(item,index) in twelveList" :key="index">
                             <HomeNewsItem v-if="item.type != 2" type="small" :newsInfoData='item' v-on:gotoNews="gotoNews"></HomeNewsItem>
-                            <div v-else :id="item.id" :advtype="item.advType" class="adver_common_class_u8x89348jdf" v-html="item.title">
-                            </div>
+                            <home-adv-item v-else :actionItem="rightAction" type="right"></home-adv-item>
                         </li>
                     </ul>
-                    <div class="adv_class_for_jsonup" v-show="tszData != null">
-                        <img :src="tszData?tszData.pics[0]:''" @mousedown="tszDown" @mouseup="tszUp" @click="goto360News(tszData)">
-                        <div class="custom_tsz_ad_title">
-                            <a @click="goto360News(tszData)" @mousedown="tszDown" @mouseup="tszUp">{{tszData?tszData.title:""}}</a>
-                        </div>
+                    <div class="adv_class_for_jsonup" v-if="kitchenFlag">
+                        <home-adv-item :actionItem="kitchenAction2" type="kitchen"></home-adv-item>
                     </div>
                 </div>
             </div>
@@ -88,13 +73,15 @@
 </template>
 <script>
 import HomeNewsItem from './comp/HomeNewsItem'
+import HomeAdvItem from './comp/HomeAdvItem'
 import dataCenter from '@/api/DataCenter'
 import Utils from "@/js/Utils"
 import CompatibleUtils from '@/js/CompatibleUtils'
 let _this;
 export default {
     components:{
-        HomeNewsItem
+        HomeNewsItem,
+        HomeAdvItem
     },
     data(){
         return {
@@ -108,10 +95,22 @@ export default {
             newsList:[],
             twelveList:[],
             timeNewList:[],
-            headAdver:null,
-            footAdver:null,
-            tszData:null
+            kitchenFlag:false,
+            mainAction:null,
+            rightAction:null,
+            kitchenAction1:null,
+            kitchenAction2:null,
         }
+    },
+    beforeMount(){
+        this.mainAction = dataCenter.createAdvItem();
+        this.rightAction = dataCenter.createAdvItem();
+        this.kitchenAction1 = dataCenter.createAdvItem();
+        this.kitchenAction2 = dataCenter.createAdvItem();
+        this.mainAction.isFirst = false;
+        this.rightAction.isFirst = false;
+        this.kitchenAction1.isFirst = false;
+        this.kitchenAction2.isFirst = false;
     },
     mounted(){
         _this = this;
@@ -120,36 +119,49 @@ export default {
         if(str1 && str1.search("cateid=") >= 0){
             str1 = str1.split("cateid=")[1];
         } 
-        // dataCenter.setQid(query.qid);
-        dataCenter.getNewsList().then(res=>{
+        dataCenter.getHomeInfo().then(res=>{
             if(res.code != 200) return;
-            let list = res.data;
+            let data = res.data;
+            let list = data.category;
             let arr = [];
             for(let i = 0;i < list.length;i++){
                 let cate = list[i];
                 arr.push({id:cate.cateId - 1,cateId:cate.cateId,cateName:cate.cateName})
             }
             _this.titleList = arr;
-            let cateId = arr[0].cateId;
-            if(str1){
-                cateId = str1;
-            }
+            let cateId = str1 ? str1 : arr[0].cateId;
             _this.gotoCategry(cateId);
-        })
-        dataCenter.get24HoursNews().then(res=>{
-            if(res.code != 200) return;
-            _this.twelveList = res.data;
-            if(!dataCenter.adverList){
-                dataCenter.getAdverInfo(3).then(()=>{
-                    this.headAdver = dataCenter.getRandomAdverInfo(Utils.PositionType.POSITION_HEADER);
-                    this.footAdver = dataCenter.getRandomAdverInfo(Utils.PositionType.POSITION_FOOTER);
-                    _this.reRenderNow();
-                });
+
+            let news = [];
+            let rnews = [];
+            let sides = data.main_side;
+            for(let i = 0;i < sides.length;i++){
+                let side = sides[i];
+                if(side.name == "part_1"){
+                    news = side.data;
+                    this.mainAction.setIDS(side.adv);
+                }
+                else if(side.name == "part_2"){
+                    rnews = side.data;
+                    this.rightAction.setIDS(side.adv);
+                }
+                else if(side.name == "part_3"){
+                    this.kitchenAction1.setIDS(side.adv);
+                }
+                else if(side.name == "part_4"){
+                    this.kitchenAction2.setIDS(side.adv);
+                }
             }
-            else{
-                _this.reRenderNow();
-            }
-        })
+            this.newsList = news;
+            this.twelveList = rnews;
+            this.kitchenFlag = true;
+            this.$nextTick(()=>{
+                this.mainAction.checkLoad();
+                this.rightAction.checkLoad();
+                this.kitchenAction1.checkLoad();
+                this.kitchenAction2.checkLoad();
+            }); 
+        });
         dataCenter.getTimeNewsList().then(res=>{
             if(res.code != 200) return;
             let arr = res.data;
@@ -159,9 +171,6 @@ export default {
                 _this.playTimeNews();
             }
         });
-        dataCenter.get360AdvData().then(res=>{
-            this.tszData = res;
-        });
         document.title = "热点新闻";
         window.onscroll = this.listScroll.bind(this);
         window.onresize = this.listScroll.bind(this);
@@ -169,8 +178,9 @@ export default {
     },
     methods:{
         listScroll(evt){
-            dataCenter.checkAdverLoad("adver_common_class_u8x3032d3");
-            dataCenter.checkAdverLoad("adver_common_class_u8x89348jdf");
+            this.mainAction.checkLoad();
+            this.rightAction.checkLoad();
+            this.kitchenAction2.checkLoad();
             let mEle = document.getElementsByClassName("an_middle")[0];
             let rEle = document.getElementsByClassName("an_right")[0];
             if(!mEle || !rEle) return;
@@ -224,33 +234,8 @@ export default {
             }
             return cname;
         },
-        tszDown(evt){
-            dataCenter.upTo360ClkLog(this.tszData.adv,evt.offsetX,evt.offsetY,316,316,1);
-        },
-        tszUp(evt){
-            dataCenter.upTo360ClkLog(this.tszData.adv,evt.offsetX,evt.offsetY,316,316,2);
-        },
-        addKitchAdver(){
-            // let had = dataCenter.getRandomAdverInfo(Utils.PositionType.POSITION_HEADER);
-            // let fad = dataCenter.getRandomAdverInfo(Utils.PositionType.POSITION_FOOTER);
-            // let ele1 = document.getElementsByClassName("adv_class_for_jsonup")[0];
-            // let ele2 = document.getElementsByClassName("adv_class_for_jsonup")[1];
-            // if(!had || !fad) return;
-            // ele1.innerHTML = had.ad_script;
-            // ele2.innerHTML = fad.ad_script;
-            // Utils.changeAndExecuteJS(ele1);
-            // Utils.changeAndExecuteJS(ele2);
-
-            // dataCenter.addAdsByClassName("adv_class_for_jsonup");
-        },
         reloadHome(){
             window.location.reload();
-        },
-        reRenderNow(){
-            this.$nextTick(()=>{
-                dataCenter.checkAdverLoad("adver_common_class_u8x89348jdf");
-                this.addKitchAdver();
-            });
         },
         gotoCategry(idx){
             if(idx - 1 != this.selectIndex){
@@ -262,35 +247,21 @@ export default {
                 _this.isChange = false;
                 if(res.code != 200) return
                 let news = res.data;
-                if(_this.curPageIndex <= 1){
-                    _this.newsList = news;
-                }
-                else{
-                    _this.newsList = _this.newsList.concat(news);
-                }
+                this.mainAction.reset();
+                this.mainAction.isFirst = false;
+                _this.newsList = _this.curPageIndex <= 1 ? news : _this.newsList.concat(news)
                 _this.$nextTick(()=>{
                     if(_this.curPageIndex <= 1){
                         window.scrollTo(0,0);
                     }
-                    dataCenter.checkAdverLoad("adver_common_class_u8x3032d3");
+                    this.mainAction.checkLoad();
                 });
             })
         },
         gotoNews(item){
-            // let routeUrl = this.$router.resolve({
-            //     path: "/content",
-            //     query: {id:idx}            
-            // });
-            // window.open(routeUrl.href, '_blank');
             let turl = "https://news.dtxww.cn/content/?id="+item.id + "&cateid=" + item.cateId;
             window.open(turl, '_blank');
             return false;
-        },
-        goto360News(item){
-            if(item && item.cateId == -100){
-                dataCenter.upTo360ClkLog(this.tszData.adv,0,0,316,316,3);
-                return;
-            }
         },
         playTimeNews(ele = null,isplay = false){
             if(!ele){
@@ -511,6 +482,7 @@ export default {
         margin-bottom: 10px;
         padding-bottom: 10px;
         border-bottom: 1px solid #eee;
+        text-align: left;
     }
     .an_right {
         width: 336px;

@@ -2,7 +2,8 @@
 require('./check-versions')()
 
 process.env.NODE_ENV = 'production'
-process.env.BUILD_MODE = 7
+//1首页 2 mini 3 content 4 mini2  5minib  6 minib测试  7 详情测试
+process.env.BUILD_MODE = 5
 
 const ora = require('ora')
 const rm = require('rimraf')

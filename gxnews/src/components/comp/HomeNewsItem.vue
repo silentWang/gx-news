@@ -146,8 +146,8 @@ export default {
     }
     .an_small_content a.image {
         float: left;
-        width: 100px;
-        height: 57px;
+        width: 140px;
+        height: 90px;
         display: block;
         overflow: hidden;
         margin-right: 10px;
@@ -157,15 +157,15 @@ export default {
     }
     .an_small_content .image img {
         vertical-align: middle;
-        width: 100px;
-        height: 57px;
+        width: 140px;
+        height: 90px;
         transition: all 0.6s;
     }
     .an_small_content .image img:hover {
        transform: scale(1.2);
     }
     .an_small_content p {
-        width: 206px;
+        width: 160px;
         height: 54px;
         text-align: left;
         float: left;

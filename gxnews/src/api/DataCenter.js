@@ -538,9 +538,21 @@ class DataCenter {
         return this.axios.get(url).then(res=>res.data)
     }
     /****************************优化版接口******************************************** */
+    /**首页新接口 */
+    getHomeInfo(){
+        // https://news-dtxww.oss-cn-hangzhou.aliyuncs.com/data/develop/home_data.json
+        let ext = `//news.dtxww.cn/data/online/home_data.json`;
+        if(process.env.NODE_ENV == "development"){
+            ext = `/data/develop/home_data.json`;
+        }
+        return this.axios.get(ext,{headers:{'Content-Type':'application/json'}}).then(res=>{
+            let data = res.data;
+            return {code:200,data};
+        });
+    }
     /**详情页单接口 */
     getDetailInfo(cateid){
-        let ext = `//news.dtxww.cn/data/mini_detail_v_${cateid}.json`;
+        let ext = `//news.dtxww.cn/data/online/mini_detail_v_${cateid}.json`;
         if(process.env.NODE_ENV == "development"){
             ext = `/data/develop/mini_detail_v_${cateid}.json`;
         }
@@ -562,7 +574,7 @@ class DataCenter {
                 this.areaBool = true;
                 window.check_version = adata.data&&adata.data.is_sign != 1;
             }
-            let ext = `//news.dtxww.cn/data/mini_data_${cateid}.json?v=${new Date().getTime()}`;
+            let ext = `//news.dtxww.cn/data/online/mini_data_${cateid}.json?v=${new Date().getTime()}`;
             if(process.env.NODE_ENV == "development"){
                 ext = `/data/develop/mini_data_${cateid}.json?v=${new Date().getTime()}`;
             }

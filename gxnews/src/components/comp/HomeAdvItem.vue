@@ -1,65 +1,55 @@
 <template>
     <div>
         <div :id="itemId" v-if="advType != 'advbd'">
-            <div v-if="type == 'left'">
-                <div class="left_one_div">
-                    <a :href="itemUrl" target="_blank" class="left_one_img_a" @click="clickTo" @mousedown="advDown" @mouseup="advUp">
+            <div v-if="type == 'right'">
+                <div class="right_one_div">
+                    <a :href="itemUrl" target="_blank" class="right_one_img_a" @click="clickTo" @mousedown="advDown" @mouseup="advUp">
                         <img :src="pictures[0]">
                     </a>
-                    <div class="left_up_pp">
+                    <div class="right_up_pp">
                         <a :href="itemUrl" target="_blank" @click="clickTo" @mousedown="advDown" @mouseup="advUp">{{itemTitle}}</a>
                     </div>
-                    <a class="left_up_pp_source" :href="itemUrl" target="_blank" @click="clickTo" @mousedown="advDown" @mouseup="advUp">{{itemSource}}</a>
-                    <p><a :href="itemUrl" target="_blank" @click="clickTo" @mousedown="advDown" @mouseup="advUp"><span class="left_up_pp_span">广告</span></a></p>
+                    <a class="right_up_pp_source" :href="itemUrl" target="_blank" @click="clickTo" @mousedown="advDown" @mouseup="advUp">{{itemSource}}</a>
+                    <p><a :href="itemUrl" target="_blank" @click="clickTo" @mousedown="advDown" @mouseup="advUp"><span class="right_up_pp_span">广告</span></a></p>
                 </div>
             </div>
             <div v-else-if="type == 'kitchen'">
-                <div class="kitchen_adv_class" >
-                    <a class="kitchen_img_a" :href="itemUrl" target="_blank" @click="clickTo" @mousedown="advDown" @mouseup="advUp">
+                <div class="home_kitchen_adv_class" >
+                    <a class="home_kitchen_img_a" :href="itemUrl" target="_blank" @click="clickTo" @mousedown="advDown" @mouseup="advUp">
                         <img :src="pictures[0]">
-                        <span class="content_guanggao">广告</span>
+                        <span class="home_guanggao">广告</span>
                     </a>
-                    <a class="kitchen_title" :href="itemUrl" target="_blank" @click="clickTo" @mousedown="advDown" @mouseup="advUp">{{itemTitle}}</a>
-                </div>
-            </div>
-            <div v-else-if="type == 'float'">
-                <div class="float_adv_class" v-show="closeFlag">
-                    <a class="float_img_a" :href="itemUrl" target="_blank" @click="clickTo" @mousedown="advDown" @mouseup="advUp">
-                        <img :src="pictures[0]">
-                        <span class="content_guanggao">广告</span>
-                    </a>
-                    <a class="float_title" :href="itemUrl" target="_blank" @click="clickTo" @mousedown="advDown" @mouseup="advUp">{{itemTitle}}</a>
-                    <div class="adv_float_closebtn" @click="closeFlag = false" >X</div>                        
+                    <a class="home_kitchen_title" :href="itemUrl" target="_blank" @click="clickTo" @mousedown="advDown" @mouseup="advUp">{{itemTitle}}</a>
                 </div>
             </div>
             <div v-else>
-                <div class="cmini_adv_four" v-if="pictures.length == 4">
-                    <a class="cmini_adv_title" target="_blank" :href="itemUrl" @click="clickTo" @mousedown="advDown" @mouseup="advUp">{{itemTitle}}</a>
-                    <div class="cfour_image" v-for="(item,index) in pictures" :key="index">
+                <div class="hmini_adv_four" v-if="pictures.length == 4">
+                    <a class="hmini_adv_title" target="_blank" :href="itemUrl" @click="clickTo" @mousedown="advDown" @mouseup="advUp">{{itemTitle}}</a>
+                    <div class="hcfour_image" v-for="(item,index) in pictures" :key="index">
                         <a :href="getSpUrl(index)" target="_blank" @click="clickTo" @mousedown="advDown" @mouseup="advUp"><img :src="item"></a>
                     </div>
-                    <a :href="itemUrl" target="_blank" @mousedown="advDown" @mouseup="advUp"><span class="content_guanggao">广告</span></a>
+                    <a :href="itemUrl" target="_blank" @mousedown="advDown" @mouseup="advUp"><span class="home_guanggao">广告</span></a>
                 </div>
-                <div class="mini_adv_three" v-else-if="pictures.length == 3">
-                    <a class="cmini_adv_title" target="_blank" :href="itemUrl" @click="clickTo" @mousedown="advDown" @mouseup="advUp">{{itemTitle}}</a>
-                    <div class="cthree_image" v-for="(item,index) in pictures" :key="index">
+                <div class="hmini_adv_three" v-else-if="pictures.length == 3">
+                    <a class="hmini_adv_title" target="_blank" :href="itemUrl" @click="clickTo" @mousedown="advDown" @mouseup="advUp">{{itemTitle}}</a>
+                    <div class="hthree_image" v-for="(item,index) in pictures" :key="index">
                         <a :href="getSpUrl(index)" target="_blank" @click="clickTo" @mousedown="advDown" @mouseup="advUp"><img :src="item"></a>
                     </div>
-                    <a :href="itemUrl" target="_blank" @click="clickTo" @mousedown="advDown" @mouseup="advUp"><span class="content_guanggao" @mousedown="advDown" @mouseup="advUp">广告</span></a>
+                    <a :href="itemUrl" target="_blank" @click="clickTo" @mousedown="advDown" @mouseup="advUp"><span class="home_guanggao" @mousedown="advDown" @mouseup="advUp">广告</span></a>
                 </div>
-                <div class="mini_adv_two" v-else-if="pictures.length == 2">
-                    <a class="cmini_adv_title" target="_blank" :href="itemUrl" @click="clickTo" @mousedown="advDown" @mouseup="advUp">{{itemTitle}}</a>
-                    <div class="ctwo_image" v-for="(item,index) in pictures" :key="index">
+                <div class="hmini_adv_two" v-else-if="pictures.length == 2">
+                    <a class="hmini_adv_title" target="_blank" :href="itemUrl" @click="clickTo" @mousedown="advDown" @mouseup="advUp">{{itemTitle}}</a>
+                    <div class="htwo_image" v-for="(item,index) in pictures" :key="index">
                         <a :href="getSpUrl(index)" target="_blank" @click="clickTo" @mousedown="advDown" @mouseup="advUp"><img :src="item"></a>
                     </div>
-                    <a :href="itemUrl" target="_blank" @click="clickTo" @mousedown="advDown" @mouseup="advUp"><span class="content_guanggao" @mousedown="advDown" @mouseup="advUp">广告</span></a>
+                    <a :href="itemUrl" target="_blank" @click="clickTo" @mousedown="advDown" @mouseup="advUp"><span class="home_guanggao" @mousedown="advDown" @mouseup="advUp">广告</span></a>
                 </div>
                 <div v-else-if="singleSmallBool">
-                    <a class="content_adv_next_pic" target="_blank" :href="itemUrl" @click="clickTo" @mousedown="advDown" @mouseup="advUp">
+                    <a class="home_adv_next_pic" target="_blank" :href="itemUrl" @click="clickTo" @mousedown="advDown" @mouseup="advUp">
                         <img :src="pictures[0]"/>
-                        <span class="content_guanggao">广告</span>
+                        <span class="home_guanggao">广告</span>
                     </a>
-                    <a class="content_adv_small_title" target="_blank" :href="itemUrl" @click="clickTo" @mousedown="advDown" @mouseup="advUp">
+                    <a class="home_adv_small_title" target="_blank" :href="itemUrl" @click="clickTo" @mousedown="advDown" @mouseup="advUp">
                         {{itemTitle}}
                         <div>
                             <span>{{itemSource}}</span>
@@ -67,9 +57,9 @@
                     </a>
                 </div>
                 <div v-else>
-                    <a class="cmini_adv_title" target="_blank" :href="itemUrl" @click="clickTo" @mousedown="advDown" @mouseup="advUp">{{itemTitle}}</a>
-                    <a target="_blank" :href="itemUrl" @click="clickTo" class="pic_ad_a" @mousedown="advDown" @mouseup="advUp"><img :src='pictures[0]'/></a>
-                    <a :href="itemUrl" target="_blank" @click="clickTo" @mousedown="advDown" @mouseup="advUp"><span class="content_guanggao" @mousedown="advDown" @mouseup="advUp">广告</span></a>
+                    <a class="hmini_adv_title" target="_blank" :href="itemUrl" @click="clickTo" @mousedown="advDown" @mouseup="advUp">{{itemTitle}}</a>
+                    <a target="_blank" :href="itemUrl" @click="clickTo" class="hpic_ad_a" @mousedown="advDown" @mouseup="advUp"><img :src='pictures[0]'/></a>
+                    <a :href="itemUrl" target="_blank" @click="clickTo" @mousedown="advDown" @mouseup="advUp"><span class="home_guanggao" @mousedown="advDown" @mouseup="advUp">广告</span></a>
                 </div>
             </div>
         </div>
@@ -87,7 +77,7 @@ export default {
         },
         type:{
             default:function(){
-                return "dialog";
+                return "";
             }
         }
     },
@@ -116,10 +106,6 @@ export default {
             let info = this.advData.data;
             if(!info){
                 this.advType = "advbd"
-                // this.bdcode = dataCenter.getDefaultBDAdv();
-                // this.$nextTick(()=>{
-                //     dataCenter.addAdsByClassName("adv_class_bd_default");
-                // });
                 return;
             }
             this.advType = info.advType;
@@ -182,59 +168,59 @@ export default {
 }
 </script>
 <style>
-    .cmini_adv_title {
+    .hmini_adv_title {
         font-size: 20px;
         font-weight: bold;
         display: block;
         padding-bottom: 10px;
     }
-    .cfour_image {
+    .hcfour_image {
         padding: 0 5px 0 0px;
         overflow: hidden;
         float: left;
     }
-    .cfour_image a {
-        width: 185px;
+    .hcfour_image a {
+        width: 167px;
         display: block;
         overflow: hidden;
     }
-    .cfour_image a img {
-        width: 185px;
+    .hcfour_image a img {
+        width: 167px;
         padding: 0;
     }
-    .cthree_image {
+    .hthree_image {
         padding: 0 5px 0 0px;
         overflow: hidden;
         float: left;
     }
-    .cthree_image a {
+    .hthree_image a {
         width: 245px;
         display: block;
         float: left;
         overflow: hidden;
     }
-    .cthree_image a img {
+    .hthree_image a img {
         width: 240px;
     }
-    .ctwo_image a {
-        width: 380px;
+    .htwo_image a {
+        width: 345px;
         display: block;
         padding: 0 10px 0 px;
         float: left;
         overflow: hidden;
     }
-    .ctwo_image a img {
-        width: 373px;
+    .htwo_image a img {
+        width: 338px;
     }
-    .pic_ad_a {
+    .hpic_ad_a {
         height: 100%;
         overflow:hidden;
         display: block;
     }
-    .pic_ad_a img{
+    .hpic_ad_a img{
         width: 100%;
     }
-    .content_adv_next_pic {
+    .home_adv_next_pic {
         width: 177px;
         height: 100px;
         display: block;
@@ -243,36 +229,36 @@ export default {
         background-color: #f1f1f1;
         overflow:hidden;
     }
-    .content_adv_next_pic img {
+    .home_adv_next_pic img {
         width: 177px;
         height: 100px;
         overflow: hidden;
         padding: 0px;
         transition: all 0.6s;
     }
-    .content_adv_next_pic img:hover {
+    .home_adv_next_pic img:hover {
         transform: scale(1.2);
     }
-    .content_adv_small_title {
+    .home_adv_small_title {
         display: block;
         font-size: 20px;
         font-weight: bold;
         text-align: left;
     }
-    .content_adv_small_title div {
+    .home_adv_small_title div {
         display: block;
         font-size: 12px;
         color: #666;
         position: relative;
         top: 55px;
     }
-    .left_one_div {
+    .right_one_div {
         width: 100%;
         height: 90px;
         text-align: left;
         position: relative;
     }
-    .left_one_img_a {
+    .right_one_img_a {
         float: left;
         width: 140px;
         height: 90px;
@@ -283,16 +269,16 @@ export default {
         position: relative;
         cursor: pointer;
     }
-    .left_one_img_a img {
+    .right_one_img_a img {
         width: 140px;
         min-height: 90px;
         vertical-align: middle;
         transition: all 0.6s;
     }
-    .left_one_img_a img:hover {
+    .right_one_img_a img:hover {
         transform: scale(1.2);
     }
-    .left_up_pp_span {
+    .right_up_pp_span {
         display: block;
         position: absolute;
         color: #A6A6A6;
@@ -301,92 +287,53 @@ export default {
         bottom: 2px;
         opacity: 0.5;
     }
-    .left_up_pp {
+    .right_up_pp {
         width: 340px;
         height: 40px;
         position: relative;
         text-align: left;
     }
-    .left_up_pp a {
+    .right_up_pp a {
         display: block;
         width: 190px;
         height: 200px;
         font-size: 14px;
         overflow: hidden;
     }
-    .left_up_pp_source {
+    .right_up_pp_source {
         display: block;
         float: left;
         position: relative;
         top: 30px;
     }
-    .kitchen_adv_class {
+    .home_kitchen_adv_class {
         border:1px solid #ececec;
         width: 340px;
         height: 280px;
         margin: 0px auto;
     }
-    .kitchen_img_a {
+    .home_kitchen_img_a {
         width: 100%;
         height: 100%;
         display: block;
     }
-    .kitchen_img_a img {
+    .home_kitchen_img_a img {
         width: 100%;
         height: 100%;
     }
-    .kitchen_title {
+    .home_kitchen_title {
         display: none;
         position: relative;
         width: 100%;
         font-size: medium;
     }
-    .float_adv_class {
-        border:1px solid #ececec;
-        width: 300px;
-        height: 250px;
-        margin: 0px auto;
-    }
-    .float_img_a {
-        width: 100%;
-        height: 100%;
-        display: block;
-    }
-    .float_img_a img {
-        width: 100%;
-        height: 100%;
-    }
-    .float_title {
-        display: block;
-        position: relative;
-        width: 100%;
-        color: white;
-        font-size: small;
-        top: -40px;
-        text-align: left;
-        height: 40px;
-        overflow: hidden;
-    }
-    .adv_float_closebtn {
-        width: 30px;
-        height: 22px;
-        position: relative;
-        color: seashell;
-        left: 265px;
-        top: -288px;
-        padding: 7px 0 0 0;
-        background-color: rgba(0, 0, 0, 0.2);
-        border-radius: 16px;
-        z-index: 90;
-        cursor: pointer;
-    }
-    .content_guanggao {
+    .home_guanggao {
         display: block;
         float: right;
         color: #eee;
         font-size: x-small;
         position: relative;
-        right: 5px;
+        right: 25px;
         top: -20px;
         opacity: .2;
     }

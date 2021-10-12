@@ -85,6 +85,9 @@
             </div>
             <div class="bn_content_float_advs" v-if="floatFlag">
                 <content-adv-item :actionItem="floatAction" type="float"></content-adv-item>
+                <div class="float_adv_good_trans">
+                    <content-adv-item :actionItem="floatTransAction"></content-adv-item>
+                </div>
             </div>
             <div class="bn_sidenav">
                 <ul>
@@ -166,6 +169,7 @@ export default {
             nowDate:"",
             nongDate:"",
             floatAction:null,
+            floatTransAction:null,
             kitchenAction1:null,
             kitchenAction2:null,
             kitchenAction3:null,
@@ -184,12 +188,14 @@ export default {
         this.kitchenAction4 = dataCenter.createAdvItem();
         this.kitchenAction5 = dataCenter.createAdvItem();
         this.floatAction = dataCenter.createAdvItem();
+        this.floatTransAction = dataCenter.createAdvItem();
         this.kitchenAction1.isFirst = false;
         this.kitchenAction2.isFirst = false;
         this.kitchenAction3.isFirst = false;
         this.kitchenAction4.isFirst = false;
         this.kitchenAction5.isFirst = false;
         this.floatAction.isFirst = false;
+        this.floatTransAction.isFirst = false;
         this.hotAction = dataCenter.createAdvItem();
         this.commonAction = dataCenter.createAdvItem();
         this.dialogAction = dataCenter.createAdvItem("an_dialog_second_cont");
@@ -312,6 +318,7 @@ export default {
                 }
                 else if(detail.name == "part_13"){
                     this.floatAction.setIDS(detail.adv)
+                    this.floatTransAction.setIDS(detail.adv,false)
                     this.floatFlag = true                    
                 }
             }
@@ -336,6 +343,7 @@ export default {
                     this.hotAction.checkLoad();
                     this.commonAction.checkLoad();
                     this.floatAction.checkLoad();
+                    this.floatTransAction.checkLoad();
                 })
                 this.checkStayState();     
             });
@@ -373,10 +381,10 @@ export default {
                 rEle.style.position = "fixed";
                 rEle.style.top = "40px";
             }
-            else if(rsHgt - clientHgt + 40 < scrollTop){
+            else if(rsHgt < scrollTop){
                 if(rEle.style.position != "fixed"){
                     rEle.style.position = "fixed";
-                    rEle.style.top = (clientHgt - rsHgt) + "px";
+                    rEle.style.top = "-280px";
                 }
             }
             else {
@@ -432,8 +440,11 @@ export default {
             let _this = this;
             if(!this.screenHandler){
                 this.screenHandler = new ScreenHandler(15000,()=>{
+                    if(_this.showDialogFlag) return;
                     _this.showDialogFlag = true;
                     document.body.style.overflow = "hidden";
+                    this.dialogAction.reset();
+                    this.dialogAction.isFirst = false;
                     this.$nextTick(()=>{
                         this.dialogScroll();
                     });
@@ -470,6 +481,12 @@ export default {
     .cls_main {
         height: 100%;
         background: #fff;
+    }
+    img {
+        transition: all 0.6s;
+    }
+    img:hover {
+        transform: scale(1.1);
     }
     .an_dialog_container {
         position: fixed;
@@ -600,8 +617,9 @@ export default {
         word-break: break-all;
         cursor: pointer;
         margin-bottom: 10px;
-        padding-bottom: 10px;
         text-align: left;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #aaa;
     }
     .bn_title {
         width: 100%;
@@ -777,14 +795,14 @@ export default {
         cursor: pointer;
     }
     .chuchuang_class {
-        height: 340px;
+        height: 290px;
         overflow: hidden;
         background-color: #f7f7f7;
         border:1px solid #ececec;
     }
     .chuchuang_class2 {
         width: 360px;
-        height: 340px;
+        height: 290px;
         overflow: hidden;
         margin-top: 10px;
         padding-top: 10px;
@@ -888,6 +906,13 @@ export default {
         right: 10px;
         bottom: 10px;
         z-index: 100;
+    }
+    .float_adv_good_trans {
+        position: absolute;
+        left: 100px;
+        top: -10px;
+        z-index: 101;
+        opacity: 0;
     }
     .bn_sidenav {
         position: fixed;
