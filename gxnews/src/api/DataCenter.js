@@ -29,9 +29,9 @@ class DataCenter {
      * dfttIds 东方广告ids
      * showIds  360 showids
      */
-    createAdvItem(container = ""){
+    createAdvItem(container = "",name = "actionDefault"){
         let item = new AdvDFTT(container);
-        item.name = container ? container : "window";
+        item.name = name;
         return item;
     }
 

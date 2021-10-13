@@ -90,6 +90,10 @@ export default class AdvDFTT {
 
     getData(array){
         let length = array.length;
+        if(process.env.NODE_ENV != "production"){
+            console.log(`--------${this.name} checkload num:${length}---------`,array);
+            console.log(`advConfigList:`,this.advConfigList.length);
+        }
         // let imparray = [];
         // let report = {};
         // let showarray = [];
@@ -127,11 +131,12 @@ export default class AdvDFTT {
     reset(){
         let length = this.advConfigList.length;
         if(length == 0) return;
-        for(let i = 0;i < length;i++){
-            let config = this.advConfigList[i];
-            config.data = null; 
-            config.loaded = false;
-        }
+        this.advConfigList = [];
+        // for(let i = 0;i < length;i++){
+        //     let config = this.advConfigList[i];
+        //     config.data = null; 
+        //     config.loaded = false;
+        // }
         this.isFirst = true;
     }
 

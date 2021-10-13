@@ -80,7 +80,6 @@ class AdvService {
     requestDFTT(data){
         return new Promise((resolve,reject)=>{
             let params = this.getDFTTParams(data);
-            Utils.addDelay(()=>{resolve(null);},this,5000,1);
             NEWDSP_20200715.GET_DSP_DATA(params, (res) => {
                 resolve(res);
             });

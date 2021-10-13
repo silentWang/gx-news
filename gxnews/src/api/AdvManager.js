@@ -39,7 +39,6 @@ class AdvManager {
         let adtype2 = advs[1] ? advs[1].ad_type : "";
         let adtype3 = advs[2] ? advs[2].ad_type : "";
         let advType = adtype1;
-
         if(adtype1 == Utils.ADV_TYPE.BAIDU){
             this.loadBaiduAD(array,advs);
         }
@@ -85,7 +84,7 @@ class AdvManager {
             return;
         }
         if(process.env.NODE_ENV != "production"){
-            console.log(advType,res);
+            console.log(`--------${advType}---------`,res);
         }
         if(res && Utils.getObjectLength(res) > 0){
             let confs = queueData.array;

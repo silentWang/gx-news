@@ -263,7 +263,6 @@ export default {
                                 let msc = obj.ad_script.split("mediav.ad.show('")[1]
                                 if(msc){                                
                                     xobj.adv_id = msc.split("',")[0]
-                                    console.log(xobj.adv_id)
                                 }
                                 xobj.adv_script = obj.ad_script
                                 break
@@ -282,7 +281,6 @@ export default {
                                 let msc = obj.ad_script.split("mediav.ad.show('")[1]
                                 if(msc){                                
                                     xobj.adv_id = msc.split("',")[0]
-                                    console.log(xobj.adv_id)
                                 }
                                 xobj.adv_script = obj.ad_script
                                 break
@@ -428,11 +426,7 @@ export default {
         gotoPage(index){
             let len = this.allPages.length;
             if(index >= len - 1){
-                let routeUrl = this.$router.resolve({
-                    path: "/",
-                    query: {id:1}
-                });
-                window.open(routeUrl.href, '_self');
+                window.open("https://news.dtxww.cn/", '_self');
             }
             else{
                 this.currentPageIndex = index;

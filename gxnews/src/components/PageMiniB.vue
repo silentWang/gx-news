@@ -96,11 +96,11 @@ export default {
         }
     },
     beforeMount(){
-        this.actionItem1 = dataCenter.createAdvItem("mini_main");
-        this.actionItem2 = dataCenter.createAdvItem("mini_main");
-        this.actionItemList = dataCenter.createAdvItem("mini_main");
-        this.actionItem3 = dataCenter.createAdvItem("mini_main");
-        this.actionItemCC = dataCenter.createAdvItem("mini_main");
+        this.actionItem1 = dataCenter.createAdvItem("mini_main","actionItem1");
+        this.actionItem2 = dataCenter.createAdvItem("mini_main","actionItem2");
+        this.actionItemList = dataCenter.createAdvItem("mini_main","actionItemList");
+        this.actionItem3 = dataCenter.createAdvItem("mini_main","actionItem3");
+        this.actionItemCC = dataCenter.createAdvItem("mini_main","actionItemCC");
     },
     mounted(){
         _this = this;        
@@ -190,6 +190,7 @@ export default {
             return skey;
         },
         scrollHandler(e){
+            console.log("dddddddddddd",this.isloading)
             let ele = e.srcElement ? e.srcElement : e.target;
             if(!ele) return;
             if(!this.isloading){
@@ -220,6 +221,7 @@ export default {
         },
         clickClose(){
             this.dialogFlag = false;    
+            dataCenter.upToActivity(100001,"close");
             if(this.showAdvFlag2){
                 this.showAdvFlag2 = false;
             }            
@@ -265,25 +267,25 @@ export default {
         },
         gotoCategry(idx){
             if(idx < 0){
-                window.open("/","blank")
+                window.open("https://news.dtxww.cn/","blank")
                 return;
             }
             if(this.selectCateId == idx) return;
             this.curLoadPage = 1;
             this.selectCateId = idx;
+            this.isloading = true;
             dataCenter.getMiniInfo(idx,this.curLoadPage).then(res=>{
                 if(res.code != 200) return
                 let data = res.data;
-                this.actionItem3.reset();
-                this.newsList = data.main_list;
+                this.currentPage = 1;
                 let cele = document.getElementsByClassName("mini_middle")[0];
-                if(cele && cele.scrollTop > 0){
-                    this.currentPage = 1;
-                    cele.scrollTop = 0;
-                }
-                else{
+                cele.scrollTop = 0;
+                this.actionItemList.reset();
+                this.newsList = data.main_list;
+                this.$nextTick(()=>{
+                    this.isloading = false;
                     this.loadNextAdver(1);
-                }
+                });
                 Utils.addDelay(_this.checkIsMore,this,10000,1);
             });
         },
@@ -304,8 +306,8 @@ export default {
                 this.currentPage = 1;
             }
             this.$nextTick(()=>{
-                this.actionItem3.checkLoad(3);
-                this.actionItemList.checkLoad(3);
+                this.actionItemList.checkLoad(force != 2 ? 3 : 1);
+                this.actionItem3.checkLoad();
                 if(force == 0){
                     this.actionItem2.checkLoad();
                     this.actionItemCC.checkLoad();
@@ -321,12 +323,6 @@ export default {
             else{
                 clearTimeout(this.delayGotoId);
             }
-        },
-        tszDown(evt){
-            dataCenter.upTo360ClkLog(this.tszData.adv,evt.offsetX,evt.offsetY,200,185,1);
-        },
-        tszUp(evt){
-            dataCenter.upTo360ClkLog(this.tszData.adv,evt.offsetX,evt.offsetY,200,185,2);
         },
         gotoNews(item,index){
             //前10条点击即移动到第10条
