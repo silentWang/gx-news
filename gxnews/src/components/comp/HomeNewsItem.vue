@@ -21,6 +21,7 @@
             </a>
             <p>
                 <a  :title="title" @click="gotoNews">{{title}}</a>
+                <a target="_self" v-show="from.length > 0">{{from}}</a>
             </p>
         </div>
     </div>

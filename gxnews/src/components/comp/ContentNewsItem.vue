@@ -257,8 +257,9 @@ export default {
     .nup_hot_div .hot_title {
         display: block;
         width: 156px;
-        height: 36px;
+        height: 34px;
         overflow: hidden;
+        text-overflow: ellipsis;
     }
     .nup_hot_div .nup_hot_image_a {
         width: 166px;

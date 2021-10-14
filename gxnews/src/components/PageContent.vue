@@ -106,18 +106,18 @@
                 </ul>
             </div>
         </div>
-        <div v-show="showDialogFlag" class="an_dialog_container" @click="checkStayState(false)">
+        <div v-if="showDialogFlag" class="an_dialog_container">
             <div class="an_dialog_container_alpha"></div>
-            <div class="an_dialog_close"></div>
+            <div class="an_dialog_close" @click="checkStayState(false)"></div>
             <div class="tips-left-date">
                 <p class="tips-time" id="tips-time">{{nowTime}}</p>
                 <p class="tips-date">{{nowDate}}</p>
                 <p class="tips-month">{{nongDate}}</p>
                 <p class="tips-weather" id="tips-weather" style="display: block;"><span class="weather-icon i1" id="weather-icon"></span><span id="weather-info">30℃  多云</span></p>
             </div>
-            <div class="an_dialog_second_cont" @scroll="dialogScroll">
-                <div class="an_dialog_view">
-                    <div class="atitle" @click="checkStayState(false)">
+            <div class="an_dialog_second_cont" @scroll="dialogScroll" @click="checkStayState(false)">
+                <div class="an_dialog_view" @click.stop>
+                    <div class="atitle">
                         <p><span class="line"></span>本网页已闲置过久，点击关闭或空白处，即可回到网页</p>
                     </div>
                     <ul class="an_dialog_list">
@@ -818,6 +818,10 @@ export default {
         max-width: 780px;
         display: block;
         margin: 0 auto;
+        transition:none;
+    }
+    .cls_newscontent img:hover {
+        transform: none;
     }
     .cls_newscontent p {
         text-indent: 36px;

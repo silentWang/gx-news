@@ -336,10 +336,15 @@ export default {
         height: 100%;
     }
     .kitchen_title {
-        display: none;
         position: relative;
         width: 100%;
-        font-size: medium;
+        height: 34px;
+        color: #fff;
+        font-size: 15px;
+        display: block;
+        background: rgba(0,0,0,0.7);
+        top: -34px;
+        overflow: hidden;
     }
     .float_adv_class {
         border:1px solid #ececec;

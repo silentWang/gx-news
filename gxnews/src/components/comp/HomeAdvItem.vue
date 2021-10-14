@@ -322,10 +322,15 @@ export default {
         height: 100%;
     }
     .home_kitchen_title {
-        display: none;
         position: relative;
         width: 100%;
-        font-size: medium;
+        height: 34px;
+        color: #fff;
+        font-size: 15px;
+        display: block;
+        background: rgba(0,0,0,0.7);
+        top: -34px;
+        overflow: hidden;
     }
     .home_guanggao {
         display: block;
