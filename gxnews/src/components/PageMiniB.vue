@@ -84,6 +84,9 @@ export default {
             rightList:[],
             dialogNewsList:[],
             tszData:null,
+            screenHandler1:null,//弹窗
+            screenHandler2:null,//切标签
+            curLabelIndex:0,
             showAdvFlag1:false,
             showAdvFlag2:false,
             showAdvFlag3:false,
@@ -141,6 +144,7 @@ export default {
                 this.showAdvFlag3 = false;
             }
         },this);
+        this.screenHandler2 = new ScreenHandler(10000,this.checkNextLabel.bind(this));
         document.title = "MiniPage";
     },
     methods:{
@@ -190,7 +194,6 @@ export default {
             return skey;
         },
         scrollHandler(e){
-            console.log("dddddddddddd",this.isloading)
             let ele = e.srcElement ? e.srcElement : e.target;
             if(!ele) return;
             if(!this.isloading){
@@ -219,6 +222,18 @@ export default {
             }
             return cname + "    ";
         },
+        checkNextLabel(){
+            this.curLabelIndex++;
+            let item = this.titleList[this.curLabelIndex];
+            this.gotoCategry(item.cateId);
+            if(this.curLabelIndex >= 2) this.curLabelIndex = -1;
+            if(this.curLabelIndex == 0){
+                this.screenHandler2.destroy();
+            }
+            else{
+                this.screenHandler2.reWatch();
+            }
+        },
         clickClose(){
             this.dialogFlag = false;    
             dataCenter.upToActivity(100001,"close");
@@ -226,13 +241,13 @@ export default {
                 this.showAdvFlag2 = false;
             }            
             if(!this.screenHandler){
-                this.screenHandler = new ScreenHandler(30000,()=>{
+                this.screenHandler1 = new ScreenHandler(30000,()=>{
                     this.showDialog();
                 });
             }
             else {
                 this.dialogFlag = false;
-                this.screenHandler.reWatch();
+                this.screenHandler1.reWatch();
             }
         },
         showDialog(){

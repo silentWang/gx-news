@@ -1,7 +1,12 @@
 <template>
     <div>
-        <div :id="itemId" v-if="advType != 'advbd'">
-            <div v-if="type == 'left'">
+        <div :id="itemId">
+            <div v-if="isLoadingSelf()">
+                <div v-if="type == 'float'" class="adv_float_closebtn" @click="closeFlag = false" >X</div>
+                <div :id="itemId" class="adv_class_bd_default" v-show="closeFlag">
+                </div>
+            </div>
+            <div v-else-if="type == 'left'">
                 <div class="left_one_div">
                     <a :href="itemUrl" target="_blank" class="left_one_img_a" @click="clickTo" @mousedown="advDown" @mouseup="advUp">
                         <img :src="pictures[0]">
@@ -24,12 +29,12 @@
             </div>
             <div v-else-if="type == 'float'">
                 <div class="float_adv_class" v-show="closeFlag">
+                    <div class="adv_float_closebtn" @click="closeFlag = false" >X</div>                        
                     <a class="float_img_a" :href="itemUrl" target="_blank" @click="clickTo" @mousedown="advDown" @mouseup="advUp">
                         <img :src="pictures[0]">
                         <span class="content_guanggao">广告</span>
                     </a>
                     <a class="float_title" :href="itemUrl" target="_blank" @click="clickTo" @mousedown="advDown" @mouseup="advUp">{{itemTitle}}</a>
-                    <div class="adv_float_closebtn" @click="closeFlag = false" >X</div>                        
                 </div>
             </div>
             <div v-else>
@@ -73,8 +78,6 @@
                 </div>
             </div>
         </div>
-        <div v-else v-html="bdcode" class="adv_class_bd_default">
-        </div>
     </div>
 </template>
 <script>
@@ -101,7 +104,6 @@ export default {
             itemTitle:"",
             pictures:[],
             itemUrl:"",
-            bdcode:"",
             itemSource:"",
             singleSmallBool:false,
             closeFlag:true
@@ -116,10 +118,6 @@ export default {
             let info = this.advData.data;
             if(!info){
                 this.advType = "advbd"
-                // this.bdcode = dataCenter.getDefaultBDAdv();
-                // this.$nextTick(()=>{
-                //     dataCenter.addAdsByClassName("adv_class_bd_default");
-                // });
                 return;
             }
             this.advType = info.advType;
@@ -154,6 +152,9 @@ export default {
                 this.tszData = info;
                 dataCenter.upTo360ShowLog(this.tszData);
             }
+        },
+        isLoadingSelf(){
+            return !this.advType || this.advType == Utils.ADV_TYPE.BAIDU;
         },
         getSpUrl(index){
             if(this.advType != Utils.ADV_TYPE.TSZ) return this.itemUrl;
@@ -376,9 +377,10 @@ export default {
         width: 30px;
         height: 22px;
         position: relative;
+        float: right;
         color: seashell;
-        left: 265px;
-        top: -288px;
+        top: 32px;
+        right: 5px;
         padding: 7px 0 0 0;
         background-color: rgba(0, 0, 0, 0.2);
         border-radius: 16px;

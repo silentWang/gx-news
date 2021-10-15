@@ -113,8 +113,10 @@ class AdvManager {
             let conf = array[i];
             let ele = document.getElementById(conf.elementID);
             if(!ele) continue;
-            ele.innerHTML = advs[0].ad_script;
-            Utils.changeAndExecuteJS(ele);
+            let cele = ele.getElementsByClassName("adv_class_bd_default")[0];
+            if(!cele) continue;
+            cele.innerHTML = advs[0].ad_script;
+            Utils.changeAndExecuteJS(cele);
         }
     }
 

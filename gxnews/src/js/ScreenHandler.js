@@ -31,4 +31,16 @@ export default class ScreenHandler {
             }
         }, this.timeOut);
     }
+    destroy(){
+        clearTimeout(this.timeOutId);
+        this.backFunc = null;
+        CompatibleUtils.removeEvent(document.body,"mousemove",this.triggerEvent,this);
+        CompatibleUtils.removeEvent(document.body,"mousedown",this.triggerEvent,this);
+        CompatibleUtils.removeEvent(document.body,"click",this.triggerEvent,this);
+        CompatibleUtils.removeEvent(document.body,"mouseup",this.triggerEvent,this);
+        CompatibleUtils.removeEvent(window,"mousewheel",this.triggerEvent,this);
+        CompatibleUtils.removeEvent(document.body,"keydown",this.triggerEvent,this);
+        CompatibleUtils.removeEvent(document.body,"keypress",this.triggerEvent,this);
+        CompatibleUtils.removeEvent(document.body,"keyup",this.triggerEvent,this);
+    }
 }

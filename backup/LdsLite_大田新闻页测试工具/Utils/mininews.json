@@ -4,7 +4,7 @@
             {
                 "tabname": "大田新闻页",
                 "tabicon": "http://sha.gimini.cn/mini6/index.html?sid=sha",
-                "url": "https://news.dtxww.cn/mini/002/?v=101",
+                "url": "https://news.dtxww.cn/mini/002/?v=101&version=123",
                 "same_core":  "1",
                 "ids": "dtxww"
             },
