@@ -309,7 +309,6 @@ export default {
     body {
         background: #f5f5f5;
         color:#222222;
-        /* font: 14px/26px PingFang SC,Hiragino Sans GB,Microsoft YaHei,WenQuanYi Micro Hei,Helvetica Neue,Arial,sans-serif; */
     }
     a {
         color: #333;

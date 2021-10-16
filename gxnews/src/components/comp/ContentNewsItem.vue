@@ -32,7 +32,7 @@
         </div>
         <div v-else-if="type == 'nlink'">
             <div class="nup_nlink_div">
-                <a @click="gotoNews">{{from}}&nbsp;&nbsp;&nbsp;&nbsp;</a>
+                <a @click="gotoNews" class="nup_nlink_cate">{{from}}&nbsp;&nbsp;&nbsp;&nbsp;</a>
                 <a :title="title" @click="gotoNews">{{title}}</a>
             </div>
         </div>
@@ -251,13 +251,22 @@ export default {
         white-space: nowrap;
         text-overflow: ellipsis;
     }
+    .nup_nlink_cate {
+        color: #333;
+        text-decoration: none;
+        cursor: pointer;
+        display: inline-block;
+        width: 36px;
+        margin-right: 5px;
+        border-right: 1px solid #eee;
+    }
     .nup_hot_div {
         width: 166px;
     }
     .nup_hot_div .hot_title {
-        display: block;
+        display: inline-block;
         width: 156px;
-        height: 34px;
+        height: 36px;
         overflow: hidden;
         text-overflow: ellipsis;
     }

@@ -245,7 +245,6 @@ export default {
     }
     body {
         background: #f5f5f5;
-        font-family: "Microsoft YaHei", Arial, sans-serif;
     }
     a {
         color: #333;

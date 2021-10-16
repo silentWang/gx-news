@@ -764,8 +764,8 @@ export default {
         overflow: hidden;
         zoom: 1;
         text-align: left;
-        padding-top: 4px;
-        padding-bottom: 2px;
+        padding-top: 6px;
+        padding-bottom: 4px;
         border-bottom: 1px solid #ececec;
     }
     .n_hot_list {

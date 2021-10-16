@@ -26,7 +26,12 @@
             <ul class="mini_right_list">
                 <li v-for="(item,index) in rightList.slice(0,3)" :key="index">
                     <div v-if="item.type == 2">
-                        <MiniAdvItem :actionItem="actionItemCC" type="kitchen" class="mini_adver_kicthen_class_style"></MiniAdvItem>
+                        <div v-if="index == 0">
+                            <MiniAdvItem :actionItem="actionItemCC1" type="kitchen" class="mini_adver_kicthen_class_style"></MiniAdvItem>
+                        </div>
+                        <div v-else>
+                            <MiniAdvItem :actionItem="actionItemCC2" type="kitchen" class="mini_adver_kicthen_class_style"></MiniAdvItem>
+                        </div>
                     </div>
                     <div v-else>
                         <NewsSlider v-on:gotoNews="gotoNews" :nsId="index" nWidth="200" nHeight="185" v-bind:newsList="getSlideNewsList(item.data)"></NewsSlider>
@@ -95,7 +100,8 @@ export default {
             actionItem2:null,
             actionItem3:null,
             actionItemList:null,
-            actionItemCC:null
+            actionItemCC1:null,
+            actionItemCC2:null
         }
     },
     beforeMount(){
@@ -103,7 +109,8 @@ export default {
         this.actionItem2 = dataCenter.createAdvItem("mini_main","actionItem2");
         this.actionItemList = dataCenter.createAdvItem("mini_main","actionItemList");
         this.actionItem3 = dataCenter.createAdvItem("mini_main","actionItem3");
-        this.actionItemCC = dataCenter.createAdvItem("mini_main","actionItemCC");
+        this.actionItemCC1 = dataCenter.createAdvItem("mini_main","actionItemCC1");
+        this.actionItemCC2 = dataCenter.createAdvItem("mini_main","actionItemCC2");
     },
     mounted(){
         _this = this;        
@@ -123,7 +130,12 @@ export default {
             this.currentPage = 1;
             let cele = document.getElementsByClassName("mini_middle")[0];
             cele.scrollTop = 0;
-            this.createAdv(data);            
+            this.createAdv(data);
+            let switch_rate = data.switch_rate;
+            let rate = 100*Math.random();
+            if(switch_rate && switch_rate > 0 && rate < parseInt(switch_rate)){
+                this.screenHandler2 = new ScreenHandler(20000,this.checkNextLabel.bind(this));
+            }            
             Utils.addDelay(_this.checkIsMore,this,10000,1);            
         });
 
@@ -144,7 +156,6 @@ export default {
                 this.showAdvFlag3 = false;
             }
         },this);
-        // this.screenHandler2 = new ScreenHandler(10000,this.checkNextLabel.bind(this));
         document.title = "MiniPage";
     },
     methods:{
@@ -160,14 +171,20 @@ export default {
                     this.showAdvFlag1 = window.check_version && rand <= xrate;
                 }
                 else if(info.name == "part_1"){
-                    this.actionItemCC.setIDS(info.adv);
+                    this.actionItemCC1.setIDS(info.adv);
                     info.type = 2
                     sides.push(info)
                 } 
-                else if(info.name == "part_2" || info.name == "part_3"){
+                else if(info.name == "part_2"){
                     sides.push(info);
                     this.showAdvFlag3 = true;
                     this.actionItem2.setIDS(info.adv,false);
+                }
+                else if(info.name == "part_3"){
+                    sides.push(info);
+                    info.type = 2;
+                    this.showAdvFlag3 = true;
+                    this.actionItemCC2.setIDS(info.adv);
                 } 
                 else if(info.name == "part_4"){
                     this.actionItem1.setIDS(info.adv,false);
@@ -325,7 +342,8 @@ export default {
                 this.actionItem3.checkLoad();
                 if(force == 0){
                     this.actionItem2.checkLoad();
-                    this.actionItemCC.checkLoad();
+                    this.actionItemCC1.checkLoad();
+                    this.actionItemCC2.checkLoad();
                 }
             });
         },
@@ -424,7 +442,6 @@ export default {
     }
     body {
         background: #f5f5f5;
-        font-family: "Microsoft YaHei", Arial, sans-serif;
     }
     a {
         color: #333;
