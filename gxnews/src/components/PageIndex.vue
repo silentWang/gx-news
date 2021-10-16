@@ -519,6 +519,7 @@ export default {
     .an_right_list li {
         overflow: hidden;
         zoom: 1;
+        padding-bottom: 10px;
         border-bottom: 1px solid #eee;
         margin-top: 10px;
     }

@@ -130,7 +130,7 @@
             </div>
         </div>
         <div v-if="showAdvFlag && showDialogFlag" class="adv_detail_class_show">
-            <content-adv-item class="content_adver_dialog_class_style" :actionItem="dialogAction" type="dialog"></content-adv-item>
+            <content-adv-item class="content_adver_dialog_class_style" :actionItem="dialogRateAction" type="dialog"></content-adv-item>
         </div>
     </div>
 </template>
@@ -177,7 +177,8 @@ export default {
             kitchenAction5:null,
             hotAction:null,
             commonAction:null,
-            dialogAction:null
+            dialogAction:null,
+            dialogRateAction:null,
         }
     },
     beforeMount(){
@@ -199,9 +200,11 @@ export default {
         this.hotAction = dataCenter.createAdvItem();
         this.commonAction = dataCenter.createAdvItem();
         this.dialogAction = dataCenter.createAdvItem("an_dialog_second_cont");
+        this.dialogRateAction = dataCenter.createAdvItem();
         this.hotAction.isFirst = false;
         this.commonAction.isFirst = false;
         this.dialogAction.isFirst = false;
+        this.dialogRateAction.isFirst = false;
     },
     created(){
         let query = Utils.getUrlParams();
@@ -291,8 +294,9 @@ export default {
                 }
                 else if(detail.name == "part_5"){
                     dialogList = detail.data;
-                    this.showAdvFlag = detail.adv && detail.adv.adv_rate > rate;
-                    this.dialogAction.setIDS(detail.adv)                    
+                    this.showAdvFlag = detail.adv && detail.adv.open_rate > rate;
+                    this.dialogAction.setIDS(detail.adv);
+                    this.dialogRateAction.setIDS(detail.adv,false);
                 }
                 else if(detail.name == "part_6"){
                     //左侧五个橱窗
@@ -445,12 +449,15 @@ export default {
                     this.dialogAction.isFirst = false;
                     this.$nextTick(()=>{
                         this.dialogScroll();
+                        if(this.showAdvFlag){
+                            this.dialogRateAction.checkLoad();
+                        }
                     });
                 });
             }
             if(!bool){
                 _this.showDialogFlag = false;
-                _this.screenHandler.reWatch();
+                _this.screenHandler.reWatch(30000);
                 document.body.style.overflow = "auto";
             }
         }

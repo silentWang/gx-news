@@ -22,9 +22,10 @@ export default class ScreenHandler {
         this.curTime = new Date().getTime();
         this.reWatch();
     }
-    reWatch(){
+    reWatch(timeOut = this.timeOut){
         clearTimeout(this.timeOutId);
         let _this = this;
+        this.timeOut = timeOut;
         this.timeOutId = setTimeout(() => {
             if(_this.backFunc){
                 _this.backFunc();

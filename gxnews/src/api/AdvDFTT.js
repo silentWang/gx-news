@@ -17,11 +17,21 @@ export default class AdvDFTT {
         if(!info) return
         let advs = isNormal ? info.ad_script :info.open_script;
         if(!advs || advs.length == 0) return
-        let r = Math.ceil(100*Math.random());
         advs.sort((a,b)=>{
             return b.ad_weight - a.ad_weight;
-        })
-        this.advData = advs;
+        });
+        let arr1 = [];
+        let arr2 = [];
+        let r = Math.ceil(100*Math.random());
+        for(let i = 0;i < advs.length;i++){
+            if(r <= advs[i].ad_weight){
+                arr1.push(advs[i]);
+            }
+            else{
+                arr2.push(advs[i]);
+            }
+        }
+        this.advData = arr1.concat(arr2);
         for(let adv of advs){
             if(adv.ad_type == "advdf"){
                 let dfttIds = adv.ad_script.split(",")

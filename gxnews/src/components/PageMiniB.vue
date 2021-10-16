@@ -144,7 +144,7 @@ export default {
                 this.showAdvFlag3 = false;
             }
         },this);
-        this.screenHandler2 = new ScreenHandler(10000,this.checkNextLabel.bind(this));
+        // this.screenHandler2 = new ScreenHandler(10000,this.checkNextLabel.bind(this));
         document.title = "MiniPage";
     },
     methods:{
