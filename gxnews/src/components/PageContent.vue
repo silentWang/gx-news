@@ -179,6 +179,7 @@ export default {
             commonAction:null,
             dialogAction:null,
             dialogRateAction:null,
+            screenHandlerRefresh:null
         }
     },
     beforeMount(){
@@ -245,6 +246,7 @@ export default {
             let choseHots = [];
             let rankHots = [];
             let details = data.detail_side;
+            let isRefresh = false;
             let rate = ~~(100*Math.random());
             for(let i = 0;i < details.length;i++){
                 let detail = details[i];
@@ -254,7 +256,11 @@ export default {
                 }
                 else if(detail.name == "part_2"){
                     bottomList = detail.data;
-                    this.commonAction.setIDS(detail.adv)
+                    if(detail.adv.refresh_script){
+                        isRefresh = true;
+                        detail.adv.ad_script = detail.adv.refresh_script;
+                    }
+                    this.commonAction.setIDS(detail.adv);
                 }
                 else if(detail.name == "part_3"){
                     let infos = detail.adv.ad_script;
@@ -269,6 +275,10 @@ export default {
                                 }
                                 xobj.adv_script = obj.ad_script
                                 break
+                            }
+                            else if(obj.ad_type == "advbd"){
+                                xobj.adv_type = "advbd"
+                                xobj.adv_script = obj.ad_script
                             }
                         }
                         this.headAdvInfo = xobj;
@@ -287,6 +297,10 @@ export default {
                                 }
                                 xobj.adv_script = obj.ad_script
                                 break
+                            }
+                            else if(obj.ad_type == "advbd"){
+                                xobj.adv_type = "advbd"
+                                xobj.adv_script = obj.ad_script
                             }
                         }
                         this.footAdvInfo = xobj;
@@ -350,6 +364,9 @@ export default {
                     this.commonAction.checkLoad();
                     this.floatAction.checkLoad();
                     this.floatTransAction.checkLoad();
+                    if(isRefresh){
+                        this.checkBottomRefresh();
+                    }
                 })
                 this.checkStayState();     
             });
@@ -436,6 +453,15 @@ export default {
                 this.currentPageIndex = index;
                 this.detailHtml = Utils.escapeHtml(this.allPages[index]);
                 window.scrollTo(0,0);
+            }
+        },
+        checkBottomRefresh(){
+            if(!this.screenHandlerRefresh){
+                this.screenHandlerRefresh = new ScreenHandler(20000,()=>{
+                    this.commonAction.resetBaidu();
+                    this.commonAction.checkLoad();
+                    this.screenHandlerRefresh.reWatch();
+                });
             }
         },
         checkStayState(bool = true){

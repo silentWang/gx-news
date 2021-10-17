@@ -225,11 +225,16 @@ export default {
         text-align: left;
     }
     .n_up_pp a {
-        display: block;
-        width: 190px;
-        height: 200px;
-        font-size: 14px;
+        width: 156px;
+        height: 40px;
+        font-size: 16px;
+        text-overflow: -o-ellipsis-lastline;
         overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        line-clamp: 2;
+        -webkit-box-orient: vertical;
     }
     .n_up_pp_span {
         display: block;
@@ -264,11 +269,17 @@ export default {
         width: 166px;
     }
     .nup_hot_div .hot_title {
-        display: inline-block;
+        display: inline;
         width: 156px;
-        height: 36px;
+        height: 40px;
+        font-size: 16px;
+        text-overflow: -o-ellipsis-lastline;
         overflow: hidden;
         text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        line-clamp: 2;
+        -webkit-box-orient: vertical;
     }
     .nup_hot_div .nup_hot_image_a {
         width: 166px;

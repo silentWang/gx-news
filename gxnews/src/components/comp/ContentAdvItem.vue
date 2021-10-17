@@ -311,8 +311,8 @@ export default {
     .left_up_pp a {
         display: block;
         width: 190px;
-        height: 200px;
-        font-size: 14px;
+        height: 40px;
+        font-size: 16px;
         overflow: hidden;
     }
     .left_up_pp_source {

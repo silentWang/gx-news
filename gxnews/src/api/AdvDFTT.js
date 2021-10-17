@@ -83,7 +83,8 @@ export default class AdvDFTT {
                 if(config.data || config.loaded) continue;
                 let ele = document.getElementById(config.elementID);
                 if(!ele) continue;
-                if(Utils.checkIsInViewport(ele)){
+                let isbaidu = this.advData[0] && this.advData[0].ad_type == Utils.ADV_TYPE.BAIDU;
+                if(isbaidu || Utils.checkIsInViewport(ele)){
                     config.loaded = true;
                     array.push(config);
                     if(array.length >= this.maxOnePage){
@@ -148,6 +149,16 @@ export default class AdvDFTT {
         //     config.loaded = false;
         // }
         this.isFirst = true;
+    }
+
+    resetBaidu(){
+        let length = this.advConfigList.length;
+        if(length == 0) return;
+        for(let i = 0;i < length;i++){
+            let config = this.advConfigList[i];
+            config.data = null; 
+            config.loaded = false;
+        }
     }
 
 }
