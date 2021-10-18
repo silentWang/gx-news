@@ -805,6 +805,7 @@ export default {
         padding:2px 0px 0px 4px;
         margin-bottom: 10px;
         width: 166px;
+        height: 155px;
         float: left;
     }
     .bn_left_list_news_title {

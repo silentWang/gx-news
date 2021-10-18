@@ -220,12 +220,11 @@ export default {
         transform: scale(1.2);
     }
     .n_up_pp {
-        width: 340px;
+        width: 366px;
         position: relative;
         text-align: left;
     }
     .n_up_pp a {
-        width: 156px;
         height: 40px;
         font-size: 16px;
         text-overflow: -o-ellipsis-lastline;
