@@ -113,7 +113,9 @@
                 <p class="tips-time" id="tips-time">{{nowTime}}</p>
                 <p class="tips-date">{{nowDate}}</p>
                 <p class="tips-month">{{nongDate}}</p>
-                <p class="tips-weather" id="tips-weather" style="display: block;"><span class="weather-icon i1" id="weather-icon"></span><span id="weather-info">30℃  多云</span></p>
+                <p class="tips-weather" style="display: block;">
+                    <iframe allowtransparency="true" frameborder="0" width="195" height="96" scrolling="no" src="//tianqi.2345.com/plugin/widget/index.htm?s=1&z=3&t=0&v=0&d=1&bd=0&k=&f=000000&ltf=009944&htf=cc0000&q=0&e=0&a=1&c=54511&w=195&h=96&align=center"></iframe>
+                </p>
             </div>
             <div class="an_dialog_second_cont" @scroll="dialogScroll" @click="checkStayState(false)">
                 <div class="an_dialog_view" @click.stop>
@@ -262,48 +264,30 @@ export default {
                     }
                     this.commonAction.setIDS(detail.adv);
                 }
-                else if(detail.name == "part_3"){
+                else if(detail.name == "part_3" || detail.name == "part_4"){
                     let infos = detail.adv.ad_script;
                     if(infos){
-                        let xobj = {}
-                        for(let obj of infos){
-                            if(obj.ad_type == "adv360"){
-                                xobj.adv_type = "adv360"
-                                let msc = obj.ad_script.split("mediav.ad.show('")[1]
-                                if(msc){                                
-                                    xobj.adv_id = msc.split("',")[0]
-                                }
-                                xobj.adv_script = obj.ad_script
-                                break
-                            }
-                            else if(obj.ad_type == "advbd"){
-                                xobj.adv_type = "advbd"
-                                xobj.adv_script = obj.ad_script
-                            }
+                        infos.sort((a,b)=>{
+                            return parseInt(b.ad_weight) - parseInt(a.ad_weight);
+                        });
+                        let obj = infos[0];
+                        let xobj = {};
+                        if(obj.ad_type == "adv360"){
+                            xobj.adv_type = "adv360";
+                            let msc = obj.ad_script.split("mediav.ad.show('")[1];
+                            if(msc) xobj.adv_id = msc.split("',")[0];
+                            xobj.adv_script = obj.ad_script
                         }
-                        this.headAdvInfo = xobj;
-                    }
-                }
-                else if(detail.name == "part_4"){
-                    let infos = detail.adv.ad_script;
-                    if(infos){
-                        let xobj = {}
-                        for(let obj of infos){
-                            if(obj.ad_type == "adv360"){
-                                xobj.adv_type = "adv360"
-                                let msc = obj.ad_script.split("mediav.ad.show('")[1]
-                                if(msc){                                
-                                    xobj.adv_id = msc.split("',")[0]
-                                }
-                                xobj.adv_script = obj.ad_script
-                                break
-                            }
-                            else if(obj.ad_type == "advbd"){
-                                xobj.adv_type = "advbd"
-                                xobj.adv_script = obj.ad_script
-                            }
+                        else if(obj.ad_type == "advbd"){
+                            xobj.adv_type = "advbd";
+                            xobj.adv_script = obj.ad_script
                         }
-                        this.footAdvInfo = xobj;
+                        if(detail.name == "part_3"){
+                            this.headAdvInfo = xobj;
+                        }
+                        else{
+                            this.footAdvInfo = xobj;
+                        }
                     }
                 }
                 else if(detail.name == "part_5"){

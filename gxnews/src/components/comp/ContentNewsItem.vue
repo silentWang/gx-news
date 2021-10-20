@@ -225,7 +225,7 @@ export default {
         text-align: left;
     }
     .n_up_pp a {
-        height: 40px;
+        height: 45px;
         font-size: 16px;
         text-overflow: -o-ellipsis-lastline;
         overflow: hidden;
@@ -270,7 +270,7 @@ export default {
     .nup_hot_div .hot_title {
         display: inline;
         width: 156px;
-        height: 40px;
+        height: 45px;
         font-size: 16px;
         text-overflow: -o-ellipsis-lastline;
         overflow: hidden;
@@ -283,9 +283,10 @@ export default {
     .nup_hot_div .nup_hot_image_a {
         width: 166px;
         height: 92px;
+        overflow:hidden;
     }
     .nup_hot_div .nup_hot_image_a img{
         width: 166px;
-        height: 100%;
+        height: 92px;
     }
 </style>

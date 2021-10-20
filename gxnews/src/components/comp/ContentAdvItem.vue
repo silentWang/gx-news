@@ -3,7 +3,7 @@
         <div :id="itemId">
             <div v-if="isLoadingSelf()">
                 <div v-if="type == 'float'" class="adv_float_closebtn" @click="closeFlag = false" >X</div>
-                <div :id="itemId" class="adv_class_bd_default" v-show="closeFlag">
+                <div class="adv_class_bd_default" v-show="closeFlag">
                 </div>
             </div>
             <div v-else-if="type == 'left'">

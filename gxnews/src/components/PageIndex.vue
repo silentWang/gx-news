@@ -30,6 +30,7 @@
                 </div>
             </div>
             <div class="an_content">
+                <home-slider-news-comp></home-slider-news-comp>
                 <div class="an_content_item" v-for="(item,index) in newsList" :key="item.id + '_' + index">
                     <HomeNewsItem v-if="item.type != 2" :cateName="getCateName()" :index='index' :newsInfoData="item" v-on:gotoNews="gotoNews"></HomeNewsItem>
                     <home-adv-item v-else :actionItem="mainAction"></home-adv-item>
@@ -72,6 +73,7 @@
     </div>
 </template>
 <script>
+import HomeSliderNewsComp from './comp/HomeSliderNewsComp.vue'
 import HomeNewsItem from './comp/HomeNewsItem'
 import HomeAdvItem from './comp/HomeAdvItem'
 import dataCenter from '@/api/DataCenter'
@@ -80,6 +82,7 @@ import CompatibleUtils from '@/js/CompatibleUtils'
 let _this;
 export default {
     components:{
+        HomeSliderNewsComp,
         HomeNewsItem,
         HomeAdvItem
     },

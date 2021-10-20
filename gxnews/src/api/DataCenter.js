@@ -352,7 +352,7 @@ class DataCenter {
             return;
         }
         console.log(actid + "----" + type + "----" + action)
-        let url = this.getRealUrl("/v1/demo/index");
+        let url = "//func.dtw-tech.cn/data/total";//this.getRealUrl("/v1/demo/index");
         let userid = this.axios.defaults.headers["userId"];
         let params = "?userid=" + userid + "&" + "actid=" + actid;
         if(type){
