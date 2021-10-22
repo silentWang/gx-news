@@ -1,19 +1,25 @@
 <template>
     <div>
         <div class="home_newscon">
-            <div class="home_slider_con">
-                <div class="hs_ul_list">
-                    <a class="hs_slider_image">
-                        <img :src="newsInfo.pics?newsInfo.pics[0]:''">
-                    </a>
-                    <a class="hs_slider_title">{{newsInfo.title}}</a>
-                </div>
+            <div class="home_slider_con" @mouseenter="arrowFlag=true" @mouseleave="arrowFlag=false">
+                <transition name="fade" v-for="(item,index) in newsList" :key="index">
+                    <div class="home_slider_list_div" v-show="index == currentIndex">
+                        <a class="hs_slider_image" @click="gotoNews(item)">
+                            <img :src="item.pics[0]">
+                        </a>
+                        <a class="hs_slider_title" @click="gotoNews(item)">
+                            <span>{{item.title}}</span>
+                        </a>
+                    </div>
+                </transition>
             </div>
-            <div></div>
+            <div v-show="arrowFlag" @click="showNext(-1)" @mouseenter="checkFlag(true)" @mouseleave="checkFlag(false)" class="home_slide_arrow_left"><span>〈</span></div>
+            <div v-show="arrowFlag" @click="showNext(1)" @mouseenter="checkFlag(true)" @mouseleave="checkFlag(false)" class="home_slide_arrow_right"><span>〉</span></div>
         </div>
-        <div class="home_first_news">
+        <div class="home_first_news" @click="gotoFirstNews" v-show="firstNews && firstNews.title">
             <a>
-                <h3>吉林监狱罪犯越狱脱逃现场监控曝光！翻墙逃跑</h3>
+                <img class="home_first_img_tiao" src="../.././assets/hot25x25.gif"/>
+                <h3>{{firstNews ? firstNews.title : ""}}</h3>
             </a>
         </div>
     </div>
@@ -22,30 +28,47 @@
 import Utils from "@/js/Utils"
 export default {
     props:{
-        // newsList:{
-        //     default(){
-        //         return []
-        //     }
-        // }
+        newsList:{
+            default(){
+                return []
+            }
+        },
+        firstNews:null
     },
     data(){
         return {
-            newsList:[],
-            newsInfo:{},
-            currentIndex:0
+            currentIndex:0,
+            arrowFlag:false,
+            enableFlag:false
         }
     },
     mounted(){
-        this.newsList = [
-            {"id":8794661,"type":1,"title":"\u201c\u9738\u9053\u201d\u8d27\u8f66\u9738\u5360\u975e\u673a\u52a8\u8f66\u9053\u5378\u8d27","pics":["\/\/dfzximg02.dftoutiao.com\/news\/20211019\/20211019160805_f74b948282a306a86f3221bec57aa407_1_mwpm_03201609.jpeg"],"click":0,"cateId":1,"time":"2021\/10\/19","from":"\u65b0\u6c11\u665a\u62a5"},
-            {"id":8794660,"type":1,"title":"\u7f57\u5609\u826f\u8001\u5a46\u6652\u7167\uff0c\u5bf9\u955c\u6d17\u5934\u4e0d\u5728\u610f\u7d20\u989c\u76ae\u80a4\u5ae9\uff0c\u8001\u516c\u4e0d\u5728\u5bb6\u72ec\u4eab\u751f\u6d3b","pics":["\/\/imgcdn.toutiaoyule.com\/20211019\/20211019164025628759a_t.jpeg?135x90"],"click":0,"cateId":1,"time":"2021\/10\/19","from":"\u732b\u773c\u5a31\u4e50"}
-        ];
-        this.newsInfo = this.newsList[this.currentIndex]
-        Utils.addDelay(this.showNext,this,3000,0);
+        Utils.addDelay(()=>{
+            this.showNext(1);
+        },this,3000,0);
     },
     methods:{
-        showNext(){
-
+        checkFlag(bool){
+            this.arrowFlag = bool;
+            this.enableFlag = bool;
+        },
+        showNext(dir = 1){
+            if(this.arrowFlag && !this.enableFlag) return;
+            if(dir < 0){
+                this.currentIndex--;
+            }
+            else if(dir > 0){
+                this.currentIndex++;
+            }
+            if(this.currentIndex < 0 || this.currentIndex >= this.newsList.length){
+                this.currentIndex = 0;
+            }
+        },
+        gotoNews(item){
+            this.$emit("gotoNews",item);
+        },
+        gotoFirstNews(){
+            this.$emit("gotoNews",this.firstNews);
         }
     }
 }
@@ -56,19 +79,20 @@ export default {
         height: 260px;
         width: 100%;
         overflow:hidden;
+        position: relative;
     }
     .home_slider_con {
         width: 100%;
         height: 100%;
-    }
-    .hs_ul_list {
-        list-style: none;
-    }
-    .hs_ul_list li {
-        width: 100%;
         overflow:hidden;
     }
-    .hs_ul_list .hs_slider_image {
+    .home_slider_list_div {
+        position: absolute;
+        width: 100%;
+        left: 0px;
+        top: 0px;
+    }
+    .hs_slider_image {
         display: block;
         width: 100%;
         height: 260px;
@@ -80,7 +104,7 @@ export default {
         cursor: pointer;
     }
     .hs_slider_title {
-        display: block;
+        display: inline-block;
         width: 100%;
         height: 30px;
         background: rgba(0, 0, 0, 0.7);
@@ -91,6 +115,46 @@ export default {
         position: relative;
         top: -35px;
         cursor: pointer;
+    }
+    .hs_slider_title span {
+        display: inline-block;
+        width: 600px;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+    .home_slide_arrow_left {
+        width: 30px;
+        height: 40px;
+        position: relative;
+        top: -160px;
+        padding: 8px 5px 12px 0px;
+        color: #fff;
+        border-radius: 0px 5px 5px 0px;
+        font-size: 32px;
+        cursor: pointer;
+        background: rgba(0, 0, 0, 0.7);
+        overflow: hidden;
+    }
+    .home_slide_arrow_right {
+        width: 30px;
+        height: 40px;
+        position: relative;
+        float: right;
+        top: -220px;
+        padding: 8px 0px 12px 0px;
+        color: #fff;
+        border-radius: 5px 0px 0px 5px;
+        font-size: 32px;
+        cursor: pointer;
+        background: rgba(0, 0, 0, 0.7);
+        overflow: hidden;
+    }
+    .home_slide_arrow_left span {
+        margin-left: -8px;
+    }
+    .home_slide_arrow_right span {
+        margin-left: 5px;
     }
     .home_first_news {
         width: 100%;
@@ -103,6 +167,11 @@ export default {
     .home_first_news a {
         cursor: pointer;
     }
+    .home_first_img_tiao {
+        display: block;
+        float: left;
+        margin: 10px 5px 0px 0px;
+    }
     .home_first_news a h3 {
         padding-top: 5px;
         padding-left: 10px;
@@ -112,5 +181,11 @@ export default {
         font-weight: 700;
         color: #ee4b4c;
         text-overflow: ellipsis;
+    }
+    .fade-enter-active, .fade-leave-active {
+        transition: opacity 0.5s;
+    }
+    .fade-enter, .fade-leave-to {
+        opacity: 0;
     }
 </style>

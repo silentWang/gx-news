@@ -30,7 +30,7 @@
                 </div>
             </div>
             <div class="an_content">
-                <home-slider-news-comp></home-slider-news-comp>
+                <home-slider-news-comp v-on:gotoNews="gotoNews" :newsList="sliderList" :firstNews="firstToutiao"></home-slider-news-comp>
                 <div class="an_content_item" v-for="(item,index) in newsList" :key="item.id + '_' + index">
                     <HomeNewsItem v-if="item.type != 2" :cateName="getCateName()" :index='index' :newsInfoData="item" v-on:gotoNews="gotoNews"></HomeNewsItem>
                     <home-adv-item v-else :actionItem="mainAction"></home-adv-item>
@@ -98,6 +98,8 @@ export default {
             newsList:[],
             twelveList:[],
             timeNewList:[],
+            sliderList:{},
+            firstToutiao:{},
             kitchenFlag:false,
             mainAction:null,
             rightAction:null,
@@ -134,7 +136,6 @@ export default {
             _this.titleList = arr;
             let cateId = str1 ? str1 : arr[0].cateId;
             _this.gotoCategry(cateId);
-
             let news = [];
             let rnews = [];
             let sides = data.main_side;
@@ -153,6 +154,12 @@ export default {
                 }
                 else if(side.name == "part_4"){
                     this.kitchenAction2.setIDS(side.adv);
+                }
+                else if(side.name == "part_5"){
+                    this.sliderList = side.data;
+                }
+                else if(side.name == "part_6"){
+                    this.firstToutiao = side.data[0];
                 }
             }
             this.newsList = news;

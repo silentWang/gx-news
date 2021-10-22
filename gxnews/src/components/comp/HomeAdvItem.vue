@@ -28,7 +28,7 @@
                     <div class="hcfour_image" v-for="(item,index) in pictures" :key="index">
                         <a :href="getSpUrl(index)" target="_blank" @click="clickTo" @mousedown="advDown" @mouseup="advUp"><img :src="item"></a>
                     </div>
-                    <a :href="itemUrl" target="_blank" @mousedown="advDown" @mouseup="advUp"><span class="home_guanggao">广告</span></a>
+                    <a :href="itemUrl" target="_blank" @click="clickTo" @mousedown="advDown" @mouseup="advUp"><span class="home_guanggao">广告</span></a>
                 </div>
                 <div class="hmini_adv_three" v-else-if="pictures.length == 3">
                     <a class="hmini_adv_title" target="_blank" :href="itemUrl" @click="clickTo" @mousedown="advDown" @mouseup="advUp">{{itemTitle}}</a>

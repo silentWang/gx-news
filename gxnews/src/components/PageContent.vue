@@ -114,7 +114,7 @@
                 <p class="tips-date">{{nowDate}}</p>
                 <p class="tips-month">{{nongDate}}</p>
                 <p class="tips-weather" style="display: block;">
-                    <iframe allowtransparency="true" frameborder="0" width="195" height="96" scrolling="no" src="//tianqi.2345.com/plugin/widget/index.htm?s=1&z=3&t=0&v=0&d=1&bd=0&k=&f=000000&ltf=009944&htf=cc0000&q=0&e=0&a=1&c=54511&w=195&h=96&align=center"></iframe>
+                    <iframe allowtransparency="true" frameborder="0" width="195" height="96" scrolling="no" src="//tianqi.2345.com/plugin/widget/index.htm?s=1&z=3&t=0&v=0&d=1&bd=0&k=&f=ffffff&ltf=009944&htf=cc0000&q=1&e=0&a=1&c=54511&w=195&h=96&align=center"></iframe>
                 </p>
             </div>
             <div class="an_dialog_second_cont" @scroll="dialogScroll" @click="checkStayState(false)">
@@ -564,17 +564,6 @@ export default {
     }
     .tips-left-date .tips-weather .weather-icon.i1 {
         background-position: 0 -36px;
-    }
-    .tips-left-date .tips-weather .weather-icon {
-        display: inline-block;
-        width: 36px;
-        height: 36px;
-        position: relative;
-        top: 10px;
-        margin-right: 10px;
-        background-image: url("../assets/36x1224_weather.png");
-        background-position: 0 0;
-        background-repeat: no-repeat;
     }
     .tips-left-date .tips-weather {
         font-size: 16px;
