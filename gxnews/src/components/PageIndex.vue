@@ -99,7 +99,7 @@ export default {
             twelveList:[],
             timeNewList:[],
             sliderList:{},
-            firstToutiao:{},
+            firstToutiao:null,
             kitchenFlag:false,
             mainAction:null,
             rightAction:null,
@@ -120,6 +120,8 @@ export default {
     mounted(){
         _this = this;
         let url = window.location.href;
+        let query = Utils.getUrlParams();
+        let nid = query && query.id;
         let str1 = url.search("wow") >= 0 ? url.split("wow")[0] : "";
         if(str1 && str1.search("cateid=") >= 0){
             str1 = str1.split("cateid=")[1];
@@ -159,7 +161,14 @@ export default {
                     this.sliderList = side.data;
                 }
                 else if(side.name == "part_6"){
-                    this.firstToutiao = side.data[0];
+                    for(let info of side.data){
+                        if(nid && info.id == nid){
+                            _this.firstToutiao = info;
+                        }
+                    }
+                    if(!_this.firstToutiao){
+                        _this.firstToutiao = side.data[Math.floor(side.data.length*Math.random())];
+                    }
                 }
             }
             this.newsList = news;

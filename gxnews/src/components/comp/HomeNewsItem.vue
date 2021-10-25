@@ -9,7 +9,7 @@
                     <h2><a target="_blank">{{title}}</a></h2>
                     <p class="an_content_info">
                         <a target="_self" >{{cateName}}</a>&nbsp;
-                        <a target="_self" v-show="from.length > 0">{{from}}</a>&nbsp;
+                        <a target="_self" v-show="from&&from.length > 0">{{from}}</a>&nbsp;
                         <span>{{time}}</span>
                     </p>
                 </div>
@@ -21,7 +21,7 @@
             </a>
             <p>
                 <a  :title="title" @click="gotoNews">{{title}}</a>
-                <a target="_self" v-show="from.length > 0">{{from}}</a>
+                <a target="_self" v-show="from&&from.length > 0">{{from}}</a>
             </p>
         </div>
     </div>
@@ -52,7 +52,7 @@ export default {
     beforeMount(){
         this.newsInfo = this.newsInfoData
         this.title = this.newsInfo.title;
-        this.image = this.newsInfo.pics[0]
+        this.image = this.newsInfo.pics && this.newsInfo.pics[0]
         this.from = this.newsInfo.from;
         this.time = this.newsInfo.time;
     },

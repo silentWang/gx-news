@@ -410,10 +410,13 @@ class DataCenter {
         });
     }
     /**地域屏蔽 */
-    getAreaData(){
-        // let url = this.getRealUrl("/v1/demo/area");
+    getAreaData(){        
+        if(Utils.getAreaData()) return;
         let url = "https://1320418215543173.cn-hangzhou.fc.aliyuncs.com/2016-08-15/proxy/Dtxww/ClientArea/";
-        return this.axios.get(url).then(res=>res.data)
+        return this.axios.get(url).then(res=>{
+            let area = res.data
+            Utils.setRegion(area);
+        })
     }
     /**新闻列表 */
     getNewsList(){

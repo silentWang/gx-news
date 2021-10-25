@@ -357,4 +357,12 @@ export default class Utils {
         document.addEventListener("DOMContentLoaded",recalculate,false);
     }
 
+    getRegion(){
+        let region = localStorage.getItem("fjqs_region_cache");
+        return region;
+    }
+    setRegion(name){        
+        localStorage.setItem("fjqs_region_cache",name);
+    }
+
 }

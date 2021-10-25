@@ -1,7 +1,12 @@
 <template>
     <div>
-        <div :id="itemId" v-if="advType != 'advbd'">
-            <div v-if="type == 'right'">
+        <div :id="itemId">
+            <div v-if="isLoadingSelf()">
+                <div v-if="type == 'float'" class="adv_float_closebtn" @click="closeFlag = false" >X</div>
+                <div class="adv_class_bd_default" v-show="closeFlag">
+                </div>
+            </div>
+            <div v-else-if="type == 'right'">
                 <div class="right_one_div">
                     <a :href="itemUrl" target="_blank" class="right_one_img_a" @click="clickTo" @mousedown="advDown" @mouseup="advUp">
                         <img :src="pictures[0]">
@@ -62,9 +67,7 @@
                     <a :href="itemUrl" target="_blank" @click="clickTo" @mousedown="advDown" @mouseup="advUp"><span class="home_guanggao" @mousedown="advDown" @mouseup="advUp">广告</span></a>
                 </div>
             </div>
-        </div>
-        <div v-else v-html="bdcode" class="adv_class_bd_default">
-        </div>
+        </div>        
     </div>
 </template>
 <script>
@@ -144,6 +147,9 @@ export default {
         getSpUrl(index){
             if(this.advType != Utils.ADV_TYPE.TSZ) return this.itemUrl;
             return this.itemUrl;
+        },
+        isLoadingSelf(){
+            return !this.advType || this.advType == Utils.ADV_TYPE.BAIDU;
         },
         clickTo(evt){
             if(this.advType == Utils.ADV_TYPE.DFTT){
