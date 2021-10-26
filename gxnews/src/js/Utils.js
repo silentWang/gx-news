@@ -115,7 +115,7 @@ export default class Utils {
     static getUrlParams(){
         let url = window.location.href;
         let arr = url.split("?");
-        if(arr.length < 2) return null;
+        if(arr.length < 2) return {};
         let str = arr[1];
         let qarr = str.split("&");  
         let obj = {};
@@ -356,13 +356,55 @@ export default class Utils {
         window.addEventListener(resizeEvt,recalculate,false);
         document.addEventListener("DOMContentLoaded",recalculate,false);
     }
+    /**过滤广告 */
+    static filterAdvList(array = [],regions){
+        let isfilter = this.isLimitRegion(regions);
+        if(!isfilter || array.length == 0) return array;
+        let results = [];
+        for(let i = 0;i < array.length;i++){
+            if(array[i].type != 2){
+                results.push(array[i]);
+            }
+        }
+        return results;
+    }
 
-    getRegion(){
+    static getRegion(){
         let region = localStorage.getItem("fjqs_region_cache");
         return region;
     }
-    setRegion(name){        
+    static setRegion(name){
+        if(name && name.search("市") >= 0){
+            name = name.split("市")[0];
+        }
+        if(name && name.search("自治区") >= 0){
+            name = name.split("自治区")[0];
+        }        
         localStorage.setItem("fjqs_region_cache",name);
+    }
+
+    static isOnlyRegion(regions){
+        let mode = process.env.BUILD_MODE;
+        let ischeck = mode == 3 || mode == 7;
+        if(!ischeck) return;
+        ischeck = false;
+        let region = this.getRegion();
+        if(regions && region){
+            ischeck = regions.search(region) >= 0;
+        }
+        return ischeck;
+    }
+
+    static isLimitRegion(regions){
+        let mode = process.env.BUILD_MODE;
+        let ischeck = mode == 3 || mode == 7;
+        if(!ischeck) return;
+        ischeck = false;
+        let region = this.getRegion();
+        if(regions && region){
+            ischeck = regions.search(region) >= 0;
+        }
+        return ischeck;
     }
 
 }

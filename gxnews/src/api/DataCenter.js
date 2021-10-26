@@ -411,11 +411,11 @@ class DataCenter {
     }
     /**地域屏蔽 */
     getAreaData(){        
-        if(Utils.getAreaData()) return;
+        if(Utils.getRegion()) return new Promise((resolve,reject)=>{resolve()});
         let url = "https://1320418215543173.cn-hangzhou.fc.aliyuncs.com/2016-08-15/proxy/Dtxww/ClientArea/";
         return this.axios.get(url).then(res=>{
             let area = res.data
-            Utils.setRegion(area);
+            Utils.setRegion(area.data);
         })
     }
     /**新闻列表 */
@@ -554,7 +554,10 @@ class DataCenter {
         });
     }
     /**详情页单接口 */
-    getDetailInfo(cateid){
+    getDetailInfo(){
+        if(this.detailData) return new Promise((resolve,reject)=>{resolve(this.detailData)});
+        let query = Utils.getUrlParams();
+        let cateid = query.cateid ? query.cateid : 1;
         let ext = `//news.dtxww.cn/data/online/mini_detail_v_${cateid}.json`;
         if(process.env.NODE_ENV == "development"){
             ext = `/data/develop/mini_detail_v_${cateid}.json`;
@@ -564,7 +567,12 @@ class DataCenter {
         }
         return this.axios.get(ext,{headers:{'Content-Type':'application/json'}}).then(res=>{
             let data = res.data;
-            return {code:200,data};
+            if(query.from && !Utils.isLimitRegion(data.area_limit)){
+                window.location.href = `https://news.dtxww.cn/?id=${query.id}&from=${query.from}`;
+                return {code:-1};
+            }
+            this.detailData = {code:200,data};
+            return this.detailData;
         });
     }
     /**get mini info */
@@ -586,8 +594,6 @@ class DataCenter {
             }
             let res = await this.axios.get(ext,{headers:{'Content-Type':'application/json'}});
             let data = res.data;
-            // console.log("-------------");
-            // console.log(data.main_list);
             this.upToAdverByIframe(data.main_list);
             return {code:200,data};
         }

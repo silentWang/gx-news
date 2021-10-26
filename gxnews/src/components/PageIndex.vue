@@ -22,9 +22,9 @@
                     <ul class="an_left_ul">
                         <li v-for="(item,index) in titleList" 
                             :key="index"
-                            @click="gotoCategry(item.cateId)">
-                            <a target="_self" :class="[item.id == selectIndex ? 'a_active' : 'a_inactive']">{{item.cateName}}</a>
-                            <img v-show="item.id == selectIndex" src=".././assets/refresh.png">
+                            @click="gotoCategry(index)">
+                            <a target="_self" :class="[item.id == titleList[selectIndex].id ? 'a_active' : 'a_inactive']">{{item.cateName}}</a>
+                            <img v-show="item.id == titleList[selectIndex].id" src=".././assets/refresh.png">
                         </li>
                     </ul>
                 </div>
@@ -59,10 +59,10 @@
                         <a href="/">首页</a>
                     </li>
                     <li class="channel">
-                        <a target="_self"  @click="gotoCategry(selectIndex + 1)">频道</a>
+                        <a target="_self"  @click="gotoCategry(selectIndex)">频道</a>
                     </li>
                     <li class="hot">
-                        <a target="_self"  @click="gotoCategry(1)">热点</a>
+                        <a target="_self"  @click="gotoCategry(0)">热点</a>
                     </li>
                     <li class="gototop" v-show="showTopFlag">
                         <a target="_self" href="javascript:window.scrollTo(0,0)">顶部</a>
@@ -79,6 +79,7 @@ import HomeAdvItem from './comp/HomeAdvItem'
 import dataCenter from '@/api/DataCenter'
 import Utils from "@/js/Utils"
 import CompatibleUtils from '@/js/CompatibleUtils'
+import ScreenHandler from "@/js/ScreenHandler"
 let _this;
 export default {
     components:{
@@ -94,6 +95,7 @@ export default {
             selectIndex:0,
             curPageIndex:1,
             isChange:false,
+            switchHandler:null,
             titleList:[],
             newsList:[],
             twelveList:[],
@@ -131,13 +133,17 @@ export default {
             let data = res.data;
             let list = data.category;
             let arr = [];
+            let index = -1;
             for(let i = 0;i < list.length;i++){
                 let cate = list[i];
                 arr.push({id:cate.cateId - 1,cateId:cate.cateId,cateName:cate.cateName})
+                if(cate.cateId == str1){
+                    index = i;
+                }
             }
             _this.titleList = arr;
-            let cateId = str1 ? str1 : arr[0].cateId;
-            _this.gotoCategry(cateId);
+            let sindex = index >= 0 ? str1 : 0;
+            _this.gotoCategry(sindex);
             let news = [];
             let rnews = [];
             let sides = data.main_side;
@@ -179,7 +185,8 @@ export default {
                 this.rightAction.checkLoad();
                 this.kitchenAction1.checkLoad();
                 this.kitchenAction2.checkLoad();
-            }); 
+            });
+            _this.switchLabel(); 
         });
         dataCenter.getTimeNewsList().then(res=>{
             if(res.code != 200) return;
@@ -239,36 +246,46 @@ export default {
                 //到底了
                 this.isChange = true;
                 this.curPageIndex++;
-                this.gotoCategry(this.selectIndex + 1);
+                this.gotoCategry();
             }
+        },
+        switchLabel(){
+            let _this = this;
+            this.switchHandler = new ScreenHandler(15000,()=>{
+                let index = _this.selectIndex;
+                let length = _this.titleList.length;
+                index = index + 1;
+                if(index >= length){
+                    index = 0;
+                    _this.switchHandler.destroy();
+                }
+                else{
+                    _this.switchHandler.reWatch();
+                }
+                _this.selectIndex = index;
+                _this.gotoCategry(index);
+            });
         },
         getCateName(){
             let list = this.titleList;
-            let cname = "";
-            for(let cate of list){
-                if(cate.cateId == this.selectIndex + 1){
-                    cname = cate.cateName;
-                    break;
-                }
-            }
+            let cname = list[this.selectIndex] && list[this.selectIndex].cateName || "";
             return cname;
         },
         reloadHome(){
             window.location.reload();
         },
         gotoCategry(idx){
-            if(idx - 1 != this.selectIndex){
-                this.curPageIndex = 1;
-            }
-            this.selectIndex = idx - 1;
+            if(this.selectIndex != idx) this.curPageIndex = 1;
+            this.selectIndex = idx;
+            let cateId = this.titleList[idx].cateId;
             let _this = this
-            dataCenter.getNewsListById(idx,this.curPageIndex).then(res=>{
+            dataCenter.getNewsListById(cateId,this.curPageIndex).then(res=>{
                 _this.isChange = false;
                 if(res.code != 200) return
                 let news = res.data;
                 this.mainAction.reset();
                 this.mainAction.isFirst = false;
-                _this.newsList = _this.curPageIndex <= 1 ? news : _this.newsList.concat(news)
+                _this.newsList = _this.curPageIndex <= 1 ? news : _this.newsList.concat(news);
                 _this.$nextTick(()=>{
                     if(_this.curPageIndex <= 1){
                         window.scrollTo(0,0);

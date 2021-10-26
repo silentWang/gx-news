@@ -7,10 +7,12 @@ import Vue from 'vue'
 import App from './App'
 import router from './router'
 import axios from 'axios'
+import DataCenter from './api/DataCenter'
 
 Vue.config.productionTip = false
 Vue.prototype.$axios = axios
 
+let isLoadBool = true;
 let mode = process.env.BUILD_MODE;
 let scripts = ["//static.mediav.com/js/feed_ts.js","../static/js/v9.js"];
 if(mode == 2 || mode == 4){
@@ -27,11 +29,15 @@ else if(mode == 6){
 }
 else if(mode == 3 || mode == 7){
   scripts.push("//static.mediav.com/js/mvf_g4.js");
+  isLoadBool = false;
+  DataCenter.getAreaData().then(()=>{
+    isLoadBool = true;
+    DataCenter.getDetailInfo().then((res)=>{
+      if(res.code == -1) return;
+      loadNext();
+    });
+  });
 }
-if(process.env.NODE_ENV != "production"){
-  // window.check_version = true;
-}
-
 let index = 0;
 function loadNext(){
   let script = document.createElement("script");
@@ -48,7 +54,9 @@ function loadNext(){
   }
   document.body.appendChild(script);
 }
-loadNext();
+if(isLoadBool){
+  loadNext();
+}
 
 function setUpNow(){
   /* eslint-disable no-new */

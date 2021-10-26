@@ -17,6 +17,21 @@ export default class AdvDFTT {
         if(!info) return
         let advs = isNormal ? info.ad_script :info.open_script;
         if(!advs || advs.length == 0) return
+        let isCheck = Utils.isOnlyRegion(info.area_only);
+        let arr = [];
+        for(let i  = 0;i < advs.length;i++){
+            let adv = advs[i];
+            if(isCheck){
+                if(adv.ad_type == "advbd"){
+                    arr.push(adv);
+                }
+            }
+            else{
+                arr.push(adv);
+            }
+        }
+        advs = arr;
+        if(advs.length == 0) return;
         advs.sort((a,b)=>{
             return b.ad_weight - a.ad_weight;
         });
@@ -51,6 +66,9 @@ export default class AdvDFTT {
         let index2 = this.showIndex >= this.showIDS.length ? 0 : this.showIndex;
         let advID = this.dfttIDS[index1];
         let showId = this.showIDS[index2];
+        if(this.name == "actionItem1"){
+            showId = this.showIDS[Math.floor(this.showIDS.length*Math.random())];
+        }
         let elementID = "dfttadv_1000" + AdvManager.getUniqueID();
         let config = {advID,elementID,showId,callback,context,data:null,loaded:false};
         this.stepIndex = index1 + 1;
@@ -58,7 +76,8 @@ export default class AdvDFTT {
         this.advConfigList.push(config);
         return config;
     }
-    /**懒加载 进入可视范围才加载  
+    /**
+     * 懒加载 进入可视范围才加载  
      * firstNum
      * flag*/
     checkLoad(firstNum = 1){
@@ -105,9 +124,6 @@ export default class AdvDFTT {
             console.log(`--------${this.name} checkload num:${length}---------`,array);
             console.log(`advConfigList:`,this.advConfigList.length);
         }
-        // let imparray = [];
-        // let report = {};
-        // let showarray = [];
         for(let i = 0;i < length;i++){
             let conf = array[i];
             if(conf.data) continue;
@@ -121,33 +137,11 @@ export default class AdvDFTT {
             AdvManager.pushMergeRequest({imparray,report,showarray,array:[array[i]],advs:this.advData});
         }
     }
-    // getData(array){
-    //     let length = array.length;
-    //     let imparray = [];
-    //     let report = {};
-    //     let showarray = [];
-    //     for(let i = 0;i < length;i++){
-    //         let conf = array[i];
-    //         if(conf.data) continue;
-    //         imparray.push(conf.advID);
-    //         showarray.push(conf.showId);
-    //         report[conf.advID] = {
-    //             container: "#"+conf.elementID, // required | selector | 广告位选择器（通过此选择器只能获取到唯一 dom 的选择器），class / id / 属性选择器 / ...
-    //             $scrollBox: this.container
-    //         }
-    //     }
-    //     AdvManager.pushMergeRequest({imparray,report,showarray,array,advs:this.advData});
-    // }
 
     reset(){
         let length = this.advConfigList.length;
         if(length == 0) return;
         this.advConfigList = [];
-        // for(let i = 0;i < length;i++){
-        //     let config = this.advConfigList[i];
-        //     config.data = null; 
-        //     config.loaded = false;
-        // }
         this.isFirst = true;
     }
 

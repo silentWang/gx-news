@@ -6,6 +6,6 @@ module.exports = merge(prodEnv, {
   NODE_ENV: '"development"',
   API_ROOT:'"//localhost:8080"',
   PROXY_BASE:"'/napi'",
-  //1首页 2 mini 3 content 4 mini2  5minib  6 minib测试  7 详情测试
-  BUILD_MODE:"'1'"
+  //1首页 2 mini 3 content 4 mini2  5minib  6 minib测试  7 详情测试 8首页测试
+  BUILD_MODE:"'7'"
 })

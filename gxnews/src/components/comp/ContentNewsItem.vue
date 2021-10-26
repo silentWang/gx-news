@@ -12,8 +12,7 @@
                 </div>
                 <div class="acn_next_list_news_tag" @click="gotoNews">
                     <span class="tags_wrapper">
-                        <a href="#">娱乐</a>&nbsp;
-                        <a href="#">新闻</a>&nbsp;
+                        <a href="#">{{from}}</a>&nbsp;
                     </span>
                     <span>{{time}}</span>
                 </div>
@@ -56,8 +55,7 @@
                 </div>
                 <div class="acn_dialog_list_news_tag" @click="gotoNews">
                     <span class="tags_wrapper">
-                        <a href="#">娱乐</a>&nbsp;
-                        <a href="#">新闻</a>&nbsp;
+                        <a href="#">{{from}}</a>&nbsp;
                     </span>
                     <span>{{time}}</span>
                 </div>

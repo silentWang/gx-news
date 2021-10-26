@@ -164,6 +164,7 @@ export default {
             rankHots:[],
             dialogList:[],
             detailInfo:{},
+            dialogRefreshFlag:false,
             headAdvInfo:null,
             footAdvInfo:null,
             showAdvFlag:false,
@@ -181,7 +182,8 @@ export default {
             commonAction:null,
             dialogAction:null,
             dialogRateAction:null,
-            screenHandlerRefresh:null
+            screenHandlerRefresh:null,
+            screenDialogRefresh:null,
         }
     },
     beforeMount(){
@@ -211,12 +213,15 @@ export default {
     },
     created(){
         let query = Utils.getUrlParams();
-        if(!query && !query.id) {
+        if(!query || !query.id) {
             this.reloadHome();
             return;
         }
-        let cateid = query.cateid ? query.cateid : 1
         dataCenter.setQid(query.qid);
+        dataCenter.getDetailInfo().then(res=>{
+            let data = res.data;
+            this.setInfo(data);
+        });
         dataCenter.getNewsDetailById(query.id).then(res=>{
             if(res.code != 200) {
                 this.reloadHome();
@@ -233,8 +238,58 @@ export default {
             document.title = info.title;
             this.gotoPage(0);
         });
-        dataCenter.getDetailInfo(cateid).then(res=>{
-            let data = res.data;
+        Utils.addDelay(()=>{
+            this.nowTime = Utils.getTimeStr("hm");
+            this.nowDate = Utils.getTimeStr("yMdw",["年","月","日  "]);
+            this.nongDate = "辛丑(牛)年";
+        },this,1000,0);
+        Utils.addWindowClick(()=>{
+            if(this.showAdvFlag && this.showDialogFlag){
+                this.showAdvFlag = false;
+            }
+        },this);
+        window.onscroll = this.listScroll.bind(this);
+        // this.$nextTick(()=>{
+        //     this.listScroll();
+        // });
+    },
+    methods:{
+        reloadHome(evt){
+            if(process.env.NODE_ENV != "development"){
+                window.location.href = "https://news.dtxww.cn/";
+            }
+        },
+        listScroll(){
+            let rEle = document.getElementsByClassName("bn_left")[0];
+            let attrVal = CompatibleUtils.getCompatibleValue();
+            let scrollTop = attrVal.scrollTop;
+            let clientHgt = attrVal.clientHeight;
+            this.showGoTopFlag = scrollTop >= clientHgt;
+            if(!rEle) return;
+            let rsHgt = rEle.offsetHeight;
+            if(rsHgt < clientHgt){
+                rEle.style.position = "fixed";
+                rEle.style.top = "40px";
+            }
+            else if(rsHgt < scrollTop){
+                if(rEle.style.position != "fixed"){
+                    rEle.style.position = "fixed";
+                    rEle.style.top = "-280px";
+                }
+            }
+            else {
+                rEle.style.top = "10px";
+                rEle.style.position = "relative";
+            }
+            this.kitchenAction1.checkLoad();
+            this.kitchenAction2.checkLoad();
+            this.kitchenAction3.checkLoad();
+            this.kitchenAction4.checkLoad();
+            this.kitchenAction5.checkLoad();
+            this.hotAction.checkLoad();
+            this.commonAction.checkLoad();
+        },
+        setInfo(data){
             let list = data.category;
             let arr = [];
             for(let i = 0;i < list.length;i++){
@@ -253,11 +308,11 @@ export default {
             for(let i = 0;i < details.length;i++){
                 let detail = details[i];
                 if(detail.name == "part_1"){
-                    todayHots = detail.data;
+                    todayHots = Utils.filterAdvList(detail.data,detail.adv.area_limit);
                     this.hotAction.setIDS(detail.adv)
                 }
                 else if(detail.name == "part_2"){
-                    bottomList = detail.data;
+                    bottomList = Utils.filterAdvList(detail.data,detail.adv.area_limit);
                     if(detail.adv.refresh_script){
                         isRefresh = true;
                         detail.adv.ad_script = detail.adv.refresh_script;
@@ -291,8 +346,12 @@ export default {
                     }
                 }
                 else if(detail.name == "part_5"){
-                    dialogList = detail.data;
+                    dialogList = Utils.filterAdvList(detail.data,detail.adv.area_limit);
                     this.showAdvFlag = detail.adv && detail.adv.open_rate > rate;
+                    if(detail.adv.refresh_script){
+                        detail.adv.ad_script = detail.adv.refresh_script;
+                        this.dialogRefreshFlag = true;
+                    }
                     this.dialogAction.setIDS(detail.adv);
                     this.dialogRateAction.setIDS(detail.adv,false);
                 }
@@ -317,10 +376,10 @@ export default {
                     this.kitchenAction5.setIDS(detail.adv)                    
                 }
                 else if(detail.name == "part_11"){
-                    choseHots = detail.data;
+                    choseHots = Utils.filterAdvList(detail.data,detail.adv.area_limit);
                 }
                 else if(detail.name == "part_12"){
-                    rankHots = detail.data;
+                    rankHots = Utils.filterAdvList(detail.data,detail.adv.area_limit);
                 }
                 else if(detail.name == "part_13"){
                     this.floatAction.setIDS(detail.adv)
@@ -329,7 +388,7 @@ export default {
                 }
             }
             this.$nextTick(()=>{
-                this.todayHots = todayHots     
+                this.todayHots = todayHots;     
                 this.bottomList = bottomList     
                 this.dialogList = dialogList     
                 this.choseHots = choseHots     
@@ -354,57 +413,6 @@ export default {
                 })
                 this.checkStayState();     
             });
-        });
-        Utils.addDelay(()=>{
-            this.nowTime = Utils.getTimeStr("hm");
-            this.nowDate = Utils.getTimeStr("yMdw",["年","月","日  "]);
-            this.nongDate = "辛丑(牛)年";
-        },this,1000,0);
-
-        Utils.addWindowClick(()=>{
-            if(this.showAdvFlag && this.showDialogFlag){
-                this.showAdvFlag = false;
-            }
-        },this);
-        
-        window.onscroll = this.listScroll.bind(this);
-        // this.$nextTick(()=>{
-        //     this.listScroll();
-        // });
-    },
-    methods:{
-        reloadHome(evt){
-            window.open("https://news.dtxww.cn/");
-        },
-        listScroll(){
-            let rEle = document.getElementsByClassName("bn_left")[0];
-            let attrVal = CompatibleUtils.getCompatibleValue();
-            let scrollTop = attrVal.scrollTop;
-            let clientHgt = attrVal.clientHeight;
-            this.showGoTopFlag = scrollTop >= clientHgt;
-            if(!rEle) return;
-            let rsHgt = rEle.offsetHeight;
-            if(rsHgt < clientHgt){
-                rEle.style.position = "fixed";
-                rEle.style.top = "40px";
-            }
-            else if(rsHgt < scrollTop){
-                if(rEle.style.position != "fixed"){
-                    rEle.style.position = "fixed";
-                    rEle.style.top = "-280px";
-                }
-            }
-            else {
-                rEle.style.top = "10px";
-                rEle.style.position = "relative";
-            }
-            this.kitchenAction1.checkLoad();
-            this.kitchenAction2.checkLoad();
-            this.kitchenAction3.checkLoad();
-            this.kitchenAction4.checkLoad();
-            this.kitchenAction5.checkLoad();
-            this.hotAction.checkLoad();
-            this.commonAction.checkLoad();
         },
         dialogScroll(){
             this.dialogAction.checkLoad();
@@ -448,6 +456,22 @@ export default {
                 });
             }
         },
+        checkDialogRefresh(){
+            if(!this.screenDialogRefresh){
+                this.screenDialogRefresh = new ScreenHandler(5000,()=>{
+                    console.log("cccccccccccc")
+                    if(!this.showDialogFlag){
+                        this.screenDialogRefresh.destroy();
+                        this.screenDialogRefresh = null;
+                        return;
+                    }
+                    console.log("dddddddddddd")
+                    this.dialogAction.resetBaidu();
+                    this.dialogAction.checkLoad();
+                    this.screenDialogRefresh.reWatch();
+                });
+            }
+        },
         checkStayState(bool = true){
             let _this = this;
             if(!this.screenHandler){
@@ -463,6 +487,9 @@ export default {
                             this.dialogRateAction.checkLoad();
                         }
                     });
+                    if(_this.dialogRefreshFlag){
+                        this.checkDialogRefresh();
+                    }
                 });
             }
             if(!bool){

@@ -13,7 +13,7 @@ export default {
 
 <style>
 #app {
-  font-family: Microsoft YaHei,WenQuanYi Micro Hei,Helvetica Neue,Arial,sans-serif;
+  font-family: "Microsoft YaHei",微软雅黑,STHeiti,MingLiu,Arial,sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
