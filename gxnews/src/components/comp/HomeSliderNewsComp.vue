@@ -3,13 +3,18 @@
         <div class="home_newscon">
             <div class="home_slider_con" @mouseenter="arrowFlag=true" @mouseleave="arrowFlag=false">
                 <transition name="fade" v-for="(item,index) in newsList" :key="index">
-                    <div class="home_slider_list_div" v-show="index == currentIndex">
-                        <a class="hs_slider_image" @click="gotoNews(item)">
-                            <img :src="item.pics[0]">
-                        </a>
-                        <a class="hs_slider_title" @click="gotoNews(item)">
-                            <span>{{item.title}}</span>
-                        </a>
+                    <div v-show="index == currentIndex">
+                        <div v-if="item.type != 2" class="home_slider_list_div">
+                            <a class="hs_slider_image" @click="gotoNews(item)">
+                                <img :src="item.pics[0]">
+                            </a>
+                            <a class="hs_slider_title" @click="gotoNews(item)">
+                                <span>{{item.title}}</span>
+                            </a>
+                        </div>
+                        <div v-else>
+                            <home-adv-item :actionItem="actionItem" type="slider"></home-adv-item>
+                        </div>
                     </div>
                 </transition>
             </div>
@@ -25,15 +30,18 @@
     </div>
 </template>
 <script>
+import HomeAdvItem from "./HomeAdvItem.vue"
 import Utils from "@/js/Utils"
 export default {
+  components: { HomeAdvItem },
     props:{
         newsList:{
             default(){
                 return []
             }
         },
-        firstNews:null
+        firstNews:null,
+        actionItem:null
     },
     data(){
         return {
@@ -63,6 +71,11 @@ export default {
             if(this.currentIndex < 0 || this.currentIndex >= this.newsList.length){
                 this.currentIndex = 0;
             }
+            this.$nextTick(()=>{
+                if(this.actionItem){
+                    this.actionItem.checkLoad();
+                }
+            });
         },
         gotoNews(item){
             this.$emit("gotoNews",item);

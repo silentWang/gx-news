@@ -6,6 +6,15 @@
                 <div class="adv_class_bd_default" v-show="closeFlag">
                 </div>
             </div>
+            <div v-else-if="type == 'slider'">
+                <a target="_blank" :href="itemUrl" @click="clickTo" class="hs_slider_image" @mousedown="advDown" @mouseup="advUp">
+                    <img :src="pictures[0]"/>
+                    <a :href="itemUrl" target="_blank" @click="clickTo" @mousedown="advDown" @mouseup="advUp"><span class="home_guanggao" @mousedown="advDown" @mouseup="advUp">广告</span></a>
+                </a>
+                <a class="hs_slider_title" target="_blank" :href="itemUrl" @click="clickTo" @mousedown="advDown" @mouseup="advUp">
+                    <span>{{itemTitle}}</span>
+                </a>
+            </div>
             <div v-else-if="type == 'right'">
                 <div class="right_one_div">
                     <a :href="itemUrl" target="_blank" class="right_one_img_a" @click="clickTo" @mousedown="advDown" @mouseup="advUp">
@@ -337,6 +346,37 @@ export default {
         background: rgba(0,0,0,0.7);
         top: -34px;
         overflow: hidden;
+    }
+    .hs_slider_image {
+        display: block;
+        width: 100%;
+        height: 260px;
+        overflow:hidden;
+        cursor: pointer;
+    }
+    .hs_slider_image img {
+        width: 100%;
+        cursor: pointer;
+    }
+    .hs_slider_title {
+        display: inline-block;
+        width: 100%;
+        height: 30px;
+        background: rgba(0, 0, 0, 0.7);
+        color: #fff;
+        font-size: 18px;
+        text-align: left;
+        padding:5px 0 0 10px;
+        position: relative;
+        top: -35px;
+        cursor: pointer;
+    }
+    .hs_slider_title span {
+        display: inline-block;
+        width: 600px;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
     }
     .home_guanggao {
         display: block;

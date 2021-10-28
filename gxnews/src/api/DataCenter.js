@@ -548,6 +548,9 @@ class DataCenter {
         if(process.env.NODE_ENV == "development"){
             ext = `/data/develop/home_data.json`;
         }
+        else if(process.env.BUILD_MODE == 8){
+            ext = `//news.dtxww.cn/data/develop/home_data.json`;
+        }
         return this.axios.get(ext,{headers:{'Content-Type':'application/json'}}).then(res=>{
             let data = res.data;
             return {code:200,data};

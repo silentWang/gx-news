@@ -30,7 +30,7 @@
                 </div>
             </div>
             <div class="an_content">
-                <home-slider-news-comp v-on:gotoNews="gotoNews" :newsList="sliderList" :firstNews="firstToutiao"></home-slider-news-comp>
+                <home-slider-news-comp v-on:gotoNews="gotoNews" :actionItem="homeSliderAdvAction" :newsList="sliderList" :firstNews="firstToutiao"></home-slider-news-comp>
                 <div class="an_content_item" v-for="(item,index) in newsList" :key="item.id + '_' + index">
                     <HomeNewsItem v-if="item.type != 2" :cateName="getCateName()" :index='index' :newsInfoData="item" v-on:gotoNews="gotoNews"></HomeNewsItem>
                     <home-adv-item v-else :actionItem="mainAction"></home-adv-item>
@@ -107,6 +107,7 @@ export default {
             rightAction:null,
             kitchenAction1:null,
             kitchenAction2:null,
+            homeSliderAdvAction:null
         }
     },
     beforeMount(){
@@ -114,6 +115,7 @@ export default {
         this.rightAction = dataCenter.createAdvItem();
         this.kitchenAction1 = dataCenter.createAdvItem();
         this.kitchenAction2 = dataCenter.createAdvItem();
+        this.homeSliderAdvAction = dataCenter.createAdvItem("","homeSliderAdvAction");
         this.mainAction.isFirst = false;
         this.rightAction.isFirst = false;
         this.kitchenAction1.isFirst = false;
@@ -164,17 +166,28 @@ export default {
                     this.kitchenAction2.setIDS(side.adv);
                 }
                 else if(side.name == "part_5"){
+                    this.homeSliderAdvAction.setIDS(side.adv);
                     this.sliderList = side.data;
                 }
                 else if(side.name == "part_6"){
+                    let arr = [];
                     for(let info of side.data){
-                        if(nid && info.id == nid){
-                            _this.firstToutiao = info;
+                        if(info.type != 2){
+                            arr.push(info);
+                            if(nid && info.id == nid){
+                                _this.firstToutiao = info;
+                            }
                         }
                     }
                     if(!_this.firstToutiao){
-                        _this.firstToutiao = side.data[Math.floor(side.data.length*Math.random())];
+                        _this.firstToutiao = arr[Math.floor(arr.length*Math.random())];
                     }
+                }
+                else if(side.name == "part_7"){
+                    let arr = side.data;
+                    this.timeNewList = arr.concat(arr[0]);
+                    this.currenNewIndex = 1;
+                    this.playTimeNews();
                 }
             }
             this.newsList = news;
@@ -187,15 +200,6 @@ export default {
                 this.kitchenAction2.checkLoad();
             });
             _this.switchLabel(); 
-        });
-        dataCenter.getTimeNewsList().then(res=>{
-            if(res.code != 200) return;
-            let arr = res.data;
-            if(arr && arr.length > 0){
-                _this.timeNewList = arr.concat(arr[0]);
-                _this.currenNewIndex = 1;
-                _this.playTimeNews();
-            }
         });
         document.title = "热点新闻";
         window.onscroll = this.listScroll.bind(this);
@@ -295,7 +299,8 @@ export default {
             })
         },
         gotoNews(item){
-            let turl = "https://news.dtxww.cn/content/?id="+item.id + "&cateid=" + item.cateId;
+            let mode = process.env.BUILD_MODE == 1 ? "" : "000/";
+            let turl = `https://news.dtxww.cn/content/${mode}?id=${item.id}&cateid=${item.cateId}`;
             window.open(turl, '_blank');
             return false;
         },
