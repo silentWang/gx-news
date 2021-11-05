@@ -18,6 +18,8 @@ class DataCenter {
         this.maxTSZNum = 4;
         this.isCanLoadNext = true;
         this.areaBool = false;
+        // Utils.getIp();
+        this.getIP();
     }
 
     setQid(qid){
@@ -341,7 +343,7 @@ class DataCenter {
             curl = curl.replace(/__ADSPACE_H__/g,h);
             this.advCop.curl = curl;
             if(start == 3){
-                window.open(this.advCop.curl,"_blank");
+                // window.open(this.advCop.curl,"_blank");
             }
         }
     }
@@ -408,6 +410,16 @@ class DataCenter {
             }
             return info;
         });
+    }
+    /**获取本机ip */
+    getIP(){
+        Utils.myIP = "";
+        if(returnCitySN && returnCitySN.cip){
+            Utils.myIP = returnCitySN.cip;
+        }
+        if(process.env.NODE_ENV == "development"){
+            console.log("IP相关信息",returnCitySN);
+        }
     }
     /**地域屏蔽 */
     getAreaData(){        

@@ -564,7 +564,6 @@ export default {
         width: 72px;
         height: 32px;
         margin:0px 0px 10px 0px;
-        /* background-color: #f0f8ff; */
         display: block;
         list-style-type: none;
     }

@@ -459,13 +459,11 @@ export default {
         checkDialogRefresh(){
             if(!this.screenDialogRefresh){
                 this.screenDialogRefresh = new ScreenHandler(5000,()=>{
-                    console.log("cccccccccccc")
                     if(!this.showDialogFlag){
                         this.screenDialogRefresh.destroy();
                         this.screenDialogRefresh = null;
                         return;
                     }
-                    console.log("dddddddddddd")
                     this.dialogAction.resetBaidu();
                     this.dialogAction.checkLoad();
                     this.screenDialogRefresh.reWatch();

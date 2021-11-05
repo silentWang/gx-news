@@ -1,7 +1,6 @@
 import CompatibleUtils from '@/js/CompatibleUtils'
 export default class Utils {
     constructor(){
-
     }
 
     static PositionType = {

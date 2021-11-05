@@ -27,7 +27,8 @@ class AdvService {
             // 设备信息
             device: {
                 terminal: 'PC', // string 终端：PC、WAP、APP
-                deviceType: 'PC' // string 设备类型（默认为 PC）：PC - 个人计算机、PHONE - 手机设备、TABLET - 平板设备
+                deviceType: 'PC', // string 设备类型（默认为 PC）：PC - 个人计算机、PHONE - 手机设备、TABLET - 平板设备
+                ip:Utils.myIP ? Utils.myIP : ""
             },
             // 站点信息
             site: {
