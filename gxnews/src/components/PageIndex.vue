@@ -299,7 +299,7 @@ export default {
             })
         },
         gotoNews(item){
-            let mode = process.env.BUILD_MODE == 1 ? "" : "000/";
+            let mode = dataCenter.getModeUrlRoot();
             let turl = `https://news.dtxww.cn/content/${mode}?id=${item.id}&cateid=${item.cateId}`;
             window.open(turl, '_blank');
             return false;

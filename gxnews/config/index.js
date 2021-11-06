@@ -3,32 +3,30 @@
 // see http://vuejs-templates.github.io/webpack for documentation.
 
 const path = require('path')
-let assetPath = "./";
+
+let urlPath = "";
 let mode = process.env.BUILD_MODE;
-if(mode == 1){
-  assetPath = "//news.dtxww.cn/";
+if(mode == 1) urlPath = "";
+else if(mode == 2) urlPath = "mini";
+else if(mode == 3) urlPath = "content";
+else if(mode == 4) urlPath = "mini/001";
+else if(mode == 5) urlPath = "mini/002";
+else if(mode == 6) urlPath = "mini/000";
+else if(mode == 7) urlPath = "content/000";
+else if(mode == 8) urlPath = "000";
+else if(mode >= 100){
+    let type = mode%10;
+    let xpath = ~~((~~(mode/10))*10);
+    xpath = type >= 5 ? "test" + xpath : xpath;
+    if(type == 0) urlPath = `mini/${xpath}`;
+    else if(type == 1) urlPath = `${xpath}`;
+    else if(type == 2) urlPath = `content/${xpath}`;
+    else if(type == 5) urlPath = `mini/${xpath}`;
+    else if(type == 6) urlPath = `${xpath}`;
+    else if(type == 7) urlPath = `content/${xpath}`;
 }
-else if(mode == 2){
-  assetPath = "//news.dtxww.cn/mini/";
-}
-else if(mode == 3){
-  assetPath = "//news.dtxww.cn/content/";
-}
-else if(mode == 4){
-  assetPath = "//news.dtxww.cn/mini/001/";
-}
-else if(mode == 5){
-  assetPath = "//news.dtxww.cn/mini/002/";
-}
-else if(mode == 6){
-  assetPath = "//news.dtxww.cn/mini/000/";
-}
-else if(mode == 7){
-  assetPath = "//news.dtxww.cn/content/000/";
-}
-else if(mode == 8){
-  assetPath = "//news.dtxww.cn/000/";
-}
+let assetPath = !urlPath ? `//news.dtxww.cn/` : `//news.dtxww.cn/${urlPath}/`;
+urlPath = !urlPath ? "dist" : urlPath;
 
 module.exports = {
   dev: {
@@ -64,9 +62,9 @@ module.exports = {
 
   build: {
     // Template for index.html
-    index: path.resolve(__dirname, '../dist/index.html'),
+    index: path.resolve(__dirname, '../'+urlPath+'/index.html'),
     // Paths
-    assetsRoot: path.resolve(__dirname, '../dist'),
+    assetsRoot: path.resolve(__dirname, '../'+urlPath),
     //正式
     assetsSubDirectory: 'static',
     assetsPublicPath:assetPath,

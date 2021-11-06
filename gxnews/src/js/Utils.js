@@ -384,7 +384,7 @@ export default class Utils {
 
     static isOnlyRegion(regions){
         let mode = process.env.BUILD_MODE;
-        let ischeck = mode == 3 || mode == 7;
+        let ischeck = mode == 3 || mode == 7 || (mode >= 100 && mode%10 == 2);
         if(!ischeck) return;
         ischeck = false;
         let region = this.getRegion();
@@ -396,7 +396,7 @@ export default class Utils {
 
     static isLimitRegion(regions){
         let mode = process.env.BUILD_MODE;
-        let ischeck = mode == 3 || mode == 7;
+        let ischeck = mode == 3 || mode == 7 || (mode >= 100 && mode%10 == 2);
         if(!ischeck) return;
         ischeck = false;
         let region = this.getRegion();

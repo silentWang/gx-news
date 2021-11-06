@@ -40,6 +40,22 @@ class DataCenter {
     getRealUrl(cmd = ""){
         return process.env.PROXY_BASE + cmd;
     }
+    /**渠道path域名 */
+    getModeUrlRoot(){
+        let mode = process.env.BUILD_MODE;
+        let urlPath = "";
+        if(mode == 1 || mode == 2 || mode == 3) urlPath = "";
+        else if(mode == 4) urlPath = "001/";
+        else if(mode == 5) urlPath = "002/";
+        else if(mode == 6 || mode == 7 || mode == 8) urlPath = "000/";
+        else if(mode >= 100){
+            let type = mode%10;
+            let xpath = ~~((~~(mode/10))*10);
+            xpath = type >= 5 ? "test" + xpath : xpath;
+            return xpath + "/";
+        }
+        return "";
+    }
 
     getNextId(){
         if(!this.index) this.index = 10000;
@@ -553,16 +569,46 @@ class DataCenter {
         return this.axios.get(url).then(res=>res.data)
     }
     /****************************优化版接口******************************************** */
+    getJsonUrl(type,cateid){
+        let env = process.env.NODE_ENV;
+        let mode = process.env.BUILD_MODE;
+        let url = "";
+        if(type == "home"){
+            url = `//news.dtxww.cn/data/online/home_data.json`;
+            if(env == "development"){
+                url = `/data/develop/home_data.json`;
+            }
+            else if(mode == 8 || (mode >= 100 && mode%100 == 5)){
+                url = `//news.dtxww.cn/data/develop/home_data.json`;
+            }
+            return url;
+        }
+        if(type == "detail"){
+            let query = Utils.getUrlParams();
+            let cateid = query.cateid ? query.cateid : 1;
+            url = `//news.dtxww.cn/data/online/mini_detail_v_${cateid}.json`;
+            if(env == "development"){
+                url = `/data/develop/mini_detail_v_${cateid}.json`;
+            }
+            else if(mode == 7 || (mode >= 100 && mode%10 == 7)){
+                url = `//news.dtxww.cn/data/develop/mini_detail_v_${cateid}.json`;
+            }
+            return url;
+        }
+        if(type == "mini"){
+            url = `//news.dtxww.cn/data/online/mini_data_${cateid}.json?v=${new Date().getTime()}`;
+            if(env == "development"){
+                url = `/data/develop/mini_data_${cateid}.json?v=${new Date().getTime()}`;
+            }
+            else if(mode == 6 || (mode >= 100 && mode%10 == 5)){
+                url = `//news.dtxww.cn/data/develop/mini_data_${cateid}.json?v=${new Date().getTime()}`;
+            }
+        }
+        return url;
+    }
     /**首页新接口 */
     getHomeInfo(){
-        // https://news-dtxww.oss-cn-hangzhou.aliyuncs.com/data/develop/home_data.json
-        let ext = `//news.dtxww.cn/data/online/home_data.json`;
-        if(process.env.NODE_ENV == "development"){
-            ext = `/data/develop/home_data.json`;
-        }
-        else if(process.env.BUILD_MODE == 8){
-            ext = `//news.dtxww.cn/data/develop/home_data.json`;
-        }
+        let ext = this.getJsonUrl("home");
         return this.axios.get(ext,{headers:{'Content-Type':'application/json'}}).then(res=>{
             let data = res.data;
             return {code:200,data};
@@ -571,15 +617,7 @@ class DataCenter {
     /**详情页单接口 */
     getDetailInfo(){
         if(this.detailData) return new Promise((resolve,reject)=>{resolve(this.detailData)});
-        let query = Utils.getUrlParams();
-        let cateid = query.cateid ? query.cateid : 1;
-        let ext = `//news.dtxww.cn/data/online/mini_detail_v_${cateid}.json`;
-        if(process.env.NODE_ENV == "development"){
-            ext = `/data/develop/mini_detail_v_${cateid}.json`;
-        }
-        else if(process.env.BUILD_MODE == 7){
-            ext = `//news.dtxww.cn/data/develop/mini_detail_v_${cateid}.json`;
-        }
+        let ext = this.getJsonUrl("detail");
         return this.axios.get(ext,{headers:{'Content-Type':'application/json'}}).then(res=>{
             let data = res.data;
             if(query.from && !Utils.isLimitRegion(data.area_limit)){
@@ -593,20 +631,7 @@ class DataCenter {
     /**get mini info */
     async getMiniInfo(cateid = 1,page = 1){
         if(page == 1){
-            if(window.check_version && !this.areaBool && process.env.BUILD_MODE == 4){
-                let adata = await this.getAreaData();
-                // console.log("-------------");
-                // console.log(adata);
-                this.areaBool = true;
-                window.check_version = adata.data&&adata.data.is_sign != 1;
-            }
-            let ext = `//news.dtxww.cn/data/online/mini_data_${cateid}.json?v=${new Date().getTime()}`;
-            if(process.env.NODE_ENV == "development"){
-                ext = `/data/develop/mini_data_${cateid}.json?v=${new Date().getTime()}`;
-            }
-            else if(process.env.BUILD_MODE == 6){
-                ext = `//news.dtxww.cn/data/develop/mini_data_${cateid}.json?v=${new Date().getTime()}`;
-            }
+            let ext = this.getJsonUrl("mini",cateid);
             let res = await this.axios.get(ext,{headers:{'Content-Type':'application/json'}});
             let data = res.data;
             this.upToAdverByIframe(data.main_list);

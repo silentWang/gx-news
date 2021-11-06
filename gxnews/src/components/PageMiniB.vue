@@ -299,7 +299,8 @@ export default {
         },
         gotoCategry(idx){
             if(idx < 0){
-                window.open("https://news.dtxww.cn/","blank")
+                let mode = dataCenter.getModeUrlRoot();
+                window.open("https://news.dtxww.cn/" + mode,"_blank")
                 return;
             }
             if(this.selectCateId == idx) return;
@@ -382,7 +383,7 @@ export default {
                 this.newsList = xarr;
             }
             let idx = item.id;
-            let mode = process.env.BUILD_MODE == 5 ? "" : "000/";
+            let mode = dataCenter.getModeUrlRoot();
             let xurl = `https://news.dtxww.cn/content/${mode}?id=${idx}&qid=0&cateid=${item.cateId}`;
             window.open(xurl, '_blank');
             if(index == 0){

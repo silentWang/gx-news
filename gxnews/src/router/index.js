@@ -20,17 +20,15 @@ window["requestAnimFrame"] = (function () {
 
 let routeInfo = {name:"PageIndex",component:PageIndex};
 let mode = process.env.BUILD_MODE;
-if(mode == 2 || mode == 4){
-  routeInfo.name = "PageMiniA";
-  routeInfo.component = PageMiniA;
-}
-else if(mode == 3 || mode == 7){
-  routeInfo.name = "PageContent";
-  routeInfo.component = PageContent;
-}
-else if(mode == 5 || mode == 6){
-  routeInfo.name = "PageMiniB";
-  routeInfo.component = PageMiniB;
+if(mode == 2 || mode == 4) routeInfo = {name:"PageMiniA",component:PageMiniA};
+else if(mode == 3 || mode == 7) routeInfo = {name:"PageContent",component:PageContent};
+else if(mode == 5 || mode == 6) routeInfo = {name:"PageMiniB",component:PageMiniB};
+else if(mode >= 100)
+{
+  let type = mode%10;
+  if(type == 0 || type == 5) routeInfo = {name:"PageMiniB",component:PageMiniB};
+  if(type == 1 || type == 6) routeInfo = {name:"PageIndex",component:PageIndex};
+  else if(type == 2 || type == 7) routeInfo = {name:"PageContent",component:PageContent};
 }
 
 if(process.env.NODE_ENV == "development"){

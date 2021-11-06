@@ -27,7 +27,11 @@ else if(mode == 6){
   window.check_version = window.location&&window.location.href.search("v=101") >= 0;
   window&&window.history&&window.history.pushState("","","/mini/000");
 }
-else if(mode == 3 || mode == 7){
+else if(mode >= 100 && mode%10 == 0){
+  window.check_version = window.location&&window.location.href.search("v=101") >= 0;
+  window&&window.history&&window.history.pushState("","","/mini/"+mode);
+}
+else if(mode == 3 || mode == 7 || (mode >= 100 && mode%10 == 2)){
   scripts.push("//static.mediav.com/js/mvf_g4.js");
   isLoadBool = false;
   DataCenter.getAreaData().then(()=>{

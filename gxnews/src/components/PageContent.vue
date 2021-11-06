@@ -256,7 +256,8 @@ export default {
     methods:{
         reloadHome(evt){
             if(process.env.NODE_ENV != "development"){
-                window.location.href = "https://news.dtxww.cn/";
+                let mode = dataCenter.getModeUrlRoot();
+                window.location.href = "https://news.dtxww.cn/" + mode;
             }
         },
         listScroll(){
@@ -429,17 +430,19 @@ export default {
             return cname;
         },
         gotoCategry(idx){
-            window.open("https://news.dtxww.cn/?cateid=" + idx + "wow", '_blank');
+            let mode = dataCenter.getModeUrlRoot();
+            window.open(`https://news.dtxww.cn/${mode}?cateid=${idx}wow`, '_blank');
         },
         gotoNews(item){
-            let mode = process.env.BUILD_MODE == 3 ? "" : "000/";
+            let mode = dataCenter.getModeUrlRoot();
             let turl = `https://news.dtxww.cn/content/${mode}?id=${item.id}&cateid=${item.cateId}`;
             window.open(turl, '_blank');
         },
         gotoPage(index){
+            let mode = dataCenter.getModeUrlRoot();
             let len = this.allPages.length;
             if(index >= len - 1){
-                window.open("https://news.dtxww.cn/", '_self');
+                window.open(`https://news.dtxww.cn/${mode}`, '_self');
             }
             else{
                 this.currentPageIndex = index;
