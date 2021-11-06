@@ -617,6 +617,7 @@ class DataCenter {
     /**详情页单接口 */
     getDetailInfo(){
         if(this.detailData) return new Promise((resolve,reject)=>{resolve(this.detailData)});
+        let query = Utils.getUrlParams();
         let ext = this.getJsonUrl("detail");
         return this.axios.get(ext,{headers:{'Content-Type':'application/json'}}).then(res=>{
             let data = res.data;

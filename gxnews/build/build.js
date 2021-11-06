@@ -6,7 +6,7 @@ process.env.NODE_ENV = 'production'
 // 100 产品水印 100  100-mini 101-首页 102-详情页   105-mini测试  106-首页测试 107-详情页测试 
 // 110 游戏盒子 110  110-mini 111-首页 112-详情页  115-mini测试  116-首页测试 117-详情页测试
 // 120 2345 120 120-mini 121-首页 122-详情页  125-mini测试  126-首页测试 127-详情页测试
-process.env.BUILD_MODE = 105
+process.env.BUILD_MODE = 122
 
 const ora = require('ora')
 const rm = require('rimraf')
