@@ -299,7 +299,7 @@ export default {
             })
         },
         gotoNews(item){
-            let mode = dataCenter.getModeUrlRoot();
+            let mode = dataCenter.getJumpToPath();
             let turl = `https://news.dtxww.cn/content/${mode}?id=${item.id}&cateid=${item.cateId}`;
             window.open(turl, '_blank');
             return false;

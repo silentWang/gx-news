@@ -40,15 +40,26 @@ class DataCenter {
     getRealUrl(cmd = ""){
         return process.env.PROXY_BASE + cmd;
     }
-    /**渠道path域名 */
+    /**渠道path路径 */
     getModeUrlRoot(){
         let mode = process.env.BUILD_MODE;
-        let urlPath = "";
-        if(mode == 1 || mode == 2 || mode == 3) urlPath = "";
-        else if(mode == 4) urlPath = "001/";
-        else if(mode == 5) urlPath = "002/";
-        else if(mode == 6 || mode == 7 || mode == 8) urlPath = "000/";
-        else if(mode >= 100){
+        if(mode == 4) return "001/";
+        if(mode == 1 || mode == 3 || mode == 5) return "002/";
+        if(mode == 6 || mode == 7 || mode == 8) return "000/";
+        if(mode >= 100){
+            let type = mode%10;
+            let xpath = ~~((~~(mode/10))*10);
+            xpath = type >= 5 ? "test" + xpath : xpath;
+            return xpath + "/";
+        }
+        return "";
+    }
+    /**跳转对应url 002特殊*/
+    getJumpToPath(){
+        let mode = process.env.BUILD_MODE;
+        if(mode == 4) return "001/";
+        if(mode == 6 || mode == 7 || mode == 8) return "000/";
+        if(mode >= 100){
             let type = mode%10;
             let xpath = ~~((~~(mode/10))*10);
             xpath = type >= 5 ? "test" + xpath : xpath;
@@ -572,37 +583,39 @@ class DataCenter {
     getJsonUrl(type,cateid){
         let env = process.env.NODE_ENV;
         let mode = process.env.BUILD_MODE;
+        let path = this.getModeUrlRoot();
         let url = "";
         if(type == "home"){
-            url = `//news.dtxww.cn/data/online/home_data.json`;
+            url = `//news.dtxww.cn/data/online/${path}home/home_data.json`;
             if(env == "development"){
-                url = `/data/develop/home_data.json`;
+                url = `/data/develop/${path}home/home_data.json`;
             }
             else if(mode == 8 || (mode >= 100 && mode%100 == 5)){
-                url = `//news.dtxww.cn/data/develop/home_data.json`;
+                url = `//news.dtxww.cn/data/develop/${path}home/home_data.json`;
             }
             return url;
         }
         if(type == "detail"){
             let query = Utils.getUrlParams();
             let cateid = query.cateid ? query.cateid : 1;
-            url = `//news.dtxww.cn/data/online/mini_detail_v_${cateid}.json`;
+            url = `//news.dtxww.cn/data/online/${path}detail/mini_detail_v_${cateid}.json`;
             if(env == "development"){
-                url = `/data/develop/mini_detail_v_${cateid}.json`;
+                url = `/data/develop/${path}detail/mini_detail_v_${cateid}.json`;
             }
             else if(mode == 7 || (mode >= 100 && mode%10 == 7)){
-                url = `//news.dtxww.cn/data/develop/mini_detail_v_${cateid}.json`;
+                url = `//news.dtxww.cn/data/develop/${path}detail/mini_detail_v_${cateid}.json`;
             }
             return url;
         }
         if(type == "mini"){
-            url = `//news.dtxww.cn/data/online/mini_data_${cateid}.json?v=${new Date().getTime()}`;
+            url = `//news.dtxww.cn/data/online/${path}mini/mini_data_${cateid}.json?v=${new Date().getTime()}`;
             if(env == "development"){
-                url = `/data/develop/mini_data_${cateid}.json?v=${new Date().getTime()}`;
+                url = `/data/develop/${path}mini/mini_data_${cateid}.json?v=${new Date().getTime()}`;
             }
             else if(mode == 6 || (mode >= 100 && mode%10 == 5)){
-                url = `//news.dtxww.cn/data/develop/mini_data_${cateid}.json?v=${new Date().getTime()}`;
+                url = `//news.dtxww.cn/data/develop/${path}mini/mini_data_${cateid}.json?v=${new Date().getTime()}`;
             }
+            return url;
         }
         return url;
     }

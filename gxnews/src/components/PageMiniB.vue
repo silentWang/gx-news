@@ -92,9 +92,9 @@ export default {
             screenHandler1:null,//弹窗
             screenHandler2:null,//切标签
             curLabelIndex:0,
-            showAdvFlag1:false,
-            showAdvFlag2:false,
-            showAdvFlag3:false,
+            showAdvFlag1:false,//信息流
+            showAdvFlag2:false,//弹窗
+            showAdvFlag3:false,//右侧中间橱窗
             gameCloseLeftTime:0,
             actionItem1:null,
             actionItem2:null,
@@ -177,13 +177,13 @@ export default {
                 } 
                 else if(info.name == "part_2"){
                     sides.push(info);
-                    this.showAdvFlag3 = true;
                     this.actionItem2.setIDS(info.adv,false);
+                    let rate = info.adv.open_rate;
+                    this.showAdvFlag3 = window.check_version && rand <= rate;
                 }
                 else if(info.name == "part_3"){
                     sides.push(info);
                     info.type = 2;
-                    this.showAdvFlag3 = true;
                     this.actionItemCC2.setIDS(info.adv);
                 } 
                 else if(info.name == "part_4"){
@@ -268,6 +268,10 @@ export default {
             }
         },
         showDialog(){
+            if(process.env.BUILD_MODE == 120){
+                let region = Utils.getRegion();
+                if(region && region.search("上海") >= 0) return;
+            }
             if(!this.dialogFlag){
                 dataCenter.upToActivity(100001,"open");
                 if(this.showAdvFlag2){
@@ -299,7 +303,7 @@ export default {
         },
         gotoCategry(idx){
             if(idx < 0){
-                let mode = dataCenter.getModeUrlRoot();
+                let mode = dataCenter.getJumpToPath();
                 window.open("https://news.dtxww.cn/" + mode,"_blank")
                 return;
             }
@@ -383,7 +387,7 @@ export default {
                 this.newsList = xarr;
             }
             let idx = item.id;
-            let mode = dataCenter.getModeUrlRoot();
+            let mode = dataCenter.getJumpToPath();
             let xurl = `https://news.dtxww.cn/content/${mode}?id=${idx}&qid=0&cateid=${item.cateId}`;
             window.open(xurl, '_blank');
             if(index == 0){
