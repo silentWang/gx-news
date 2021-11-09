@@ -18,8 +18,6 @@ class DataCenter {
         this.maxTSZNum = 4;
         this.isCanLoadNext = true;
         this.areaBool = false;
-        // Utils.getIp();
-        this.getIP();
     }
 
     setQid(qid){
@@ -440,13 +438,15 @@ class DataCenter {
     }
     /**获取本机ip */
     getIP(){
-        Utils.myIP = "";
+        if(this.myIP) return this.myIP;
+        this.myIP = "";
         if(returnCitySN && returnCitySN.cip){
-            Utils.myIP = returnCitySN.cip;
+            this.myIP = returnCitySN.cip;
         }
         if(process.env.NODE_ENV == "development"){
             console.log("IP相关信息",returnCitySN);
         }
+        return this.myIP;
     }
     /**地域屏蔽 */
     getAreaData(){        

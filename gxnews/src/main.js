@@ -30,7 +30,7 @@ else if(mode == 6){
 else if(mode >= 100 && mode%10 == 0){
   window.check_version = window.location&&window.location.href.search("v=101") >= 0;
   window&&window.history&&window.history.pushState("","","/mini/"+mode);
-  if(mode == 120){
+  if(mode == 130){
     DataCenter.getAreaData();
   }
 }

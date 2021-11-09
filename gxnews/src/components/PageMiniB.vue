@@ -268,7 +268,7 @@ export default {
             }
         },
         showDialog(){
-            if(process.env.BUILD_MODE == 120){
+            if(process.env.BUILD_MODE == 130){
                 let region = Utils.getRegion();
                 if(region && region.search("上海") >= 0) return;
             }
@@ -311,12 +311,12 @@ export default {
             this.curLoadPage = 1;
             this.selectCateId = idx;
             this.isloading = true;
+            this.currentPage = 1;
+            let cele = document.getElementsByClassName("mini_middle")[0];
+            cele.scrollTop = 0;
             dataCenter.getMiniInfo(idx,this.curLoadPage).then(res=>{
                 if(res.code != 200) return
                 let data = res.data;
-                this.currentPage = 1;
-                let cele = document.getElementsByClassName("mini_middle")[0];
-                cele.scrollTop = 0;
                 this.actionItemList.reset();
                 this.newsList = data.main_list;
                 this.$nextTick(()=>{

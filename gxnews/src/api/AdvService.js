@@ -1,6 +1,7 @@
 import axios from './request'
 import NetHttp from './NetHttp'
 import Utils from '../js/Utils';
+import DataCenter from './DataCenter';
 class AdvService {
     constructor(){
         this.axios = axios;   
@@ -15,9 +16,10 @@ class AdvService {
     /**********************************东方广告start************************************** */
     getDFTTQid(){
         let mode = process.env.BUILD_MODE;
-        let type = ~~(mode/100);
-        if(mode >= 100 && type == 1) return "04370";
-        if(mode >= 100 && type == 2) return "04371";
+        let type = ~~(mode/10);
+        if(mode >= 100 && type == 10) return "04370";
+        if(mode >= 100 && type == 11) return "04371";
+        if(mode >= 100 && type == 12) return "04372";
         return "04369";
     }
     /**
@@ -35,7 +37,7 @@ class AdvService {
             device: {
                 terminal: 'PC', // string 终端：PC、WAP、APP
                 deviceType: 'PC', // string 设备类型（默认为 PC）：PC - 个人计算机、PHONE - 手机设备、TABLET - 平板设备
-                ip:Utils.myIP ? Utils.myIP : ""
+                ip:DataCenter.getIP()
             },
             // 站点信息
             site: {
