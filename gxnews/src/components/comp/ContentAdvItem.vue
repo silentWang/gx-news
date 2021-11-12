@@ -162,10 +162,10 @@ export default {
         },
         clickTo(evt){
             if(this.advType == Utils.ADV_TYPE.DFTT){
-                dataCenter.upToActivity(200001,"click200001",this.itemId);
+                dataCenter.upToActivity("df_click");
             }
             else if(this.advType == Utils.ADV_TYPE.TSZ){
-                dataCenter.upToActivity(200002,"click200002",this.itemId);
+                dataCenter.upToActivity("360_click");
                 dataCenter.upTo360ClkLog(this.tszData,evt.offsetX,evt.offsetY,560,244,3);
             }
         },

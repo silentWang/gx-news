@@ -76,6 +76,8 @@ export default {
             itemUrl:"",
             itemSource:"",
             bdcode:"",
+            minix:0,
+            miniy:0,
             singleSmallBool:false,
         }
     },
@@ -129,21 +131,38 @@ export default {
         },
         clickTo(evt){
             if(this.advType == Utils.ADV_TYPE.DFTT){
-                dataCenter.upToActivity(200001,"click200001",this.itemId);
+                dataCenter.upToActivity("df_click");
             }
             else if(this.advType == Utils.ADV_TYPE.TSZ){
-                dataCenter.upToActivity(200002,"click200002",this.itemId);
-                dataCenter.upTo360ClkLog(this.tszData,evt.offsetX,evt.offsetY,560,244,3);
+                dataCenter.upToActivity("360_click");
+                if(this.actionItem.name == "actionItemMiniDialog"){
+                    dataCenter.upTo360ClkLog(this.tszData,this.minix,this.miniy,560,244,3);
+                }
+                else{
+                    dataCenter.upTo360ClkLog(this.tszData,evt.offsetX,evt.offsetY,560,244,3);
+                }
             }
         },
         advDown(evt){
             if(this.advType == Utils.ADV_TYPE.TSZ){
-                dataCenter.upTo360ClkLog(this.tszData,evt.offsetX,evt.offsetY,560,244,1);
+                if(this.actionItem.name == "actionItemMiniDialog"){
+                    this.minix = 20 + 520*Math.random();
+                    this.miniy = 10 + 210*Math.random();
+                    dataCenter.upTo360ClkLog(this.tszData,this.minix,this.miniy,560,244,1);
+                }
+                else{
+                    dataCenter.upTo360ClkLog(this.tszData,evt.offsetX,evt.offsetY,560,244,1);
+                }
             }
         },
         advUp(evt){
             if(this.advType == Utils.ADV_TYPE.TSZ){
-                dataCenter.upTo360ClkLog(this.tszData,evt.offsetX,evt.offsetY,560,244,2);
+                if(this.actionItem.name == "actionItemMiniDialog"){
+                    dataCenter.upTo360ClkLog(this.tszData,this.minix,this.miniy,560,244,2);
+                }
+                else{
+                    dataCenter.upTo360ClkLog(this.tszData,evt.offsetX,evt.offsetY,560,244,2);
+                }
             }
         },
     }

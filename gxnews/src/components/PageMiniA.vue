@@ -257,12 +257,6 @@ export default {
                 if(this.dialogFlag){
                     this.dialogFlag = false;
                     let type = this.dialogInfo.adv.adv_type;
-                    if(type == "adv360"){
-                        dataCenter.upToActivity(100001,"close");
-                    }
-                    else if(type == "advbd"){
-                        dataCenter.upToActivity(100003,"close");
-                    }
                 }
                 if(this.needShow2){
                     this.needShow2 = false;
@@ -284,13 +278,11 @@ export default {
             if(!this.dialogFlag){
                 let type = this.dialogInfo.adv.adv_type;
                 if(type == "adv360"){
-                    dataCenter.upToActivity(100001,"open");
                     let rate = this.dialogInfo.adv.adv_rate;
                     let rand = Math.ceil(100*Math.random());
                     this.needShow2 = rand <= rate;
                 }
                 else if(type == "advbd"){
-                    dataCenter.upToActivity(100003,"open");
                     Utils.addDelay(()=>{
                         this.needShow2 = false;
                     },this,8000,1)
@@ -305,7 +297,6 @@ export default {
         closeGameAd(force){
             if(force == -1){
                 Utils.removeDelay(1000,this.closeGameAd);
-                dataCenter.upToActivity(100005,"click");
                 this.gameCloseLeftTime = 0;
                 return;
             }
@@ -315,7 +306,6 @@ export default {
             }
         },
         clkGameAd(){
-            dataCenter.upToActivity(100004,"click");
         },
         gotoCategry(idx){
             if(idx < 0){
@@ -411,12 +401,7 @@ export default {
             // window.open(routeUrl,"_blank")
             let xurl = "https://news.dtxww.cn/content/?id="+idx + "&qid=0";
             window.open(xurl, '_blank');
-            if(index == 0){
-                dataCenter.upToActivity(100002,"click","left");
-            }
-            else if(index == 1){
-                dataCenter.upToActivity(100002,"click","right");
-            }
+
             return false;
         },
         gotoNextPage(){

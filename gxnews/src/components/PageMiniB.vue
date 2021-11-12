@@ -105,7 +105,7 @@ export default {
         }
     },
     beforeMount(){
-        this.actionItem1 = dataCenter.createAdvItem("mini_main","actionItem1");
+        this.actionItem1 = dataCenter.createAdvItem("mini_main","actionItemMiniDialog");
         this.actionItem2 = dataCenter.createAdvItem("mini_main","actionItem2");
         this.actionItemList = dataCenter.createAdvItem("mini_main","actionItemList");
         this.actionItem3 = dataCenter.createAdvItem("mini_main","actionItem3");
@@ -253,7 +253,6 @@ export default {
         },
         clickClose(){
             this.dialogFlag = false;    
-            dataCenter.upToActivity(100001,"close");
             if(this.showAdvFlag2){
                 this.showAdvFlag2 = false;
             }            
@@ -273,7 +272,6 @@ export default {
                 if(region && region.search("上海") >= 0) return;
             }
             if(!this.dialogFlag){
-                dataCenter.upToActivity(100001,"open");
                 if(this.showAdvFlag2){
                     this.$nextTick(()=>{
                         this.actionItem1.checkLoad();
@@ -289,7 +287,7 @@ export default {
         closeGameAd(force){
             if(force == -1){
                 Utils.removeDelay(1000,this.closeGameAd);
-                dataCenter.upToActivity(100005,"click");
+                // dataCenter.upToActivity(100005,"click");
                 this.gameCloseLeftTime = 0;
                 return;
             }
@@ -299,7 +297,7 @@ export default {
             }
         },
         clkGameAd(){
-            dataCenter.upToActivity(100004,"click");
+            // dataCenter.upToActivity(100004,"click");
         },
         gotoCategry(idx){
             if(idx < 0){
@@ -390,12 +388,6 @@ export default {
             let mode = dataCenter.getJumpToPath();
             let xurl = `https://news.dtxww.cn/content/${mode}?id=${idx}&qid=0&cateid=${item.cateId}`;
             window.open(xurl, '_blank');
-            if(index == 0){
-                dataCenter.upToActivity(100002,"click","left");
-            }
-            else if(index == 1){
-                dataCenter.upToActivity(100002,"click","right");
-            }
             return false;
         },
         gotoNextPage(){

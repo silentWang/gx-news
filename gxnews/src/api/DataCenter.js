@@ -321,6 +321,9 @@ class DataCenter {
     /**点击广告 */
     upTo360ClkLog(adv,x,y,w,h,start){
         if(!adv) return;
+        if(process.env.NODE_ENV == "development"){
+            console.log("上报类型start="+start+",x=" + x + ",y=" + y)
+        }
         if(start == 1){
             this.advCop = {};
             let clktk = adv.clktk;
@@ -372,21 +375,19 @@ class DataCenter {
             }
         }
     }
-    /**上报  type : click open close  action:left,right*/
-    upToActivity(actid,type,action){
+    /**上报  qid 渠道号*/
+    upToActivity(type){
+        let mode = this.getModeUrlRoot();
+        let channel_code = mode && mode.slice(0,3);
         if(process.env.NODE_ENV != "production"){
-            console.log(actid + "----" + type + "----" + action)
+            console.log(channel_code + "----" + type)
             return;
         }
-        console.log(actid + "----" + type + "----" + action)
-        let url = "//func.dtw-tech.cn/data/total";//this.getRealUrl("/v1/demo/index");
+        let url = "//func.dtw-tech.cn/redis/total";//this.getRealUrl("/v1/demo/index");
         let userid = this.axios.defaults.headers["userId"];
-        let params = "?userid=" + userid + "&" + "actid=" + actid;
+        let params = "?userid=" + userid + "&" + "channel_code=" + channel_code;
         if(type){
             params += "&type=" + type;
-        }
-        if(action){
-            params += "&action=" + action;
         }
         let rurl = url + params;
         this.axios.get(rurl).then((res)=>{
