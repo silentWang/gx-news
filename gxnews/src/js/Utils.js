@@ -77,7 +77,8 @@ export default class Utils {
     static getTimeStr(type = "y",dots = [":"]){
         let time = new Date();
         let y = time.getFullYear();
-        let M = time.getMonth() < 10 ? "0" + time.getMonth() : time.getMonth();
+        let mon = time.getMonth() + 1;
+        let M = mon < 10 ? "0" + mon : mon;
         let d = time.getDate() < 10 ? "0" + time.getDate() : time.getDate();
         let h = time.getHours() < 10 ? "0" + time.getHours() : time.getHours();
         let m = time.getMinutes() < 10 ? "0" + time.getMinutes() : time.getMinutes();

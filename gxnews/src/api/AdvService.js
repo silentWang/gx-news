@@ -20,6 +20,11 @@ class AdvService {
         if(mode >= 100 && type == 10) return "04370";
         if(mode >= 100 && type == 11) return "04371";
         if(mode >= 100 && type == 12) return "04372";
+        if(mode >= 100 && type == 14) return "04373";
+        if(mode >= 100 && type == 15) return "04374";
+        if(mode >= 100 && type == 16) return "04375";
+        if(mode >= 100 && type == 17) return "04376";
+        if(mode >= 100 && type == 18) return "04377";
         return "04369";
     }
     /**
