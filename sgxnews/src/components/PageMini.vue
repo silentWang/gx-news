@@ -1,0 +1,778 @@
+<template>
+    <div class="mini_main">
+        <div v-show="dialogFlag" class="mini_dialog_main">
+            <div class="mini_dialog_news">
+                <div class="mini_dialog_close" @click="clickClose()" @click.stop>ⓧ</div>
+                <div class="mini_dialog_news_block" v-for="(item,index) in dialogNewsList" @click="gotoNews(item,index)" :key="index">
+                    <div class="mini_dialog_image" @click="gotoNews(item,index)" @click.stop>
+                        <a target="_blank" :href="item.url"><img :src='item.pics[0]'/></a>
+                    </div>
+                    <div class="mini_dialog_image_title">
+                        <a target="_blank" :href="item.url" @click="gotoNews(item,index)" @click.stop>{{item.title}}</a>
+                        <p>{{item.from}}</p>
+                    </div>
+                </div>
+                <MiniAdvItem v-if="showAdvFlag2" class="mini_adver_dialog_class_style" :actionItem="actionItem1"></MiniAdvItem>
+            </div>
+        </div>
+        <div class="mini_main_title">
+            <ul class="mini_main_title_ul">
+                <li v-for="(item) in titleList" :key="item.cateId">
+                    <a @click="gotoCategry(item.cateId)" @mouseover="delayGoto(item.cateId,true)" @mouseout="delayGoto(item.cateId,false)" :class="[selectCateId == item.cateId ? 'mini_navLink_selected':'mini_navLink']">{{item.cateName}}</a>
+                </li>
+            </ul>
+        </div>
+        <div class="mini_right">
+            <ul class="mini_right_list">
+                <li v-for="(item,index) in rightList.slice(0,3)" :key="index">
+                    <div v-if="item.type == 2">
+                        <div v-if="index == 0">
+                            <MiniAdvItem :actionItem="actionItemCC1" type="kitchen" class="mini_adver_kicthen_class_style"></MiniAdvItem>
+                        </div>
+                        <div v-else>
+                            <MiniAdvItem :actionItem="actionItemCC2" type="kitchen" class="mini_adver_kicthen_class_style"></MiniAdvItem>
+                        </div>
+                    </div>
+                    <div v-else>
+                        <NewsSlider v-on:gotoNews="gotoNews" :nsId="index" nWidth="200" nHeight="185" v-bind:newsList="getSlideNewsList(item.data)"></NewsSlider>
+                        <MiniAdvItem v-if="showAdvFlag3" :actionItem="actionItem2" class="mini_adver_flag_class_style"></MiniAdvItem>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <div class="mini_middle" @scroll="scrollHandler">
+            <div class="mini_content">
+                <div class="mini_content_item" v-for="(item,index) in newsList" :key="getNextKey(item,index)">
+                    <MiniAdvItem v-if="item.type == 2" class="mini_adver_class_style" :actionItem="actionItemList"></MiniAdvItem>
+                    <MiniNewsItem v-else v-on:gotoNews="gotoNews" :newsInfo="item" :cateName="getCateName()">
+                        <MiniAdvItem v-if="showAdvFlag1" class="mini_adver_flag_class_style" :actionItem="actionItem3"></MiniAdvItem>
+                    </MiniNewsItem>
+                </div>
+            </div>
+        </div>
+        <div class="game_bottom_adver_class" v-show="gameCloseLeftTime > 0">
+            <a href="https://sdk.such-game.com/pcsdk/sdk.php?game=qiansheng" @click="clkGameAd()" target="_blank">
+                <img src=".././assets/game_header1.png">
+            </a>
+            <div class="game_bottom_adver_class_close">
+                <div class="closebtn" @click="closeGameAd(-1)">X</div>
+                <div class="close_left_time">剩余{{this.gameCloseLeftTime}}秒</div>
+            </div>
+        </div>
+        <div v-show="moreFlag" class="mini_bottom_more" @click="gotoNextPage()">更多未读资讯<span>››</span></div>
+    </div>
+</template>
+<script>
+import NewsSlider from './comp/NewsSlider'
+import MiniNewsItem from './comp/MiniNewsItem'
+import MiniAdvItem from './comp/MiniAdvItem'
+import ScreenHandler from "@/js/ScreenHandler"
+import dataCenter from '@/api/DataCenter'
+import Utils from "@/js/Utils"
+let _this;
+export default {
+    components:{
+        NewsSlider,
+        MiniNewsItem,
+        MiniAdvItem
+    },
+    data(){
+        return {
+            selectCateId:-1,
+            currentPage:1,
+            curLoadPage:1,
+            dialogFlag:false,
+            isloading:false,
+            moreFlag:false,
+            titleList:[],
+            newsList:[],
+            rightList:[],
+            dialogNewsList:[],
+            tszData:null,
+            screenHandler1:null,//弹窗
+            screenHandler2:null,//切标签
+            curLabelIndex:0,
+            showAdvFlag1:false,//信息流
+            showAdvFlag2:false,//弹窗
+            showAdvFlag3:false,//右侧中间橱窗
+            gameCloseLeftTime:0,
+            actionItem1:null,
+            actionItem2:null,
+            actionItem3:null,
+            actionItemList:null,
+            actionItemCC1:null,
+            actionItemCC2:null
+        }
+    },
+    beforeMount(){
+        this.actionItem1 = dataCenter.createAdvItem("mini_main","actionItemMiniDialog");
+        this.actionItem2 = dataCenter.createAdvItem("mini_main","actionItem2");
+        this.actionItemList = dataCenter.createAdvItem("mini_main","actionItemList");
+        this.actionItem3 = dataCenter.createAdvItem("mini_main","actionItem3");
+        this.actionItemCC1 = dataCenter.createAdvItem("mini_main","actionItemCC1");
+        this.actionItemCC2 = dataCenter.createAdvItem("mini_main","actionItemCC2");
+    },
+    mounted(){
+        _this = this;        
+        dataCenter.getMiniInfo().then(res=>{
+            if(res.code != 200) return;
+            let data = res.data;
+            let list = data.category;
+            let arr = [];
+            for(let i = 0;i < list.length;i++){
+                let cate = list[i];
+                arr.push({id:cate.cateId - 1,cateId:cate.cateId,cateName:cate.cateName})
+            }
+            arr.push({id:-1,cateId:-1,cateName:'更多'})
+            this.titleList = arr;
+            this.selectCateId = arr[0].cateId;          
+            //中间新闻列表
+            this.currentPage = 1;
+            let cele = document.getElementsByClassName("mini_middle")[0];
+            cele.scrollTop = 0;
+            this.createAdv(data);
+            let switch_rate = data.switch_rate;
+            let rate = 100*Math.random();
+            if(switch_rate && switch_rate > 0 && rate < parseInt(switch_rate)){
+                this.screenHandler2 = new ScreenHandler(20000,this.checkNextLabel.bind(this));
+            }            
+            Utils.addDelay(_this.checkIsMore,this,10000,1);            
+        });
+
+        Utils.addDelay(this.showDialog,this,15000,1);        
+        // this.showGameAd();
+        Utils.addWindowClick(()=>{
+            if(this.dialogFlag){
+                this.showAdvFlag2 = false;
+                return;
+            }
+            if(this.showAdvFlag1){
+                this.showAdvFlag1 = false;
+            }
+            if(this.showAdvFlag2){
+                this.showAdvFlag2 = false;
+            }
+            if(this.showAdvFlag3){
+                this.showAdvFlag3 = false;
+            }
+        },this);
+        document.title = "MiniPage";
+    },
+    methods:{
+        createAdv(data){
+            let rand = Math.ceil(100*Math.random());
+            let sides = []
+            let main_side = data.main_side
+            for(let info of main_side){
+                if(info.name == "part_0"){
+                    this.actionItemList.setIDS(info.adv);
+                    this.actionItem3.setIDS(info.adv,false);
+                    let xrate = info.adv.open_rate;
+                    this.showAdvFlag1 = window.check_version && rand <= xrate;
+                }
+                else if(info.name == "part_1"){
+                    this.actionItemCC1.setIDS(info.adv);
+                    // info.type = 2
+                    // sides.push(info)
+                } 
+                else if(info.name == "part_2"){
+                    sides.push(info);
+                    sides.push(info);
+                    this.actionItem2.setIDS(info.adv,false);
+                    let rate = info.adv.open_rate;
+                    this.showAdvFlag3 = window.check_version && rand <= rate;
+                }
+                else if(info.name == "part_3"){
+                    sides.push(info);
+                    // info.type = 2;
+                    this.actionItemCC2.setIDS(info.adv);
+                } 
+                else if(info.name == "part_4"){
+                    this.actionItem1.setIDS(info.adv,false);
+                    this.dialogNewsList = info.data.slice(0,2);
+                    let rate = info.adv.open_rate;
+                    this.showAdvFlag2 = window.check_version && rand <= rate;
+                } 
+            }
+            this.$nextTick(()=>{
+                this.newsList = data.main_list;
+                this.rightList = sides;
+                this.loadNextAdver(0);
+            });
+        },
+        getNextKey(item,index){
+            let skey = "";
+            if(item.type == 2){
+                skey = item.type + "_" + item.cateId + "_" + index;
+            }
+            else{
+                let id = dataCenter.getNextId();
+                skey = "item_" + id + "_" + index;
+            }
+            return skey;
+        },
+        scrollHandler(e){
+            let ele = e.srcElement ? e.srcElement : e.target;
+            if(!ele) return;
+            if(!this.isloading){
+                this.loadNextAdver(2);
+            }
+            if(ele.scrollTop + ele.offsetHeight > ele.scrollHeight - 100){
+                if(!this.isloading){
+                    this.loadNextPage();
+                    console.log("load next");
+                }
+            }
+            if(this.moreFlag){
+                this.moreFlag = false;
+                Utils.addDelay(this.checkIsMore,this,10000);
+            }
+        },
+        getCateName(item){
+            if(item && item.cateId == -100) return "";
+            let list = this.titleList;
+            let cname = "";
+            for(let cate of list){
+                if(cate.cateId == this.selectCateId){
+                    cname = cate.cateName;
+                    break;
+                }
+            }
+            return cname + "    ";
+        },
+        checkNextLabel(){
+            this.curLabelIndex++;
+            let item = this.titleList[this.curLabelIndex];
+            this.gotoCategry(item.cateId);
+            if(this.curLabelIndex >= 2) this.curLabelIndex = -1;
+            if(this.curLabelIndex == 0){
+                this.screenHandler2.destroy();
+            }
+            else{
+                this.screenHandler2.reWatch();
+            }
+        },
+        clickClose(){
+            this.dialogFlag = false;    
+            if(this.showAdvFlag2){
+                this.showAdvFlag2 = false;
+            }            
+            if(!this.screenHandler){
+                this.screenHandler1 = new ScreenHandler(30000,()=>{
+                    this.showDialog();
+                });
+            }
+            else {
+                this.dialogFlag = false;
+                this.screenHandler1.reWatch();
+            }
+        },
+        showDialog(){
+            // if(process.env.BUILD_MODE == 130){
+            //     let region = Utils.getRegion();
+            //     if(region && region.search("上海") >= 0) return;
+            // }
+            return;
+            if(!this.dialogFlag){
+                if(this.showAdvFlag2){
+                    this.$nextTick(()=>{
+                        this.actionItem1.checkLoad();
+                    });
+                }
+            }
+            this.dialogFlag = true;
+        },
+        showGameAd(){
+            this.gameCloseLeftTime = 5;
+            Utils.addDelay(this.closeGameAd,this,1000,5);
+        },
+        closeGameAd(force){
+            if(force == -1){
+                Utils.removeDelay(1000,this.closeGameAd);
+                // dataCenter.upToActivity(100005,"click");
+                this.gameCloseLeftTime = 0;
+                return;
+            }
+            this.gameCloseLeftTime--;
+            if(this.gameCloseLeftTime <= 0){
+                Utils.removeDelay(1000,this.closeGameAd);
+            }
+        },
+        clkGameAd(){
+            // dataCenter.upToActivity(100004,"click");
+        },
+        gotoCategry(idx){
+            if(idx < 0){
+                let mode = dataCenter.getJumpToPath();
+                window.open("//news.kukumai.cn/" + mode,"_blank")
+                return;
+            }
+            if(this.selectCateId == idx) return;
+            this.curLoadPage = 1;
+            this.selectCateId = idx;
+            this.isloading = true;
+            this.currentPage = 1;
+            let cele = document.getElementsByClassName("mini_middle")[0];
+            cele.scrollTop = 0;
+            dataCenter.getMiniInfo(idx,this.curLoadPage).then(res=>{
+                if(res.code != 200) return
+                let data = res.data;
+                this.actionItemList.reset();
+                this.newsList = data.main_list;
+                this.$nextTick(()=>{
+                    this.isloading = false;
+                    this.loadNextAdver(1);
+                });
+                Utils.addDelay(_this.checkIsMore,this,10000,1);
+            });
+        },
+        loadNextPage(){
+            this.isloading = true;
+            this.curLoadPage++;
+            dataCenter.getMiniInfo(this.selectCateId,this.curLoadPage).then(res=>{
+                this.isloading = false;
+                if(res.code != 200) return
+                let data = res.data;
+                this.newsList = this.newsList.concat(data.main_list);
+                this.loadNextAdver(2);
+                Utils.addDelay(_this.checkIsMore,this,10000,1);
+            });
+        },
+        loadNextAdver(force = 2){
+            if(force == 1){
+                this.currentPage = 1;
+            }
+            this.$nextTick(()=>{
+                this.actionItemList.checkLoad(force != 2 ? 3 : 1);
+                this.actionItem3.checkLoad();
+                if(force == 0){
+                    this.actionItem2.checkLoad();
+                    this.actionItemCC1.checkLoad();
+                    this.actionItemCC2.checkLoad();
+                }
+            });
+        },
+        delayGoto(cid,isdelay){
+            if(isdelay){
+                this.delayGotoId = setTimeout(()=>{
+                    this.gotoCategry(cid);
+                },600);
+            }
+            else{
+                clearTimeout(this.delayGotoId);
+            }
+        },
+        gotoNews(item,index){
+            //前10条点击即移动到第10条
+            let sindex = this.newsList.indexOf(item);
+            if(sindex <= 19 && item.type != 2){
+                let arr = this.newsList.slice(0,20);
+                let arr1 = [];
+                let arr2 = [];
+                for(let i = 0;i < arr.length;i++){
+                    if(arr[i].type == 2){
+                        arr2.push(arr[i]);
+                    }
+                    else if(sindex != i){
+                        arr1.push(arr[i]);
+                    }
+                }
+                arr1.push(arr[sindex]);
+                let tarr = [];
+                for(let i = 0;i < arr2.length;i++){
+                    tarr.push(arr2[i]);
+                    tarr.push(arr1[i]);
+                }
+                let xarr = tarr.concat(this.newsList.slice(20));
+                this.newsList = xarr;
+            }
+            let idx = item.id;
+            let mode = dataCenter.getJumpToPath();
+            let xurl = `//news.kukumai.cn/content/${mode}?id=${idx}&qid=0&cateid=${item.cateId}`;
+            window.open(xurl, '_blank');
+            return false;
+        },
+        gotoNextPage(){
+            let page = this.currentPage + 1;
+            let len = this.newsList.length;
+            let um = Math.ceil(len/10);
+            if(page > um) return;
+            this.currentPage++;
+            this.moreFlag = false;
+            Utils.addDelay((bool)=>{
+                let mele = document.getElementsByClassName("mini_middle")[0]
+                let scrollTop = mele.scrollTop;
+                mele.scrollTop = scrollTop + 55;
+                if(bool){
+                    Utils.addDelay(this.checkIsMore,this,100)
+                }
+            },this,1,10)
+        },
+        checkIsMore(){
+            let len = this.newsList.length;
+            let um = Math.ceil(len/10);
+            this.moreFlag = this.currentPage < um;
+        },
+        getSlideNewsList(list){
+            let arr = [];
+            if(list && list.length > 0){
+                for(let i = 0;i < list.length;i++){
+                    let obj = list[i];
+                    arr.push({id:obj.id,title:obj.title,pic:obj.pics[0],url:obj.url,cateId:obj.cateId})
+                }
+                if(list.length > 1){
+                    arr.push(arr[0])
+                }
+            }
+            return arr;
+        }
+    }
+}
+</script>
+<style>
+    * {
+        margin:0px;
+        padding:0px;
+    }
+    html {
+        top:0;
+        left: 0;
+        height: 100%;
+    }
+    body {
+        background: #f5f5f5;
+    }
+    a {
+        color: #333;
+        text-decoration: none;
+        cursor: pointer;
+    }
+    a:hover{ 
+        color:#f24e4e;
+    }
+    img {
+        transition: all 0.6s;
+    }
+    img:hover {
+        transform: scale(1.1);
+    }
+    .mini_main {
+        display: block;
+        position: relative;
+        margin: 0 auto;
+        width: 898px;
+        height: 599px;
+        background: #ffffff;
+        overflow: hidden;
+    }
+    .mini_dialog_main {
+        width: 100%;
+        height: 100%;
+        display: block;
+        position: absolute;
+        text-align: center;
+        top: 0px;
+        left: 0px;
+        background-color: rgba(0, 0, 0, 0.7);
+        z-index: 100;
+    }
+    .mini_dialog_news {
+        width: 500px;
+        height: 360px;
+        display: block;
+        position: relative;
+        top: 100px;
+        background-color: #f5f5f5;
+        border-radius: 10px;
+        margin: 0 auto;
+    }
+    .mini_dialog_close {
+        width: 32px;
+        height: 32px;
+        display: block;
+        position: relative;
+        float: right;
+        text-align: center;
+        background-color: #fff;
+        border-radius: 8px;
+        font-size: 26px;
+        font-weight: bolder;
+        color: #ed4040;
+        margin-right: -38px;
+        padding: 0 2px 4px 2px;
+        cursor: pointer;
+    }
+    .mini_dialog_news_block {
+        float: left;
+        width: 230px;
+        height: 340px;
+        margin: 10px 0px 0px 14px;
+        border-radius: 10px;
+        background-color: #fff;
+        box-shadow: 2px 2px 2px #999;
+    }
+    .mini_dialog_image {
+        width: 230px;
+        height: 180px;
+        overflow: hidden;
+        text-align: left;
+    }
+    .mini_dialog_image a {
+        overflow: hidden;
+    }
+    .mini_dialog_image a img {
+        width: 100%;
+        border-radius: 10px;
+        transition: all 1s;
+    }
+    .mini_dialog_image a img:hover {
+        transform: scale(1.2);
+    }
+    .mini_dialog_image_title {
+        text-align: left;
+        font-size: 18px;
+        font-weight: bold;
+        padding: 5px;
+    }
+    .mini_dialog_image_title a {
+        line-height: 35px;
+    }
+    .mini_dialog_image_title p {
+        display: block;
+        font-size: 12px;
+        color: #888;
+        text-align: left;
+        padding: 20px 0 20px 0;
+    }
+    .mini_main_title {
+        width: 72px;
+        position: absolute;
+        margin-left: 10px;
+        top: 10px;
+        /* right: 30px; */
+        z-index: 99;
+        background: #fff;
+    }
+    .mini_main_title_ul {
+        white-space:nowrap;
+        display: block;
+        padding-top: 6px;
+        text-align: center;
+    }
+    .mini_main_title_ul li {
+        width: 72px;
+        height: 32px;
+        margin:0px 0px 10px 0px;
+        display: block;
+        list-style-type: none;
+    }
+    .mini_navLink {
+        height: 24px;
+        display: block;
+        padding-top: 4px;
+        color: #000;
+        font-size: 14px;
+        text-decoration: none;
+        border-radius: 2px;
+    }
+    .mini_navLink:hover {
+        color:#fff;
+        background: #ed4040;
+    }
+    .mini_navLink_selected {
+        height: 24px;
+        display: block;
+        padding-top: 4px;
+        font-size: 14px;
+        text-decoration: none;
+        color:#fff;
+        background: #ed4040;
+        border-radius: 2px;
+    }
+    .mini_navLink_selected:hover {
+        color: #fff;
+    }
+    .n_title_weather {
+        position: absolute;
+        top: -30px;
+        right: 0px;
+        overflow: hidden;
+        height: 40px;
+    }
+    .mini_middle {
+        width: 802px;
+        height: 595px;
+        position: absolute;
+        left: 95px;
+        top: 5px;
+        z-index: 9;
+        overflow-y: hidden;
+    }
+    .mini_middle:hover {
+        overflow-y: auto;
+    }
+    .mini_content {
+        width: 560px;
+        height: 550px;
+        padding: 10px 10px 10px 0px;
+    }
+    .mini_content_item {
+        overflow: hidden;
+        zoom: 1;
+        margin-bottom: 5px;
+        padding-bottom: 4px;
+        border-bottom: 1px solid #eee;
+        text-align: left;
+        font-size: 15px;
+        font-weight: bold;
+    }
+    .game_bottom_adver_class {
+        width: 100%;
+        height: 300px;
+        position: absolute;
+        left: 0px;
+        bottom: 0px;
+        z-index: 100;
+    }
+    .game_bottom_adver_class a img {
+        width: 100%;
+        height: 100%;
+    }
+    .game_bottom_adver_class_close {
+        width: 90px;
+        height: 20px;
+        position: absolute;
+        top: 15px;
+        right: 20px;
+        color: #fff;
+        background-color: rgba(0, 0, 0, 0.7);
+        border-radius: 10px;
+    }
+    .closebtn {
+        width: 32px;
+        height: 25px;
+        position: relative;
+        top:-6px;
+        padding: 7px 0 0 0;
+        background-color: #333;
+        border-radius: 16px;
+        z-index: 90;
+        cursor: pointer;
+    }
+    .close_left_time {
+        position: relative;
+        font-size: 12px;
+        left: 14px;
+        top: -30px;
+        z-index: 80;
+    }
+    .mini_bottom_more {
+        width: 100%;
+        height: 30px;
+        position: absolute;
+        line-height: 30px;
+        bottom: 0px;
+        text-align: center;
+        background-color: rgba(237,64,64,0.7);
+        cursor: pointer;
+        font-size: 14px;
+        color: #fff;
+        z-index: 20;
+    }
+    .mini_bottom_more span {
+        width: 16px;
+        height: 16px;
+        display: inline-block;
+        line-height: 16px;
+        text-align: center;
+        font-size: 16px;
+        transform: rotate(90deg);
+    }
+    .mini_right {
+        width: 200px;
+        position: absolute;
+        top:10px;
+        right: 30px;
+        z-index: 10;
+    }
+    .mini_right_list {
+        list-style: none;
+        font-size: 12px;
+        margin-block-start: 1em;
+        margin-inline-start: 0px;
+        margin-inline-end: 0px;
+    }
+    .mini_right_list li {
+        height: 185px;
+        overflow: hidden;
+        zoom: 1;
+        margin-bottom:6px;
+    }
+    .mini_right_list_image {
+        display: block;
+        overflow: hidden;
+        background: #f1f1f1;
+        position: relative;
+        cursor: pointer;
+    }
+    .mini_right_list_title {
+        display: block;
+        width: 242px;
+        height: 36px;
+        float: left;
+        position: relative;
+        padding-left: 3px;
+        padding-top: 3px;
+        bottom: 36px;
+        background-color: rgba(0, 0, 0, 0.7);
+        text-align: left;
+        color: seashell;
+        font-size: 13px;
+        line-height: 100%;
+    }
+    .mini_right_list_image img {
+        width: 244px;
+        height: 128px;
+        transition: all 0.6s;
+    }
+    .mini_right_list_image img:hover {
+        transform: scale(1.2);
+    }
+    .mini_adver_dialog_class_style {
+        width: 560px;
+        height: 100%;
+        overflow: hidden;
+        position: absolute;
+        opacity: 0;
+        border: 2px solid #000;
+    }
+    .mini_adver_flag_class_style {
+        width: 560px;
+        height: 142px;
+        overflow: hidden;
+        position: absolute;
+        background: #fff;
+        opacity: 0;
+        border: 2px solid #000;
+    }
+    .mini_adver_kicthen_class_style {
+        width: 200px;
+        height: 185px;
+        overflow: hidden;
+        position: absolute;
+    }
+    .mini_middle::-webkit-scrollbar {
+        width : 8px;
+    }
+    .mini_middle::-webkit-scrollbar-thumb {
+        border-radius: 6px;
+        box-shadow: inset 0 0 5px #ed4040;
+        background: #ed4040;
+    }
+    .mini_middle::-webkit-scrollbar-track {
+        box-shadow: inset 0 0 5px #fff;
+        border-radius: 6px;
+        background: #fff;
+    }
+    
+</style>
