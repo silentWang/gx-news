@@ -396,9 +396,9 @@ export default {
                 this.rankHots = rankHots
                 this.kitchenFlag = true;
                 this.$nextTick(()=>{
-                    // dataCenter.addAdsByClassName("adver_common_class_u9oe3r8d25");
-                    // dataCenter.addAdsByClassName("adver_common_class_u9803ide66");
-                    // dataCenter.addAdsByClassName("bn_content_float_advs");
+                    dataCenter.addAdsByClassName("adver_common_class_u9oe3r8d25");
+                    dataCenter.addAdsByClassName("adver_common_class_u9803ide66");
+                    dataCenter.addAdsByClassName("bn_content_float_advs");
                     this.kitchenAction1.checkLoad();
                     this.kitchenAction2.checkLoad();
                     this.kitchenAction3.checkLoad();
@@ -832,7 +832,6 @@ export default {
         overflow: hidden;
         background-color: #f7f7f7;
         border:1px solid #ececec;
-        display: none;
     }
     .chuchuang_class2 {
         width: 360px;
@@ -842,7 +841,6 @@ export default {
         padding-top: 10px;
         background-color: #f7f7f7;
         border:1px solid #ececec;
-        display: none;
     }
     .cls_newscontent {
         display: block;

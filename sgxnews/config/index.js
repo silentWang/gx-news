@@ -20,23 +20,23 @@ else if(mode >= 100){
     else if(type == 6) urlPath = `home/${xpath}`;
     else if(type == 7) urlPath = `content/${xpath}`;
 }
-let assetPath = !urlPath ? `//news.dtxww.cn/` : `//news.dtxww.cn/${urlPath}/`;
+let assetPath = !urlPath ? `//news.kukumai.cn/` : `//news.kukumai.cn/${urlPath}/`;
 urlPath = !urlPath ? "dist/home" : "dist/"+urlPath;
-assetPath = ``
+assetPath = ""
 module.exports = {
   dev: {
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
     proxyTable: {
       '/napi': {
-        target:'https://www.dtw-tech.cn/api', // 你请求的第三方接口
+        target:'http://admin.kukumai.cn/api', // 你请求的第三方接口
         changeOrigin:true,
         pathRewrite:{ 
           '^/napi': ''  
         }
       },
       '/data':{
-        target:'https://news.dtxww.cn/data',
+        target:'https://news-home.obs.cn-south-1.myhuaweicloud.com/data',
         changeOrigin:true,
         pathRewrite:{
           '^/data': ''  

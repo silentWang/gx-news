@@ -21,7 +21,6 @@ class AdvManager {
 
     /**********************************df优先 360打底式请求队列 start *****************************************/
     pushMergeRequest(params){
-        return;
         this.dfQueues.push(params);
         if(this.isRequest) return;
         this.sendMergeMsg();

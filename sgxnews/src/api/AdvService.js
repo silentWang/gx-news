@@ -1,6 +1,5 @@
 import axios from './request'
 import NetHttp from './NetHttp'
-import Utils from '../js/Utils';
 import DataCenter from './DataCenter';
 class AdvService {
     constructor(){
@@ -17,16 +16,12 @@ class AdvService {
     getDFTTQid(){
         let mode = process.env.BUILD_MODE;
         let type = ~~(mode/10);
-        if(mode >= 100 && type == 10) return "04370";
-        if(mode >= 100 && type == 11) return "04371";
-        if(mode >= 100 && type == 12) return "04372";
-        if(mode >= 100 && type == 13) return "04378";
-        if(mode >= 100 && type == 14) return "04373";
-        if(mode >= 100 && type == 15) return "04374";
-        if(mode >= 100 && type == 16) return "04375";
-        if(mode >= 100 && type == 17) return "04376";
-        if(mode >= 100 && type == 18) return "04377";
-        return "04369";
+        if(mode >= 100 && type == 10) return "04379";
+        if(mode >= 100 && type == 11) return "04383";
+        if(mode >= 100 && type == 13) return "04382";
+        if(mode >= 100 && type == 14) return "04381";
+        if(mode >= 100 && type == 15) return "04380";
+        return "04379";
     }
     /**
      * newdsp 请求参数示例
