@@ -167,7 +167,13 @@ export default {
                 }
                 else if(side.name == "part_5"){
                     this.homeSliderAdvAction.setIDS(side.adv);
-                    this.sliderList = side.data;
+                    let arr = [];
+                    for(let info of side.data){
+                        if(info && info.type != 2){
+                            arr.push(info)
+                        }
+                    }
+                    this.sliderList = arr;
                 }
                 else if(side.name == "part_6"){
                     let arr = [];

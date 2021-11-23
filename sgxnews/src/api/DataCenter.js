@@ -214,7 +214,7 @@ class DataCenter {
             console.log(channel_code + "----" + type)
             return;
         }
-        let url = "//func.dtw-tech.cn/redis/total";//this.getRealUrl("/v1/demo/index");
+        let url = "http://api.kukumai.cn/RedisData";//this.getRealUrl("/v1/demo/index");
         let userid = this.axios.defaults.headers["userId"];
         let params = "?userid=" + userid + "&" + "channel_code=" + channel_code;
         if(type){
