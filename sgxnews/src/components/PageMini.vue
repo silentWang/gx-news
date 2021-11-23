@@ -262,7 +262,6 @@ export default {
             //     let region = Utils.getRegion();
             //     if(region && region.search("上海") >= 0) return;
             // }
-            return;
             if(!this.dialogFlag){
                 if(this.showAdvFlag2){
                     this.$nextTick(()=>{
