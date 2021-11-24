@@ -128,6 +128,7 @@ export default {
                 }
                 dataCenter.upTo360ShowLog(this.tszData);
             }
+            console.log(this.itemId + "---ccccccccc")
         },
         clickTo(evt){
             if(this.advType == Utils.ADV_TYPE.DFTT){

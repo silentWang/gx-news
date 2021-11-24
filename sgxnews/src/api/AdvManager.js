@@ -94,7 +94,6 @@ class AdvManager {
                 if(data && data.data){
                     conf.data = data.data;
                     conf.data.advType = advType;
-                    conf.callback.call(conf.context);
                 }
             }
             for(let i = 0;i < confs.length;i++){
