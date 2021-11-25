@@ -128,7 +128,7 @@ export default {
                 }
                 dataCenter.upTo360ShowLog(this.tszData);
             }
-            console.log(this.itemId + "---ccccccccc")
+            this.advType = Utils.ADV_TYPE.TSZ
         },
         clickTo(evt){
             if(this.advType == Utils.ADV_TYPE.DFTT){
@@ -137,10 +137,10 @@ export default {
             else if(this.advType == Utils.ADV_TYPE.TSZ){
                 dataCenter.upToActivity("360_click");
                 if(this.actionItem.name == "actionItemMiniDialog"){
-                    dataCenter.upTo360ClkLog(this.tszData,this.minix,this.miniy,560,244,3);
+                    dataCenter.upTo360ClkLog(this.tszData,this.itemId,this.minix,this.miniy,3);
                 }
                 else{
-                    dataCenter.upTo360ClkLog(this.tszData,evt.offsetX,evt.offsetY,560,244,3);
+                    dataCenter.upTo360ClkLog(this.tszData,this.itemId,evt.offsetX,evt.offsetY,3);
                 }
             }
         },
@@ -149,23 +149,23 @@ export default {
                 if(this.actionItem.name == "actionItemMiniDialog"){
                     this.minix = 20 + 520*Math.random();
                     this.miniy = 10 + 210*Math.random();
-                    dataCenter.upTo360ClkLog(this.tszData,this.minix,this.miniy,560,244,1);
+                    dataCenter.upTo360ClkLog(this.tszData,this.itemId,this.minix,this.miniy,1);
                 }
                 else{
-                    dataCenter.upTo360ClkLog(this.tszData,evt.offsetX,evt.offsetY,560,244,1);
+                    dataCenter.upTo360ClkLog(this.tszData,this.itemId,evt.offsetX,evt.offsetY,1);
                 }
             }
         },
         advUp(evt){
             if(this.advType == Utils.ADV_TYPE.TSZ){
                 if(this.actionItem.name == "actionItemMiniDialog"){
-                    dataCenter.upTo360ClkLog(this.tszData,this.minix,this.miniy,560,244,2);
+                    dataCenter.upTo360ClkLog(this.tszData,this.itemId,this.minix,this.miniy,2);
                 }
                 else{
-                    dataCenter.upTo360ClkLog(this.tszData,evt.offsetX,evt.offsetY,560,244,2);
+                    dataCenter.upTo360ClkLog(this.tszData,this.itemId,evt.offsetX,evt.offsetY,2);
                 }
             }
-        },
+        }
     }
 }
 </script>

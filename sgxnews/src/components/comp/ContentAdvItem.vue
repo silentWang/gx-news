@@ -166,17 +166,17 @@ export default {
             }
             else if(this.advType == Utils.ADV_TYPE.TSZ){
                 dataCenter.upToActivity("360_click");
-                dataCenter.upTo360ClkLog(this.tszData,evt.offsetX,evt.offsetY,560,244,3);
+                dataCenter.upTo360ClkLog(this.tszData,this.itemId,evt.offsetX,evt.offsetY,3);
             }
         },
         advDown(evt){
             if(this.advType == Utils.ADV_TYPE.TSZ){
-                dataCenter.upTo360ClkLog(this.tszData,evt.offsetX,evt.offsetY,560,244,1);
+                dataCenter.upTo360ClkLog(this.tszData,this.itemId,evt.offsetX,evt.offsetY,1);
             }
         },
         advUp(evt){
             if(this.advType == Utils.ADV_TYPE.TSZ){
-                dataCenter.upTo360ClkLog(this.tszData,evt.offsetX,evt.offsetY,560,244,2);
+                dataCenter.upTo360ClkLog(this.tszData,this.itemId,evt.offsetX,evt.offsetY,2);
             }
         }
     }

@@ -149,12 +149,26 @@ class DataCenter {
             }
         }
     }
-    /**点击广告 */
-    upTo360ClkLog(adv,x,y,w,h,start){
-        if(!adv) return;
-        if(process.env.NODE_ENV == "development"){
-            console.log("上报类型start="+start+",x=" + x + ",y=" + y)
+    /**获取广告元素宽高 */
+    getWIDHGT(elementId){
+        let width = 560;
+        let height = 244;
+        let ele = document.getElementById(elementId)
+        if(ele){
+            width = ele.offsetWidth;
+            height = ele.offsetHeight;
         }
+        return {width,height}
+    }
+    /**点击广告 */
+    upTo360ClkLog(adv,elementId,x,y,start){
+        let obj = this.getWIDHGT(elementId);
+        let w = obj.width;
+        let h = obj.height;
+        if(process.env.NODE_ENV == "development"){
+            console.log(`上报类型start=${start},x=${x},y=${y},w=${w},h=${h}`)
+        }
+        if(!adv) return;
         if(start == 1){
             this.advCop = {};
             let clktk = adv.clktk;
