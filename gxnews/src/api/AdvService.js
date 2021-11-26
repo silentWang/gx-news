@@ -123,6 +123,10 @@ class AdvService {
             let url = process.env.NODE_ENV == "development" ? "http://show.g.mediav.com/s" : "https://show-g.mediav.com/s";
             let params = this.get360Params(showid);
             NetHttp.jsonp(url,params).then((res)=>{
+                // onlytest
+                // let obj = {clktk: (3) ["https://stat.lianmeng.360.cn/s2/clk.gif?lm_extend=…89%8B%E8%BD%A6%E8%AF%84%E4%BC%B0&_r=1637905149866", "https://sfstat.lianmeng.360.cn/s2/clk.gif?lm_exten…&img_key=t014a8303f5ad7357c7.jpg&_r=1637905149866", "https://max-l.mediav.com/rtb?type=3&v=CH8SEDE1YmQy…D__&adw=__ADSPACE_W__&adh=__ADSPACE_H__&tc=&turl="],curl: "https://www.so.com/s?src=lm&ls=sn2912376&q=%E4%BA%8C%E6%89%8B%E8%BD%A6%E8%AF%84%E4%BC%B0&lm_extend=ctype%3A26%7Clmbid%3A51%7Cjt%3A2%7Cmaxbid%3A4325393%2C4390929%2C4390930%2C4390944%2C4390951%2C4390978%2C4390996%2C4391026%2C4391042%2C4391463%2C4391488%2C4391504%2C4391537%2C4391553%2C4456453%2C4456457%2C4456713%2C4457015%2C4457029%2C4457057%2C4457062%2C4457064%2C4457072%2C4457073%2C4489217%7Csadspace%3A&lmsid=640c6a95ae522dba.0",desc: "二手房评估, 二手房信息, 海量二手房源, 二手房交易数据.",img: "https://p3.ssl.qhimgs0.com/dr/660_220_60/t014a8303f5ad7357c7.jpg",imgh: 220,imgw: 660,imptk: (3) ["https://max-l.mediav.com/rtb?type=2&v=CH8SEDE1YmQy…AiC&st=__EVENT_TIME_START__&et=__EVENT_TIME_END__", "https://stat.lianmeng.360.cn/s2/srp.gif?lm_extend=…gUCAg0LCtZp6yIpH5VdiZ2WYw==&ds=1&_r=1637905149866", "https://sfstat.lianmeng.360.cn/s2/srp.gif?lm_exten…&img_key=t014a8303f5ad7357c7.jpg&_r=1637905149866"],slot: 1,src: "大观",title: "二手车直卖！查查你心仪的二手车价格",type: 3,advType:Utils.ADV_TYPE.TSZ}
+                // res = {ads:[obj]}
+
                 if(!res || !res.ads || !res.ads.length || !res.ads[0]){
                     resolve(null);
                     return;
